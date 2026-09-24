@@ -1,17 +1,10 @@
 import { Recipe } from '../types/recipe';
 import { DayMenu, ShoppingItem, WeeklyPlan } from '../types/menu';
+import { Lang, translations } from '../i18n/translations';
 
 export const DEFAULT_PORTIONS = 11; // Mittelwert der Zielgruppe von 10-12 Personen
 
 const AISLE_ORDER: ShoppingItem['storeCategory'][] = ['gemuese', 'kuehlung', 'mopro', 'trocken', 'tk'];
-
-export const AISLE_LABELS: Record<ShoppingItem['storeCategory'], string> = {
-  gemuese: 'Obst & Gemüse',
-  kuehlung: 'Fleisch & Fisch (Kühlung)',
-  mopro: 'Molkereiprodukte',
-  trocken: 'Trockensortiment / Vorrat',
-  tk: 'Tiefkühlware',
-};
 
 function recipesOfDay(day: DayMenu): Recipe[] {
   return [day.vorspeise, day.hauptspeise, day.nachspeise];
@@ -78,10 +71,14 @@ export function buildShoppingLists(
   };
 }
 
-export function groupByAisle(items: ShoppingItem[]): Array<{ category: ShoppingItem['storeCategory']; label: string; items: ShoppingItem[] }> {
+export function groupByAisle(
+  items: ShoppingItem[],
+  lang: Lang,
+): Array<{ category: ShoppingItem['storeCategory']; label: string; items: ShoppingItem[] }> {
+  const aisleLabels = translations[lang].aisleLabels;
   return AISLE_ORDER.filter((category) => items.some((i) => i.storeCategory === category)).map((category) => ({
     category,
-    label: AISLE_LABELS[category],
+    label: aisleLabels[category],
     items: items.filter((i) => i.storeCategory === category),
   }));
 }

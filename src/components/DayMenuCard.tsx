@@ -2,14 +2,7 @@ import { Clock, Shuffle, Soup, UtensilsCrossed, IceCreamCone, Salad } from 'luci
 import { DayMenu } from '../types/menu';
 import { Recipe } from '../types/recipe';
 import { getBeilageRecipe } from '../data/beilagen';
-
-const PROTEIN_LABELS: Record<string, string> = {
-  gefluegel: 'Geflügel',
-  rind: 'Rindfleisch',
-  fisch: 'Fisch',
-  suess: 'Süße Hauptspeise',
-  vegetarisch: 'Vegetarisch',
-};
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface DayMenuCardProps {
   day: DayMenu;
@@ -18,8 +11,9 @@ interface DayMenuCardProps {
 }
 
 export default function DayMenuCard({ day, onReroll, onOpenRecipe }: DayMenuCardProps) {
+  const { t } = useLanguage();
   const proteinLabel = day.hauptspeise.proteinCategory
-    ? PROTEIN_LABELS[day.hauptspeise.proteinCategory]
+    ? t.proteinLabels[day.hauptspeise.proteinCategory]
     : undefined;
   const beilageRecipe = getBeilageRecipe(day.beilage);
 
@@ -27,10 +21,10 @@ export default function DayMenuCard({ day, onReroll, onOpenRecipe }: DayMenuCard
     <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
       <div className="mb-3 flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-slate-800">{day.dayOfWeek}</h3>
+          <h3 className="text-lg font-semibold text-slate-800">{t.dayLabels[day.dayOfWeek]}</h3>
           <p className="flex items-center gap-1 text-xs text-slate-500">
             <Clock size={14} />
-            Start {day.prepStartTime} Uhr · Servieren {day.targetServeTime} Uhr
+            {t.startServe(day.prepStartTime, day.targetServeTime)}
           </p>
         </div>
         {proteinLabel && (
@@ -70,10 +64,10 @@ export default function DayMenuCard({ day, onReroll, onOpenRecipe }: DayMenuCard
                 onClick={() => onOpenRecipe(beilageRecipe)}
                 className="cursor-pointer text-left underline-offset-2 hover:text-brand-700 hover:underline"
               >
-                Beilage: {day.beilage}
+                {t.beilage(day.beilage)}
               </button>
             ) : (
-              <span>Beilage: {day.beilage}</span>
+              <span>{t.beilage(day.beilage)}</span>
             )}
           </li>
         )}
@@ -95,7 +89,7 @@ export default function DayMenuCard({ day, onReroll, onOpenRecipe }: DayMenuCard
         className="mt-4 flex items-center gap-2 rounded-full border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-600 active:scale-95"
       >
         <Shuffle size={14} />
-        Tag neu würfeln
+        {t.rerollDay}
       </button>
     </div>
   );
