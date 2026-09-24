@@ -1,8 +1,19 @@
-import { Content, Part } from '@google/genai';
+import { ApiError, Content, Part } from '@google/genai';
 import { ChatContext, ChatMessage } from '../../types/ai';
 import { createGeminiClient, GEMINI_MODEL } from './client';
 import { buildSystemPrompt } from './systemPrompt';
 import { chatToolDeclarations, createToolDispatcher } from './tools';
+
+/** Extrahiert eine möglichst konkrete, aber sichere Fehlermeldung aus einem fehlgeschlagenen Gemini-Aufruf. */
+export function describeChatError(err: unknown): { status?: number; message: string } {
+  if (err instanceof ApiError) {
+    return { status: err.status, message: err.message };
+  }
+  if (err instanceof Error) {
+    return { message: err.message };
+  }
+  return { message: String(err) };
+}
 
 const MAX_TOOL_ROUNDS = 4;
 
@@ -51,9 +62,10 @@ export async function sendChatMessage(
 
     const responseParts: Part[] = [];
     for (const call of functionCalls) {
-      const result = await dispatch(call.name ?? '', call.args ?? {});
+      const toolName = call.name ?? 'unknown_function';
+      const result = await dispatch(toolName, call.args ?? {});
       responseParts.push({
-        functionResponse: { name: call.name, response: result },
+        functionResponse: { name: toolName, response: result },
       });
     }
     contents.push({ role: 'user', parts: responseParts });

@@ -60,8 +60,12 @@ interface Translation {
   chatApiKeyClear: string;
   chatOffline: string;
   chatError: string;
+  chatErrorAuth: string;
+  chatErrorQuota: string;
   chatThinking: string;
   aiRecipeBadge: string;
+  chatApiKeyInvalid: string;
+  chatApiKeyValidating: string;
 }
 
 export const translations: Record<Lang, Translation> = {
@@ -144,8 +148,12 @@ export const translations: Record<Lang, Translation> = {
     chatApiKeyClear: 'API-Key entfernen',
     chatOffline: 'Der Chat benötigt eine Internetverbindung.',
     chatError: 'Da ist etwas schiefgelaufen. Bitte versuche es erneut.',
+    chatErrorAuth: 'Der Gemini API-Key scheint ungültig zu sein. Bitte im Chat-Header prüfen/erneuern.',
+    chatErrorQuota: 'Gemini-Kontingent erschöpft. Bitte später erneut versuchen.',
     chatThinking: 'Denkt nach…',
     aiRecipeBadge: 'KI-generiert',
+    chatApiKeyInvalid: 'Dieser API-Key wurde von Gemini abgelehnt. Bitte prüfen und erneut versuchen.',
+    chatApiKeyValidating: 'Wird geprüft…',
   },
   tr: {
     langName: 'Türkçe',
@@ -226,7 +234,11 @@ export const translations: Record<Lang, Translation> = {
     chatApiKeyClear: 'API Anahtarını Kaldır',
     chatOffline: 'Sohbet için internet bağlantısı gerekli.',
     chatError: 'Bir şeyler ters gitti. Lütfen tekrar dene.',
+    chatErrorAuth: 'Gemini API anahtarı geçersiz görünüyor. Lütfen sohbet başlığından kontrol et/yenile.',
+    chatErrorQuota: 'Gemini kotası doldu. Lütfen daha sonra tekrar dene.',
     chatThinking: 'Düşünüyor…',
     aiRecipeBadge: 'Yapay Zeka ile Oluşturuldu',
+    chatApiKeyInvalid: 'Bu API anahtarı Gemini tarafından reddedildi. Lütfen kontrol edip tekrar dene.',
+    chatApiKeyValidating: 'Kontrol ediliyor…',
   },
 };
