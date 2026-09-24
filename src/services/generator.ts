@@ -12,7 +12,7 @@ const BEILAGE_BY_RECIPE_ID: Record<string, string> = {
   'hs-gefluegel-03': 'Basmatireis',
   'hs-gefluegel-04': 'Kartoffelspalten',
   'hs-rind-01': 'Spätzle',
-  'hs-rind-02': 'Kartoffelbrei',
+  'hs-rind-02': 'Kartoffelpüree',
   'hs-rind-03': 'Bandnudeln',
   'hs-rind-04': 'Spaghetti',
   'hs-fisch-01': 'Kartoffelsalat',

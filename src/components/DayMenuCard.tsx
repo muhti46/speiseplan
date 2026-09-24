@@ -1,6 +1,7 @@
-import { Clock, Shuffle, Soup, UtensilsCrossed, IceCreamCone } from 'lucide-react';
+import { Clock, Shuffle, Soup, UtensilsCrossed, IceCreamCone, Salad } from 'lucide-react';
 import { DayMenu } from '../types/menu';
-import { formatHauptspeiseWithBeilage } from '../services/format';
+import { Recipe } from '../types/recipe';
+import { getBeilageRecipe } from '../data/beilagen';
 
 const PROTEIN_LABELS: Record<string, string> = {
   gefluegel: 'Geflügel',
@@ -13,12 +14,14 @@ const PROTEIN_LABELS: Record<string, string> = {
 interface DayMenuCardProps {
   day: DayMenu;
   onReroll: () => void;
+  onOpenRecipe: (recipe: Recipe) => void;
 }
 
-export default function DayMenuCard({ day, onReroll }: DayMenuCardProps) {
+export default function DayMenuCard({ day, onReroll, onOpenRecipe }: DayMenuCardProps) {
   const proteinLabel = day.hauptspeise.proteinCategory
     ? PROTEIN_LABELS[day.hauptspeise.proteinCategory]
     : undefined;
+  const beilageRecipe = getBeilageRecipe(day.beilage);
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -40,15 +43,49 @@ export default function DayMenuCard({ day, onReroll }: DayMenuCardProps) {
       <ul className="space-y-2 text-sm text-slate-700">
         <li className="flex items-start gap-2">
           <Soup size={16} className="mt-0.5 shrink-0 text-brand-600" />
-          <span>{day.vorspeise.name}</span>
+          <button
+            type="button"
+            onClick={() => onOpenRecipe(day.vorspeise)}
+            className="cursor-pointer text-left underline-offset-2 hover:text-brand-700 hover:underline"
+          >
+            {day.vorspeise.name}
+          </button>
         </li>
         <li className="flex items-start gap-2">
           <UtensilsCrossed size={16} className="mt-0.5 shrink-0 text-brand-600" />
-          <span>{formatHauptspeiseWithBeilage(day)}</span>
+          <button
+            type="button"
+            onClick={() => onOpenRecipe(day.hauptspeise)}
+            className="cursor-pointer text-left underline-offset-2 hover:text-brand-700 hover:underline"
+          >
+            {day.hauptspeise.name}
+          </button>
         </li>
+        {day.beilage !== '—' && (
+          <li className="flex items-start gap-2 pl-6 text-slate-500">
+            <Salad size={14} className="mt-0.5 shrink-0 text-brand-500" />
+            {beilageRecipe ? (
+              <button
+                type="button"
+                onClick={() => onOpenRecipe(beilageRecipe)}
+                className="cursor-pointer text-left underline-offset-2 hover:text-brand-700 hover:underline"
+              >
+                Beilage: {day.beilage}
+              </button>
+            ) : (
+              <span>Beilage: {day.beilage}</span>
+            )}
+          </li>
+        )}
         <li className="flex items-start gap-2">
           <IceCreamCone size={16} className="mt-0.5 shrink-0 text-brand-600" />
-          <span>{day.nachspeise.name}</span>
+          <button
+            type="button"
+            onClick={() => onOpenRecipe(day.nachspeise)}
+            className="cursor-pointer text-left underline-offset-2 hover:text-brand-700 hover:underline"
+          >
+            {day.nachspeise.name}
+          </button>
         </li>
       </ul>
 

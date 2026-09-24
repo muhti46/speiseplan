@@ -10,6 +10,7 @@ import { getAllPlans, getRecentRecipeIds, savePlan } from './services/storage';
 import Tabs, { TabItem } from './components/Tabs';
 import DayMenuCard from './components/DayMenuCard';
 import CheckboxList from './components/CheckboxList';
+import RecipeDetailModal from './components/RecipeDetailModal';
 
 const recipes = recipesData as Recipe[];
 
@@ -24,6 +25,7 @@ export default function App() {
   const [plan, setPlan] = useState<WeeklyPlan | null>(null);
   const [archive, setArchive] = useState<WeeklyPlan[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
 
   useEffect(() => {
     getAllPlans().then(setArchive);
@@ -111,7 +113,12 @@ export default function App() {
 
             {plan &&
               plan.days.map((day) => (
-                <DayMenuCard key={day.dayOfWeek} day={day} onReroll={() => handleReroll(day.dayOfWeek)} />
+                <DayMenuCard
+                  key={day.dayOfWeek}
+                  day={day}
+                  onReroll={() => handleReroll(day.dayOfWeek)}
+                  onOpenRecipe={setSelectedRecipe}
+                />
               ))}
 
             {plan && (
@@ -183,6 +190,10 @@ export default function App() {
       <div className="sm:hidden">
         <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
       </div>
+
+      {selectedRecipe && (
+        <RecipeDetailModal recipe={selectedRecipe} onClose={() => setSelectedRecipe(null)} />
+      )}
     </div>
   );
 }
