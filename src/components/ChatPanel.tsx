@@ -5,7 +5,7 @@ import { WeeklyPlan } from '../types/menu';
 import { ChatMessage } from '../types/ai';
 import { useLanguage } from '../i18n/LanguageContext';
 import { getApiKey, clearApiKey } from '../services/ai/apiKey';
-import { sendChatMessage } from '../services/ai/chat';
+import { describeChatError, sendChatMessage } from '../services/ai/chat';
 import ApiKeySettings from './ApiKeySettings';
 import ChatMessageList from './ChatMessageList';
 import ChatInput from './ChatInput';
@@ -31,7 +31,12 @@ export default function ChatPanel({
 }: ChatPanelProps) {
   const { lang, t } = useLanguage();
   const [hasKey, setHasKey] = useState(() => Boolean(getApiKey()));
+  // `messages` ist der volle UI-Verlauf (inkl. Fehler-/Offline-Hinweisen).
+  // `apiHistory` enthält NUR erfolgreich abgeschlossene user/assistant-Paare und wird
+  // an Gemini geschickt - so bleibt die Rollen-Abfolge (user/model/user/model/...) auch
+  // nach einem Fehlschlag konsistent, statt zwei aufeinanderfolgende user-Turns zu erzeugen.
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [apiHistory, setApiHistory] = useState<ChatMessage[]>([]);
   const [isSending, setIsSending] = useState(false);
 
   function handleClearKey() {
@@ -54,7 +59,7 @@ export default function ChatPanel({
       return;
     }
 
-    const history = messages;
+    const history = apiHistory;
     setMessages((prev) => [...prev, { role: 'user', text }]);
     setIsSending(true);
     try {
@@ -68,9 +73,19 @@ export default function ChatPanel({
         onPlanUpdate,
         onRecipeAdd,
       });
-      setMessages((prev) => [...prev, { role: 'assistant', text: reply || t.chatError }]);
-    } catch {
-      setMessages((prev) => [...prev, { role: 'system', text: t.chatError }]);
+      const assistantText = reply || t.chatError;
+      setMessages((prev) => [...prev, { role: 'assistant', text: assistantText }]);
+      setApiHistory((prev) => [...prev, { role: 'user', text }, { role: 'assistant', text: assistantText }]);
+    } catch (err) {
+      const { status, message } = describeChatError(err);
+      // eslint-disable-next-line no-console
+      console.error('Gemini chat error', status, message, err);
+      let errorText = t.chatError;
+      if (status === 401 || status === 403) errorText = t.chatErrorAuth;
+      else if (status === 429) errorText = t.chatErrorQuota;
+      setMessages((prev) => [...prev, { role: 'system', text: errorText }]);
+      // Bewusst NICHT in apiHistory übernehmen, damit der nächste Send-Versuch
+      // keine zwei aufeinanderfolgenden user-Turns an Gemini schickt.
     } finally {
       setIsSending(false);
     }

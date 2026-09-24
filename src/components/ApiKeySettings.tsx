@@ -1,6 +1,8 @@
 import { FormEvent, useState } from 'react';
-import { KeyRound } from 'lucide-react';
+import { KeyRound, Loader2 } from 'lucide-react';
 import { setApiKey } from '../services/ai/apiKey';
+import { createGeminiClient, GEMINI_MODEL } from '../services/ai/client';
+import { describeChatError } from '../services/ai/chat';
 import { useLanguage } from '../i18n/LanguageContext';
 
 interface ApiKeySettingsProps {
@@ -10,12 +12,34 @@ interface ApiKeySettingsProps {
 export default function ApiKeySettings({ onSaved }: ApiKeySettingsProps) {
   const { t } = useLanguage();
   const [value, setValue] = useState('');
+  const [isValidating, setIsValidating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    if (!value.trim()) return;
-    setApiKey(value);
-    onSaved();
+    const key = value.trim();
+    if (!key || isValidating) return;
+
+    setError(null);
+    setIsValidating(true);
+    try {
+      // Minimaler Testaufruf, um einen ungültigen/eingeschränkten Key sofort hier
+      // sichtbar zu machen statt erst beim ersten echten Chat-Versuch.
+      await createGeminiClient(key).models.generateContent({
+        model: GEMINI_MODEL,
+        contents: [{ role: 'user', parts: [{ text: 'ping' }] }],
+        config: { maxOutputTokens: 1 },
+      });
+      setApiKey(key);
+      onSaved();
+    } catch (err) {
+      const { message } = describeChatError(err);
+      // eslint-disable-next-line no-console
+      console.error('Gemini API-Key-Validierung fehlgeschlagen', err);
+      setError(`${t.chatApiKeyInvalid} (${message})`);
+    } finally {
+      setIsValidating(false);
+    }
   }
 
   return (
@@ -31,15 +55,19 @@ export default function ApiKeySettings({ onSaved }: ApiKeySettingsProps) {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={t.chatApiKeyPlaceholder}
-          className="flex-1 rounded-full border border-slate-300 px-3 py-2 text-sm focus:border-brand-600 focus:outline-none"
+          disabled={isValidating}
+          className="flex-1 rounded-full border border-slate-300 px-3 py-2 text-sm focus:border-brand-600 focus:outline-none disabled:opacity-60"
         />
         <button
           type="submit"
-          className="shrink-0 rounded-full bg-brand-700 px-4 py-2 text-sm font-medium text-white active:scale-95"
+          disabled={isValidating || !value.trim()}
+          className="flex shrink-0 items-center gap-2 rounded-full bg-brand-700 px-4 py-2 text-sm font-medium text-white active:scale-95 disabled:opacity-60"
         >
-          {t.chatApiKeySave}
+          {isValidating && <Loader2 size={14} className="animate-spin" aria-hidden />}
+          {isValidating ? t.chatApiKeyValidating : t.chatApiKeySave}
         </button>
       </form>
+      {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
     </div>
   );
 }

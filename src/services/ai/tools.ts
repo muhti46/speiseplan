@@ -1,4 +1,4 @@
-import { FunctionDeclaration } from '@google/genai';
+import { FunctionDeclaration, Schema, Type } from '@google/genai';
 import { Course, Recipe } from '../../types/recipe';
 import { DayOfWeek, DAYS_OF_WEEK } from '../../types/menu';
 import { ChatContext } from '../../types/ai';
@@ -6,28 +6,31 @@ import { applyMealSwap, generateWeeklyPlan, rerollDay } from '../generator';
 import { buildShoppingLists } from '../shopping';
 import { coerceRecipe, isCoercionError } from './recipeCoercion';
 
-const recipeFieldsSchema = {
-  name: { type: 'string', description: 'Name des Gerichts' },
-  course: { type: 'string', enum: ['vorspeise', 'hauptspeise', 'nachspeise'] },
-  subCategory: { type: 'string', enum: ['suppe', 'salat', 'beilage', 'dessert'] },
+// Klassisches Schema/Type-Format statt parametersJsonSchema: die Gemini API
+// validiert Function-Declaration-Schemas strikt und lehnt unbekannte
+// JSON-Schema-Keywords mit einem 400 ab - dieses Format ist stabil dokumentiert.
+const recipeFieldsSchema: Record<string, Schema> = {
+  name: { type: Type.STRING, description: 'Name des Gerichts' },
+  course: { type: Type.STRING, enum: ['vorspeise', 'hauptspeise', 'nachspeise'] },
+  subCategory: { type: Type.STRING, enum: ['suppe', 'salat', 'beilage', 'dessert'] },
   proteinCategory: {
-    type: 'string',
+    type: Type.STRING,
     enum: ['gefluegel', 'rind', 'fisch', 'suess', 'vegetarisch'],
     description: 'Nur bei course "hauptspeise" erforderlich.',
   },
-  beilage: { type: 'string', description: 'Nur bei course "hauptspeise": Name der Beilage, oder "—".' },
-  prepTimeMinutes: { type: 'number' },
-  cookTimeMinutes: { type: 'number' },
-  instructions: { type: 'array', items: { type: 'string' } },
+  beilage: { type: Type.STRING, description: 'Nur bei course "hauptspeise": Name der Beilage, oder "—".' },
+  prepTimeMinutes: { type: Type.NUMBER },
+  cookTimeMinutes: { type: Type.NUMBER },
+  instructions: { type: Type.ARRAY, items: { type: Type.STRING } },
   ingredients: {
-    type: 'array',
+    type: Type.ARRAY,
     items: {
-      type: 'object',
+      type: Type.OBJECT,
       properties: {
-        item: { type: 'string' },
-        amountPer10Pax: { type: 'number', description: 'Menge für 10 Portionen' },
-        unit: { type: 'string' },
-        storeCategory: { type: 'string', enum: ['gemuese', 'kuehlung', 'mopro', 'trocken', 'tk'] },
+        item: { type: Type.STRING },
+        amountPer10Pax: { type: Type.NUMBER, description: 'Menge für 10 Portionen' },
+        unit: { type: Type.STRING },
+        storeCategory: { type: Type.STRING, enum: ['gemuese', 'kuehlung', 'mopro', 'trocken', 'tk'] },
       },
       required: ['item', 'amountPer10Pax', 'unit', 'storeCategory'],
     },
@@ -39,8 +42,8 @@ export const chatToolDeclarations: FunctionDeclaration[] = [
     name: 'generate_recipe',
     description:
       'Erzeugt ein vollständiges Rezept (Zutaten, Zubereitungsschritte, Zeiten, Kategorie) für ein neues Gericht. Muss vor add_recipe_to_library aufgerufen werden.',
-    parametersJsonSchema: {
-      type: 'object',
+    parameters: {
+      type: Type.OBJECT,
       properties: recipeFieldsSchema,
       required: ['name', 'course', 'prepTimeMinutes', 'cookTimeMinutes', 'instructions', 'ingredients'],
     },
@@ -48,9 +51,11 @@ export const chatToolDeclarations: FunctionDeclaration[] = [
   {
     name: 'add_recipe_to_library',
     description: 'Speichert ein zuvor mit generate_recipe erzeugtes Rezept dauerhaft in der Rezeptdatenbank.',
-    parametersJsonSchema: {
-      type: 'object',
-      properties: { recipeId: { type: 'string', description: 'Die recipeId aus der generate_recipe-Antwort.' } },
+    parameters: {
+      type: Type.OBJECT,
+      properties: {
+        recipeId: { type: Type.STRING, description: 'Die recipeId aus der generate_recipe-Antwort.' },
+      },
       required: ['recipeId'],
     },
   },
@@ -58,13 +63,13 @@ export const chatToolDeclarations: FunctionDeclaration[] = [
     name: 'swap_meal',
     description:
       'Ersetzt einen einzelnen Gang (Vorspeise/Hauptspeise/Nachspeise) an einem bestimmten Tag durch ein konkretes, bereits existierendes Rezept.',
-    parametersJsonSchema: {
-      type: 'object',
+    parameters: {
+      type: Type.OBJECT,
       properties: {
-        dayOfWeek: { type: 'string', enum: DAYS_OF_WEEK },
-        course: { type: 'string', enum: ['vorspeise', 'hauptspeise', 'nachspeise'] },
-        recipeId: { type: 'string' },
-        recipeName: { type: 'string', description: 'Alternativ zu recipeId: Name des gewünschten Rezepts.' },
+        dayOfWeek: { type: Type.STRING, enum: DAYS_OF_WEEK },
+        course: { type: Type.STRING, enum: ['vorspeise', 'hauptspeise', 'nachspeise'] },
+        recipeId: { type: Type.STRING },
+        recipeName: { type: Type.STRING, description: 'Alternativ zu recipeId: Name des gewünschten Rezepts.' },
       },
       required: ['dayOfWeek', 'course'],
     },
@@ -72,28 +77,26 @@ export const chatToolDeclarations: FunctionDeclaration[] = [
   {
     name: 'reroll_day',
     description: 'Würfelt Vorspeise, Hauptspeise und Nachspeise eines Tages neu, Protein-Kategorie bleibt erhalten.',
-    parametersJsonSchema: {
-      type: 'object',
-      properties: { dayOfWeek: { type: 'string', enum: DAYS_OF_WEEK } },
+    parameters: {
+      type: Type.OBJECT,
+      properties: { dayOfWeek: { type: Type.STRING, enum: DAYS_OF_WEEK } },
       required: ['dayOfWeek'],
     },
   },
   {
     name: 'regenerate_week',
     description: 'Erzeugt einen komplett neuen Wochenplan nach der 5-Tage-Protein-Regel.',
-    parametersJsonSchema: { type: 'object', properties: {} },
   },
   {
     name: 'get_plan_summary',
     description: 'Liefert eine kompakte Zusammenfassung des aktuellen Wochenplans (Gerichte je Tag).',
-    parametersJsonSchema: { type: 'object', properties: {} },
   },
   {
     name: 'get_shopping_list',
     description: 'Liefert die Einkaufsliste für Montag (Mo-Mi) oder Freitag (Do-Fr).',
-    parametersJsonSchema: {
-      type: 'object',
-      properties: { list: { type: 'string', enum: ['mon', 'fri'] } },
+    parameters: {
+      type: Type.OBJECT,
+      properties: { list: { type: Type.STRING, enum: ['mon', 'fri'] } },
       required: ['list'],
     },
   },
