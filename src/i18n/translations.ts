@@ -12,7 +12,7 @@ interface Translation {
   langName: string;
   appTitle: string;
   appSubtitle: string;
-  tabs: { plan: string; einkauf: string; archiv: string };
+  tabs: { plan: string; einkauf: string; archiv: string; chat: string };
   generate: string;
   regenerate: string;
   nextWeek: (week: number) => string;
@@ -49,6 +49,19 @@ interface Translation {
   pdf_vorspeise: string;
   pdf_hauptspeise: string;
   pdf_nachspeise: string;
+  chatTitle: string;
+  chatPlaceholder: string;
+  chatSend: string;
+  chatEmptyState: string;
+  chatApiKeyLabel: string;
+  chatApiKeyHint: string;
+  chatApiKeyPlaceholder: string;
+  chatApiKeySave: string;
+  chatApiKeyClear: string;
+  chatOffline: string;
+  chatError: string;
+  chatThinking: string;
+  aiRecipeBadge: string;
 }
 
 export const translations: Record<Lang, Translation> = {
@@ -56,7 +69,7 @@ export const translations: Record<Lang, Translation> = {
     langName: 'Deutsch',
     appTitle: 'Kinderheim Speiseplan',
     appSubtitle: 'Weilburg · 10–12 Personen',
-    tabs: { plan: 'Speiseplan', einkauf: 'Einkauf', archiv: 'Archiv' },
+    tabs: { plan: 'Speiseplan', einkauf: 'Einkauf', archiv: 'Archiv', chat: 'Chat' },
     generate: 'Wochenplan erzeugen',
     regenerate: 'Neu generieren',
     nextWeek: (week) => `Nächste Woche: KW ${week}`,
@@ -120,12 +133,25 @@ export const translations: Record<Lang, Translation> = {
     pdf_vorspeise: 'Vorspeise',
     pdf_hauptspeise: 'Hauptspeise',
     pdf_nachspeise: 'Nachspeise',
+    chatTitle: 'KI-Assistent',
+    chatPlaceholder: 'Was soll ich tun?',
+    chatSend: 'Senden',
+    chatEmptyState: 'Frag mich z.B. „Füge ein neues Hauptgericht Linsen-Curry hinzu" oder „Tausche Dienstag Hähnchen gegen Fisch".',
+    chatApiKeyLabel: 'Gemini API-Key',
+    chatApiKeyHint: 'Der Key wird nur auf diesem Gerät gespeichert und direkt an Google Gemini gesendet (kein Server dazwischen).',
+    chatApiKeyPlaceholder: 'API-Key einfügen',
+    chatApiKeySave: 'Speichern',
+    chatApiKeyClear: 'API-Key entfernen',
+    chatOffline: 'Der Chat benötigt eine Internetverbindung.',
+    chatError: 'Da ist etwas schiefgelaufen. Bitte versuche es erneut.',
+    chatThinking: 'Denkt nach…',
+    aiRecipeBadge: 'KI-generiert',
   },
   tr: {
     langName: 'Türkçe',
     appTitle: 'Çocuk Yuvası Yemek Planı',
     appSubtitle: 'Weilburg · 10-12 Kişi',
-    tabs: { plan: 'Yemek Planı', einkauf: 'Alışveriş', archiv: 'Arşiv' },
+    tabs: { plan: 'Yemek Planı', einkauf: 'Alışveriş', archiv: 'Arşiv', chat: 'Sohbet' },
     generate: 'Haftalık Plan Oluştur',
     regenerate: 'Yeniden Oluştur',
     nextWeek: (week) => `Gelecek hafta: ${week}. Hafta`,
@@ -189,5 +215,18 @@ export const translations: Record<Lang, Translation> = {
     pdf_vorspeise: 'Başlangıç',
     pdf_hauptspeise: 'Ana Yemek',
     pdf_nachspeise: 'Tatlı',
+    chatTitle: 'Yapay Zeka Asistanı',
+    chatPlaceholder: 'Ne yapmamı istersin?',
+    chatSend: 'Gönder',
+    chatEmptyState: 'Örneğin şunu sor: "Mercimek Köftesi diye yeni bir ana yemek ekle" veya "Salı günü tavuk yerine balık koy".',
+    chatApiKeyLabel: 'Gemini API Anahtarı',
+    chatApiKeyHint: 'Anahtar sadece bu cihazda saklanır ve doğrudan Google Gemini\'ye gönderilir (aradaki sunucu yok).',
+    chatApiKeyPlaceholder: 'API anahtarını yapıştır',
+    chatApiKeySave: 'Kaydet',
+    chatApiKeyClear: 'API Anahtarını Kaldır',
+    chatOffline: 'Sohbet için internet bağlantısı gerekli.',
+    chatError: 'Bir şeyler ters gitti. Lütfen tekrar dene.',
+    chatThinking: 'Düşünüyor…',
+    aiRecipeBadge: 'Yapay Zeka ile Oluşturuldu',
   },
 };

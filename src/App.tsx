@@ -1,20 +1,19 @@
 import { useEffect, useMemo, useState } from 'react';
-import { CalendarDays, ShoppingCart, Archive, Sparkles, FileDown, Languages } from 'lucide-react';
+import { CalendarDays, ShoppingCart, Archive, Sparkles, FileDown, Languages, MessageCircle } from 'lucide-react';
 import recipesData from './data/recipes.json';
 import { Recipe } from './types/recipe';
 import { DayOfWeek, ShoppingItem, WeeklyPlan } from './types/menu';
 import { calculateCalendarWeek, generateWeeklyPlan, rerollDay } from './services/generator';
 import { buildShoppingLists } from './services/shopping';
 import { exportWeeklyPlanPdf } from './services/pdf';
-import { getAllPlans, getRecentRecipeIds, savePlan } from './services/storage';
+import { getAllPlans, getAllRecipes, getRecentRecipeIds, saveRecipe, savePlan } from './services/storage';
 import Tabs, { TabItem } from './components/Tabs';
 import DayMenuCard from './components/DayMenuCard';
 import CheckboxList from './components/CheckboxList';
 import RecipeDetailModal from './components/RecipeDetailModal';
+import ChatPanel from './components/ChatPanel';
 import { useLanguage } from './i18n/LanguageContext';
 import { LANGUAGES, Lang } from './i18n/translations';
-
-const recipes = recipesData as Recipe[];
 
 export default function App() {
   const { lang, setLang, t } = useLanguage();
@@ -23,11 +22,14 @@ export default function App() {
   const [archive, setArchive] = useState<WeeklyPlan[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [recipes, setRecipes] = useState<Recipe[]>(recipesData as Recipe[]);
+  const [recentRecipeIds, setRecentRecipeIds] = useState<string[]>([]);
 
   const TABS: TabItem[] = [
     { id: 'plan', label: t.tabs.plan, icon: CalendarDays },
     { id: 'einkauf', label: t.tabs.einkauf, icon: ShoppingCart },
     { id: 'archiv', label: t.tabs.archiv, icon: Archive },
+    { id: 'chat', label: t.tabs.chat, icon: MessageCircle },
   ];
 
   function toggleLang() {
@@ -38,10 +40,19 @@ export default function App() {
 
   useEffect(() => {
     getAllPlans().then(setArchive);
+    getAllRecipes().then((stored) => {
+      if (stored.length > 0) setRecipes(stored);
+    });
+    getRecentRecipeIds(4).then(setRecentRecipeIds);
   }, []);
 
   const now = useMemo(() => new Date(), []);
   const currentWeek = calculateCalendarWeek(now);
+
+  function handleRecipeAdd(recipe: Recipe) {
+    setRecipes((prev) => [...prev, recipe]);
+    saveRecipe(recipe);
+  }
 
   async function handleGenerate() {
     setIsGenerating(true);
@@ -183,6 +194,18 @@ export default function App() {
           <div className="rounded-2xl border border-dashed border-slate-300 p-8 text-center text-sm text-slate-400">
             {t.needPlanForShopping}
           </div>
+        )}
+
+        {activeTab === 'chat' && (
+          <ChatPanel
+            plan={plan}
+            recipes={recipes}
+            recentRecipeIds={recentRecipeIds}
+            calendarWeek={currentWeek}
+            year={now.getFullYear()}
+            onPlanUpdate={setPlan}
+            onRecipeAdd={handleRecipeAdd}
+          />
         )}
 
         {activeTab === 'archiv' && (

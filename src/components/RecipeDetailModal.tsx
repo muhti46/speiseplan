@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { X, Clock, ChefHat, Flame, Users } from 'lucide-react';
+import { X, Clock, ChefHat, Flame, Users, Sparkles } from 'lucide-react';
 import { Recipe } from '../types/recipe';
 import { getCategoryLabel } from '../services/labels';
 import { DEFAULT_PORTIONS } from '../services/shopping';
@@ -48,8 +48,16 @@ export default function RecipeDetailModal({ recipe, onClose }: RecipeDetailModal
       >
         <div className="flex items-start justify-between border-b border-slate-100 p-4">
           <div>
-            <span className="mb-1 inline-block rounded-full bg-brand-100 px-3 py-1 text-xs font-medium text-brand-800">
-              {getCategoryLabel(recipe, lang)}
+            <span className="mb-1 inline-flex items-center gap-2">
+              <span className="rounded-full bg-brand-100 px-3 py-1 text-xs font-medium text-brand-800">
+                {getCategoryLabel(recipe, lang)}
+              </span>
+              {recipe.source === 'ai' && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800">
+                  <Sparkles size={12} />
+                  {t.aiRecipeBadge}
+                </span>
+              )}
             </span>
             <h2 id="recipe-modal-title" className="text-lg font-bold text-slate-800">
               {recipe.name}
