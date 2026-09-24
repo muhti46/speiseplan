@@ -13,12 +13,17 @@ export interface Ingredient {
   storeCategory: StoreCategory;
 }
 
+export type RecipeSource = 'builtin' | 'ai' | 'manual';
+
 export interface Recipe {
   id: string;
   name: string;
   course: Course;
   subCategory?: SubCategory;
   proteinCategory?: ProteinCategory;
+  /** Beilagen-Name für Hauptspeisen; überschreibt ggf. die statische BEILAGE_BY_RECIPE_ID-Map. */
+  beilage?: string;
+  source?: RecipeSource;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
   totalTimeMinutes: number;

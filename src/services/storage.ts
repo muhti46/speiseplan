@@ -1,13 +1,35 @@
 import Dexie, { Table } from 'dexie';
 import { WeeklyPlan } from '../types/menu';
+import { Recipe } from '../types/recipe';
+import recipesData from '../data/recipes.json';
+
+function seedRecipes(): Recipe[] {
+  return (recipesData as Recipe[]).map((recipe) => ({ ...recipe, source: 'builtin' as const }));
+}
 
 class SpeiseplanDB extends Dexie {
   plans!: Table<WeeklyPlan, string>;
+  recipes!: Table<Recipe, string>;
 
   constructor() {
     super('speiseplan-db');
     this.version(1).stores({
       plans: 'id, year, calendarWeek, isFinalized, createdAt',
+    });
+    this.version(2)
+      .stores({
+        plans: 'id, year, calendarWeek, isFinalized, createdAt',
+        recipes: 'id, course, proteinCategory, subCategory',
+      })
+      // Läuft nur beim Upgrade einer bestehenden (v1-)Datenbank, nicht bei einer
+      // komplett neuen Installation - siehe on('populate') unten für den Fresh-Install-Fall.
+      .upgrade(async (tx) => {
+        await tx.table('recipes').bulkPut(seedRecipes());
+      });
+
+    // Läuft nur einmal, wenn die Datenbank komplett neu (ohne Vorgängerversion) angelegt wird.
+    this.on('populate', async (tx) => {
+      await tx.table('recipes').bulkPut(seedRecipes());
     });
   }
 }
@@ -63,4 +85,16 @@ export async function importPlansFromJson(json: string): Promise<number> {
   const plans = JSON.parse(json) as WeeklyPlan[];
   await db.plans.bulkPut(plans);
   return plans.length;
+}
+
+export async function saveRecipe(recipe: Recipe): Promise<void> {
+  await db.recipes.put(recipe);
+}
+
+export async function deleteRecipe(id: string): Promise<void> {
+  await db.recipes.delete(id);
+}
+
+export async function getAllRecipes(): Promise<Recipe[]> {
+  return db.recipes.toArray();
 }

@@ -1,4 +1,4 @@
-import { Recipe, ProteinCategory } from '../types/recipe';
+import { Recipe, ProteinCategory, Course } from '../types/recipe';
 import { DayMenu, DayOfWeek, DAYS_OF_WEEK, WeeklyPlan } from '../types/menu';
 
 const PROTEIN_ORDER: ProteinCategory[] = ['gefluegel', 'rind', 'fisch', 'suess', 'vegetarisch'];
@@ -30,7 +30,7 @@ const BEILAGE_BY_RECIPE_ID: Record<string, string> = {
 };
 
 function beilageFor(recipe: Recipe): string {
-  return BEILAGE_BY_RECIPE_ID[recipe.id] ?? '—';
+  return recipe.beilage ?? BEILAGE_BY_RECIPE_ID[recipe.id] ?? '—';
 }
 
 function minutesToTime(totalMinutes: number): string {
@@ -158,6 +158,27 @@ export function rerollDay(
   return {
     ...plan,
     days: plan.days.map((d) => (d.dayOfWeek === dayOfWeek ? newDay : d)),
+  };
+}
+
+/** Ersetzt einen einzelnen Gang (Vorspeise/Hauptspeise/Nachspeise) an einem Tag durch ein bestimmtes Rezept. */
+export function applyMealSwap(plan: WeeklyPlan, dayOfWeek: DayOfWeek, course: Course, recipe: Recipe): WeeklyPlan {
+  const targetDay = plan.days.find((d) => d.dayOfWeek === dayOfWeek);
+  if (!targetDay) return plan;
+
+  const updatedDay: DayMenu = { ...targetDay, [course]: recipe };
+  if (course === 'hauptspeise') {
+    updatedDay.beilage = beilageFor(recipe);
+  }
+  updatedDay.prepStartTime = calculatePrepStartTime(
+    updatedDay.vorspeise,
+    updatedDay.hauptspeise,
+    updatedDay.nachspeise,
+  );
+
+  return {
+    ...plan,
+    days: plan.days.map((d) => (d.dayOfWeek === dayOfWeek ? updatedDay : d)),
   };
 }
 
