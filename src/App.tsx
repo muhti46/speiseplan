@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { CalendarDays, ShoppingCart, Archive, Sparkles, FileDown } from 'lucide-react';
+import { CalendarDays, ShoppingCart, Archive, Sparkles, FileDown, Languages } from 'lucide-react';
 import recipesData from './data/recipes.json';
 import { Recipe } from './types/recipe';
 import { DayOfWeek, ShoppingItem, WeeklyPlan } from './types/menu';
@@ -11,21 +11,30 @@ import Tabs, { TabItem } from './components/Tabs';
 import DayMenuCard from './components/DayMenuCard';
 import CheckboxList from './components/CheckboxList';
 import RecipeDetailModal from './components/RecipeDetailModal';
+import { useLanguage } from './i18n/LanguageContext';
+import { LANGUAGES, Lang } from './i18n/translations';
 
 const recipes = recipesData as Recipe[];
 
-const TABS: TabItem[] = [
-  { id: 'plan', label: 'Speiseplan', icon: CalendarDays },
-  { id: 'einkauf', label: 'Einkauf', icon: ShoppingCart },
-  { id: 'archiv', label: 'Archiv', icon: Archive },
-];
-
 export default function App() {
+  const { lang, setLang, t } = useLanguage();
   const [activeTab, setActiveTab] = useState('plan');
   const [plan, setPlan] = useState<WeeklyPlan | null>(null);
   const [archive, setArchive] = useState<WeeklyPlan[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+
+  const TABS: TabItem[] = [
+    { id: 'plan', label: t.tabs.plan, icon: CalendarDays },
+    { id: 'einkauf', label: t.tabs.einkauf, icon: ShoppingCart },
+    { id: 'archiv', label: t.tabs.archiv, icon: Archive },
+  ];
+
+  function toggleLang() {
+    const langs = Object.keys(LANGUAGES) as Lang[];
+    const next = langs[(langs.indexOf(lang) + 1) % langs.length];
+    setLang(next);
+  }
 
   useEffect(() => {
     getAllPlans().then(setArchive);
@@ -80,8 +89,20 @@ export default function App() {
   return (
     <div className="mx-auto flex min-h-screen max-w-xl flex-col pb-20 sm:pb-6">
       <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur">
-        <h1 className="text-lg font-bold text-slate-800">Kinderheim Speiseplan</h1>
-        <p className="text-xs text-slate-500">Weilburg · 10–12 Personen</p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-lg font-bold text-slate-800">{t.appTitle}</h1>
+            <p className="text-xs text-slate-500">{t.appSubtitle}</p>
+          </div>
+          <button
+            type="button"
+            onClick={toggleLang}
+            className="flex items-center gap-1.5 rounded-full border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-600 active:scale-95"
+          >
+            <Languages size={14} />
+            {LANGUAGES[lang]}
+          </button>
+        </div>
         <div className="mt-3 hidden sm:block">
           <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
         </div>
@@ -92,7 +113,7 @@ export default function App() {
           <section className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-base font-semibold text-slate-700">
-                {plan ? `KW ${plan.calendarWeek} / ${plan.year}` : `Nächste Woche: KW ${currentWeek + 1}`}
+                {plan ? t.weekLabel(plan.calendarWeek, plan.year) : t.nextWeek(currentWeek + 1)}
               </h2>
               <button
                 type="button"
@@ -101,13 +122,13 @@ export default function App() {
                 className="flex items-center gap-2 rounded-full bg-brand-700 px-4 py-2 text-sm font-medium text-white active:scale-95 disabled:opacity-60"
               >
                 <Sparkles size={16} />
-                {plan ? 'Neu generieren' : 'Wochenplan erzeugen'}
+                {plan ? t.regenerate : t.generate}
               </button>
             </div>
 
             {!plan && (
               <div className="rounded-2xl border border-dashed border-slate-300 p-8 text-center text-sm text-slate-400">
-                Noch kein Wochenplan. Mit einem Klick automatisch nach der 5-Tage-Protein-Regel erzeugen.
+                {t.noPlanYet}
               </div>
             )}
 
@@ -129,15 +150,15 @@ export default function App() {
                   disabled={plan.isFinalized}
                   className="flex-1 rounded-full border border-brand-700 px-4 py-2 text-sm font-medium text-brand-700 disabled:opacity-50"
                 >
-                  {plan.isFinalized ? 'Freigegeben & gespeichert' : 'Plan freigeben & speichern'}
+                  {plan.isFinalized ? t.finalized : t.finalize}
                 </button>
                 <button
                   type="button"
-                  onClick={() => exportWeeklyPlanPdf(plan)}
+                  onClick={() => exportWeeklyPlanPdf(plan, lang)}
                   className="flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600"
                 >
                   <FileDown size={16} />
-                  PDF
+                  {t.pdf}
                 </button>
               </div>
             )}
@@ -147,12 +168,12 @@ export default function App() {
         {activeTab === 'einkauf' && plan && (
           <section className="space-y-8">
             <CheckboxList
-              title="Einkauf Montag (Mo–Mi)"
+              title={t.shoppingMon}
               items={plan.shoppingListMon}
               onToggle={(item) => toggleItem('shoppingListMon', item)}
             />
             <CheckboxList
-              title="Einkauf Freitag (Do–Fr)"
+              title={t.shoppingFri}
               items={plan.shoppingListFri}
               onToggle={(item) => toggleItem('shoppingListFri', item)}
             />
@@ -160,26 +181,24 @@ export default function App() {
         )}
         {activeTab === 'einkauf' && !plan && (
           <div className="rounded-2xl border border-dashed border-slate-300 p-8 text-center text-sm text-slate-400">
-            Erzeuge zuerst einen Wochenplan im Tab „Speiseplan“.
+            {t.needPlanForShopping}
           </div>
         )}
 
         {activeTab === 'archiv' && (
           <section className="space-y-3">
-            <h2 className="text-base font-semibold text-slate-700">Archivierte Wochenpläne</h2>
-            {archive.length === 0 && (
-              <p className="text-sm text-slate-400">Noch keine freigegebenen Pläne gespeichert.</p>
-            )}
+            <h2 className="text-base font-semibold text-slate-700">{t.archivedPlans}</h2>
+            {archive.length === 0 && <p className="text-sm text-slate-400">{t.noArchivedPlans}</p>}
             <ul className="space-y-2">
               {archive.map((p) => (
                 <li
                   key={p.id}
                   className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm"
                 >
-                  <span>
-                    KW {p.calendarWeek} / {p.year}
+                  <span>{t.weekLabel(p.calendarWeek, p.year)}</span>
+                  <span className="text-xs text-slate-400">
+                    {new Date(p.createdAt).toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'de-DE')}
                   </span>
-                  <span className="text-xs text-slate-400">{new Date(p.createdAt).toLocaleDateString('de-DE')}</span>
                 </li>
               ))}
             </ul>

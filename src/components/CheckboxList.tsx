@@ -1,6 +1,7 @@
 import { Check } from 'lucide-react';
 import { ShoppingItem } from '../types/menu';
-import { AISLE_LABELS, groupByAisle } from '../services/shopping';
+import { groupByAisle } from '../services/shopping';
+import { useLanguage } from '../i18n/LanguageContext';
 
 function formatAmount(item: ShoppingItem): string {
   const rounded = Math.round(item.amount * 10) / 10;
@@ -14,12 +15,13 @@ interface CheckboxListProps {
 }
 
 export default function CheckboxList({ title, items, onToggle }: CheckboxListProps) {
-  const groups = groupByAisle(items);
+  const { lang, t } = useLanguage();
+  const groups = groupByAisle(items, lang);
 
   if (items.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-slate-300 p-6 text-center text-sm text-slate-400">
-        Noch keine Einkaufsliste für {title}. Erzeuge zuerst einen Wochenplan.
+        {t.noShoppingListFor(title)}
       </div>
     );
   }
@@ -30,7 +32,7 @@ export default function CheckboxList({ title, items, onToggle }: CheckboxListPro
       {groups.map((group) => (
         <div key={group.category}>
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
-            {AISLE_LABELS[group.category]}
+            {group.label}
           </p>
           <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
             {group.items.map((item) => (
