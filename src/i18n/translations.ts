@@ -59,6 +59,8 @@ interface Translation {
   chatApiKeySave: string;
   chatApiKeyClear: string;
   chatApiKeyClearConfirm: string;
+  chatHistoryClear: string;
+  chatHistoryClearConfirm: string;
   chatOffline: string;
   chatError: string;
   chatErrorAuth: string;
@@ -148,6 +150,8 @@ export const translations: Record<Lang, Translation> = {
     chatApiKeySave: 'Speichern',
     chatApiKeyClear: 'API-Key entfernen',
     chatApiKeyClearConfirm: 'Gespeicherten Gemini API-Key wirklich entfernen? Du musst ihn dann erneut eingeben.',
+    chatHistoryClear: 'Chatverlauf löschen',
+    chatHistoryClearConfirm: 'Den gesamten Chatverlauf wirklich löschen? Das kann nicht rückgängig gemacht werden.',
     chatOffline: 'Der Chat benötigt eine Internetverbindung.',
     chatError: 'Da ist etwas schiefgelaufen. Bitte versuche es erneut.',
     chatErrorAuth: 'Der Gemini API-Key scheint ungültig zu sein. Bitte im Chat-Header prüfen/erneuern.',
@@ -235,6 +239,8 @@ export const translations: Record<Lang, Translation> = {
     chatApiKeySave: 'Kaydet',
     chatApiKeyClear: 'API Anahtarını Kaldır',
     chatApiKeyClearConfirm: 'Kayıtlı Gemini API anahtarını kaldırmak istediğine emin misin? Tekrar girmen gerekecek.',
+    chatHistoryClear: 'Sohbet Geçmişini Sil',
+    chatHistoryClearConfirm: 'Tüm sohbet geçmişini silmek istediğine emin misin? Bu işlem geri alınamaz.',
     chatOffline: 'Sohbet için internet bağlantısı gerekli.',
     chatError: 'Bir şeyler ters gitti. Lütfen tekrar dene.',
     chatErrorAuth: 'Gemini API anahtarı geçersiz görünüyor. Lütfen sohbet başlığından kontrol et/yenile.',
