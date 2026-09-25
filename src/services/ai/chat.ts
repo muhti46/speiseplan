@@ -65,7 +65,9 @@ export async function sendChatMessage(
       const toolName = call.name ?? 'unknown_function';
       const result = await dispatch(toolName, call.args ?? {});
       responseParts.push({
-        functionResponse: { name: toolName, response: result },
+        // `id` muss den passenden functionCall.id spiegeln, sonst lehnt die API
+        // die Folgeanfrage ab (insbesondere bei Modellen mit paralleler Tool-Nutzung).
+        functionResponse: { id: call.id, name: toolName, response: result },
       });
     }
     contents.push({ role: 'user', parts: responseParts });
