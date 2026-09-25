@@ -57,8 +57,14 @@ export async function sendChatMessage(
       return response.text ?? 'Ich konnte die Anfrage nicht abschließen (zu viele Zwischenschritte).';
     }
 
-    const modelParts: Part[] = functionCalls.map((call) => ({ functionCall: call }));
-    contents.push({ role: 'model', parts: modelParts });
+    // Den vom Modell zurückgegebenen Content 1:1 übernehmen (nicht aus functionCalls
+    // neu zusammenbauen): "Denk-Modelle" wie gemini-3.8-flash hängen an jeden Part
+    // eine thoughtSignature, die beim nächsten Turn exakt mitgeschickt werden muss -
+    // sonst lehnt die API die Folgeanfrage mit 400 "missing a thought_signature" ab.
+    const modelContent = response.candidates?.[0]?.content;
+    contents.push(
+      modelContent ?? { role: 'model', parts: functionCalls.map((call) => ({ functionCall: call })) },
+    );
 
     const responseParts: Part[] = [];
     for (const call of functionCalls) {
