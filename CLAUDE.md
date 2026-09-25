@@ -13,7 +13,7 @@ Speiseplan- und Einkaufslisten-App für die Hauswirtschaft (Kinderheim Weilburg,
 - `src/types/`: TypeScript definitions (`menu.ts`, `recipe.ts`, `ai.ts`).
 
 ## AI Chat Agent (`src/services/ai/`)
-- Provider: Google Gemini (`@google/genai`), model `gemini-2.5-flash` (see `client.ts`).
+- Provider: Google Gemini (`@google/genai`), model `gemini-3.8-flash` (see `client.ts`; `gemini-2.5-flash` was retired for new API keys as of late 2026).
 - User-supplied Gemini API key only, stored in `localStorage` (`speiseplan-gemini-key`, see `apiKey.ts`) — there is no backend, so the key is visible to anyone with device access. Never bundle a real key into the app.
 - Tool/function-calling: the agent can generate a full recipe from just a dish name, add it to the recipe library, swap a single meal, re-roll a day, regenerate the week, and answer questions about the current plan/shopping list (`tools.ts`, orchestrated in `chat.ts`). All plan/recipe mutations go through the existing `generator.ts`/`shopping.ts`/`storage.ts` functions, never duplicated logic.
 - Model output for new recipes is validated against the app's exact enums (`Course`, `ProteinCategory`, `SubCategory`, `StoreCategory`) via `recipeCoercion.ts` before being accepted — an invalid/missing `proteinCategory` on a Hauptspeise is rejected rather than defaulted, to protect the 5-day protein rule below.
