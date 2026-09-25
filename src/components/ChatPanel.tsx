@@ -83,7 +83,10 @@ export default function ChatPanel({
       let errorText = t.chatError;
       if (status === 401 || status === 403) errorText = t.chatErrorAuth;
       else if (status === 429) errorText = t.chatErrorQuota;
-      setMessages((prev) => [...prev, { role: 'system', text: errorText }]);
+      // Rohe Fehlermeldung zusätzlich mit anzeigen, damit sie sich (z.B. per
+      // Screenshot) ohne Browser-DevTools weitergeben lässt.
+      const detail = [status, message].filter(Boolean).join(' ');
+      setMessages((prev) => [...prev, { role: 'system', text: detail ? `${errorText}\n\n${detail}` : errorText }]);
       // Bewusst NICHT in apiHistory übernehmen, damit der nächste Send-Versuch
       // keine zwei aufeinanderfolgenden user-Turns an Gemini schickt.
     } finally {
