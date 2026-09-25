@@ -40,6 +40,9 @@ export default function ChatPanel({
   const [isSending, setIsSending] = useState(false);
 
   function handleClearKey() {
+    // Bestätigung, damit ein versehentliches Antippen des Icons den gespeicherten
+    // Key nicht sofort und ohne Vorwarnung löscht.
+    if (!window.confirm(t.chatApiKeyClearConfirm)) return;
     clearApiKey();
     setHasKey(false);
   }
