@@ -103,9 +103,12 @@ export default function App() {
     <div className="mx-auto flex min-h-screen max-w-xl flex-col pb-20 sm:pb-6">
       <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur">
         <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-lg font-bold text-slate-800">{t.appTitle}</h1>
-            <p className="text-xs text-slate-500">{t.appSubtitle}</p>
+          <div className="flex items-center gap-2.5">
+            <img src="/favicon.svg" alt="" width={32} height={32} className="rounded-lg" />
+            <div>
+              <h1 className="text-lg font-bold text-slate-800">{t.appTitle}</h1>
+              <p className="text-xs text-slate-500">{t.appSubtitle}</p>
+            </div>
           </div>
           <button
             type="button"
