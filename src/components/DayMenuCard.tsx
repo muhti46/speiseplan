@@ -6,10 +6,11 @@ import { useLanguage } from '../i18n/LanguageContext';
 
 interface DayMenuCardProps {
   day: DayMenu;
-  onReroll: () => void;
+  /** Ohne onReroll/onChangeBeilage ist die Karte schreibgeschützt (Archiv-Ansicht). */
+  onReroll?: () => void;
   /** `course` ist nur für die drei Gänge gesetzt (änderbar), nicht für die Beilage. */
   onOpenRecipe: (recipe: Recipe, course?: Course) => void;
-  onChangeBeilage: () => void;
+  onChangeBeilage?: () => void;
 }
 
 export default function DayMenuCard({ day, onReroll, onOpenRecipe, onChangeBeilage }: DayMenuCardProps) {
@@ -57,6 +58,7 @@ export default function DayMenuCard({ day, onReroll, onOpenRecipe, onChangeBeila
             {day.hauptspeise.name}
           </button>
         </li>
+        {(day.beilage !== '—' || onChangeBeilage) && (
         <li className="flex items-start gap-2 pl-6 text-slate-500">
           <Salad size={14} className="mt-0.5 shrink-0 text-brand-500" />
           {day.beilage === '—' ? (
@@ -72,15 +74,18 @@ export default function DayMenuCard({ day, onReroll, onOpenRecipe, onChangeBeila
           ) : (
             <span>{t.beilage(day.beilage)}</span>
           )}
-          <button
-            type="button"
-            onClick={onChangeBeilage}
-            aria-label={t.changeBeilage}
-            className="-my-1 ml-auto shrink-0 rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-brand-700"
-          >
-            <Pencil size={14} />
-          </button>
+          {onChangeBeilage && (
+            <button
+              type="button"
+              onClick={onChangeBeilage}
+              aria-label={t.changeBeilage}
+              className="-my-1 ml-auto shrink-0 rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-brand-700"
+            >
+              <Pencil size={14} />
+            </button>
+          )}
         </li>
+        )}
         <li className="flex items-start gap-2">
           <IceCreamCone size={16} className="mt-0.5 shrink-0 text-brand-600" />
           <button
@@ -93,14 +98,16 @@ export default function DayMenuCard({ day, onReroll, onOpenRecipe, onChangeBeila
         </li>
       </ul>
 
-      <button
-        type="button"
-        onClick={onReroll}
-        className="mt-4 flex items-center gap-2 rounded-full border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-600 active:scale-95"
-      >
-        <Shuffle size={14} />
-        {t.rerollDay}
-      </button>
+      {onReroll && (
+        <button
+          type="button"
+          onClick={onReroll}
+          className="mt-4 flex items-center gap-2 rounded-full border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-600 active:scale-95"
+        >
+          <Shuffle size={14} />
+          {t.rerollDay}
+        </button>
+      )}
     </div>
   );
 }

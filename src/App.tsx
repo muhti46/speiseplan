@@ -1,5 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
-import { CalendarDays, ShoppingCart, Archive, Sparkles, FileDown, Languages, MessageCircle, Plus } from 'lucide-react';
+import {
+  CalendarDays,
+  ShoppingCart,
+  Archive,
+  Sparkles,
+  FileDown,
+  Languages,
+  MessageCircle,
+  Plus,
+  ChevronRight,
+  ArrowLeft,
+} from 'lucide-react';
 import recipesData from './data/recipes.json';
 import { Course, Recipe } from './types/recipe';
 import { DayOfWeek, ShoppingItem, WeeklyPlan } from './types/menu';
@@ -37,6 +48,7 @@ export default function App() {
   const [showPicker, setShowPicker] = useState(false);
   const [showAddForSlot, setShowAddForSlot] = useState(false);
   const [beilageDay, setBeilageDay] = useState<DayOfWeek | null>(null);
+  const [viewingArchiveId, setViewingArchiveId] = useState<string | null>(null);
   const [recipes, setRecipes] = useState<Recipe[]>(recipesData as Recipe[]);
   const [recentRecipeIds, setRecentRecipeIds] = useState<string[]>([]);
   const [showAddRecipe, setShowAddRecipe] = useState(false);
@@ -97,6 +109,14 @@ export default function App() {
     setSelected({ ...selected, recipe });
     setShowPicker(false);
     setShowAddForSlot(false);
+  }
+
+  /** Macht einen archivierten Plan zum aktuellen Plan (ersetzt den bisherigen). */
+  function handleLoadArchived(archived: WeeklyPlan) {
+    if (plan && plan.id !== archived.id && !window.confirm(t.archiveLoadConfirm)) return;
+    setPlan(archived);
+    setViewingArchiveId(null);
+    setActiveTab('plan');
   }
 
   function handleAssignBeilage(beilage: string) {
@@ -277,25 +297,73 @@ export default function App() {
           />
         )}
 
-        {activeTab === 'archiv' && (
-          <section className="space-y-3">
-            <h2 className="text-base font-semibold text-slate-700">{t.archivedPlans}</h2>
-            {archive.length === 0 && <p className="text-sm text-slate-400">{t.noArchivedPlans}</p>}
-            <ul className="space-y-2">
-              {archive.map((p) => (
-                <li
-                  key={p.id}
-                  className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm"
+        {activeTab === 'archiv' && (() => {
+          const viewed = archive.find((p) => p.id === viewingArchiveId);
+          if (viewed) {
+            return (
+              <section className="space-y-4">
+                <button
+                  type="button"
+                  onClick={() => setViewingArchiveId(null)}
+                  className="flex items-center gap-1.5 text-sm font-medium text-brand-700"
                 >
-                  <span>{t.weekLabel(p.calendarWeek, p.year)}</span>
-                  <span className="text-xs text-slate-400">
-                    {new Date(p.createdAt).toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'de-DE')}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+                  <ArrowLeft size={16} />
+                  {t.archiveBack}
+                </button>
+                <h2 className="text-base font-semibold text-slate-700">
+                  {t.weekLabel(viewed.calendarWeek, viewed.year)}
+                </h2>
+                {viewed.days.map((day) => (
+                  <DayMenuCard
+                    key={day.dayOfWeek}
+                    day={day}
+                    onOpenRecipe={(recipe) => setSelected({ recipe })}
+                  />
+                ))}
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => handleLoadArchived(viewed)}
+                    className="flex-1 rounded-full border border-brand-700 px-4 py-2 text-sm font-medium text-brand-700 active:scale-95"
+                  >
+                    {t.archiveLoad}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => exportWeeklyPlanPdf(viewed, lang)}
+                    className="flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600"
+                  >
+                    <FileDown size={16} />
+                    {t.pdf}
+                  </button>
+                </div>
+              </section>
+            );
+          }
+          return (
+            <section className="space-y-3">
+              <h2 className="text-base font-semibold text-slate-700">{t.archivedPlans}</h2>
+              {archive.length === 0 && <p className="text-sm text-slate-400">{t.noArchivedPlans}</p>}
+              <ul className="space-y-2">
+                {archive.map((p) => (
+                  <li key={p.id}>
+                    <button
+                      type="button"
+                      onClick={() => setViewingArchiveId(p.id)}
+                      className="flex w-full items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-sm active:bg-slate-50"
+                    >
+                      <span className="font-medium text-slate-700">{t.weekLabel(p.calendarWeek, p.year)}</span>
+                      <span className="flex items-center gap-2 text-xs text-slate-400">
+                        {new Date(p.createdAt).toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'de-DE')}
+                        <ChevronRight size={16} />
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          );
+        })()}
       </main>
 
       <div className="sm:hidden">

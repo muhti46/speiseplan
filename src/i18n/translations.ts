@@ -105,6 +105,9 @@ interface Translation {
   aiFillOffline: string;
   aiFillFailed: string;
   aiFillHint: string;
+  archiveBack: string;
+  archiveLoad: string;
+  archiveLoadConfirm: string;
 }
 
 export const translations: Record<Lang, Translation> = {
@@ -231,6 +234,9 @@ export const translations: Record<Lang, Translation> = {
     aiFillNoKey: 'Bitte zuerst im Chat-Tab den Gemini API-Key eingeben.',
     aiFillOffline: 'Für die KI wird eine Internetverbindung benötigt.',
     aiFillFailed: 'Die KI konnte kein Rezept erstellen.',
+    archiveBack: 'Zurück zum Archiv',
+    archiveLoad: 'Als aktuellen Plan öffnen',
+    archiveLoadConfirm: 'Den aktuellen Wochenplan durch diesen Plan ersetzen?',
     aiFillHint: 'Name eingeben, dann füllt die KI Zutaten, Schritte und Zeiten aus - danach prüfen und speichern.',
   },
   tr: {
@@ -356,6 +362,9 @@ export const translations: Record<Lang, Translation> = {
     aiFillNoKey: 'Önce Sohbet sekmesinde Gemini API anahtarını gir.',
     aiFillOffline: 'Yapay zeka için internet bağlantısı gerekli.',
     aiFillFailed: 'Yapay zeka tarif oluşturamadı.',
+    archiveBack: 'Arşive dön',
+    archiveLoad: 'Güncel plan olarak aç',
+    archiveLoadConfirm: 'Güncel haftalık plan bu planla değiştirilsin mi?',
     aiFillHint: 'Adı yaz, yapay zeka malzemeleri, adımları ve süreleri doldursun - sonra kontrol edip kaydet.',
   },
 };
