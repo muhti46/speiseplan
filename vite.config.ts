@@ -8,6 +8,15 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],
+      // Sorgt dafür, dass ein neuer Service Worker sofort die Kontrolle übernimmt und
+      // veraltete Precaches löscht - ohne das kann eine bereits installierte Standalone-
+      // App nach einem Deploy an alten, nicht mehr existierenden JS/CSS-Dateinamen aus
+      // einem veralteten Cache hängen bleiben (kaputtes/style-loses "Mini-Layout").
+      workbox: {
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
+      },
       manifest: {
         id: '/',
         name: 'Kinderheim Speiseplan',
