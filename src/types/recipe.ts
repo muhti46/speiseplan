@@ -30,3 +30,21 @@ export interface Recipe {
   instructions: string[];
   ingredients: Ingredient[];
 }
+
+export interface RecipeDetailStep {
+  title: string;
+  text: string;
+  /** Ungefähre Dauer dieses Schritts in Minuten, falls sinnvoll. */
+  minutes?: number;
+}
+
+/** KI-erzeugte, ausführliche Anleitung zu einem Rezept (pro Sprache getrennt gespeichert). */
+export interface RecipeDetail {
+  /** `${recipeId}|${lang}` */
+  key: string;
+  recipeId: string;
+  lang: string;
+  steps: RecipeDetailStep[];
+  tips: string[];
+  createdAt: string;
+}

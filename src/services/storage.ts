@@ -1,6 +1,6 @@
 import Dexie, { Table } from 'dexie';
 import { WeeklyPlan } from '../types/menu';
-import { Recipe } from '../types/recipe';
+import { Recipe, RecipeDetail } from '../types/recipe';
 import { ChatConversation } from '../types/ai';
 import recipesData from '../data/recipes.json';
 
@@ -13,6 +13,7 @@ class SpeiseplanDB extends Dexie {
   recipes!: Table<Recipe, string>;
   chatConversations!: Table<ChatConversation, string>;
   currentPlan!: Table<{ key: string; plan: WeeklyPlan }, string>;
+  recipeDetails!: Table<RecipeDetail, string>;
 
   constructor() {
     super('speiseplan-db');
@@ -42,6 +43,14 @@ class SpeiseplanDB extends Dexie {
       chatConversations: 'id, updatedAt',
       currentPlan: 'key',
     });
+    // Ausführliche, KI-erzeugte Anleitungen je Rezept und Sprache.
+    this.version(5).stores({
+      plans: 'id, year, calendarWeek, isFinalized, createdAt',
+      recipes: 'id, course, proteinCategory, subCategory',
+      chatConversations: 'id, updatedAt',
+      currentPlan: 'key',
+      recipeDetails: 'key, recipeId',
+    });
 
     // Läuft nur einmal, wenn die Datenbank komplett neu (ohne Vorgängerversion) angelegt wird.
     this.on('populate', async (tx) => {
@@ -51,6 +60,14 @@ class SpeiseplanDB extends Dexie {
 }
 
 export const db = new SpeiseplanDB();
+
+export async function saveRecipeDetail(detail: RecipeDetail): Promise<void> {
+  await db.recipeDetails.put(detail);
+}
+
+export async function getAllRecipeDetails(): Promise<RecipeDetail[]> {
+  return db.recipeDetails.toArray();
+}
 
 const CURRENT_PLAN_KEY = 'current';
 

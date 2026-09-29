@@ -110,6 +110,16 @@ interface Translation {
   addBeilageTitle: string;
   addBeilageNamePlaceholder: string;
   beilageNew: string;
+  detailTitle: string;
+  detailShort: string;
+  detailLong: string;
+  detailCreate: string;
+  detailCreating: string;
+  detailRegenerate: string;
+  detailTips: string;
+  detailAiNote: string;
+  detailFailed: string;
+  detailMinutes: (minutes: number) => string;
   archiveBack: string;
   archiveLoad: string;
   archiveLoadConfirm: string;
@@ -244,6 +254,16 @@ export const translations: Record<Lang, Translation> = {
     addBeilageTitle: 'Beilage hinzufügen',
     addBeilageNamePlaceholder: 'z.B. Couscous',
     beilageNew: 'Neue Beilage mit Rezept hinzufügen',
+    detailTitle: 'Ausführliche Anleitung',
+    detailShort: 'Kurz',
+    detailLong: 'Ausführlich',
+    detailCreate: 'Ausführliche Anleitung mit KI erstellen',
+    detailCreating: 'KI schreibt die Anleitung… (bis zu 30 Sek.)',
+    detailRegenerate: 'Neu erstellen',
+    detailTips: 'Tipps',
+    detailAiNote: 'Von der KI erstellt – bitte vor dem Kochen prüfen.',
+    detailFailed: 'Die KI konnte die Anleitung nicht erstellen.',
+    detailMinutes: (m) => `ca. ${m} Min.`,
     archiveBack: 'Zurück zum Archiv',
     archiveLoad: 'Als aktuellen Plan öffnen',
     archiveLoadConfirm: 'Den aktuellen Wochenplan durch diesen Plan ersetzen?',
@@ -377,6 +397,16 @@ export const translations: Record<Lang, Translation> = {
     addBeilageTitle: 'Garnitür ekle',
     addBeilageNamePlaceholder: 'örn. Kuskus',
     beilageNew: 'Tarifli yeni garnitür ekle',
+    detailTitle: 'Ayrıntılı Tarif',
+    detailShort: 'Kısa',
+    detailLong: 'Ayrıntılı',
+    detailCreate: 'Yapay zeka ile ayrıntılı tarif oluştur',
+    detailCreating: 'Yapay zeka tarifi yazıyor… (30 sn\'ye kadar)',
+    detailRegenerate: 'Yeniden oluştur',
+    detailTips: 'İpuçları',
+    detailAiNote: 'Yapay zeka tarafından hazırlandı – pişirmeden önce kontrol et.',
+    detailFailed: 'Yapay zeka ayrıntılı tarifi oluşturamadı.',
+    detailMinutes: (m) => `yaklaşık ${m} dk`,
     archiveBack: 'Arşive dön',
     archiveLoad: 'Güncel plan olarak aç',
     archiveLoadConfirm: 'Güncel haftalık plan bu planla değiştirilsin mi?',

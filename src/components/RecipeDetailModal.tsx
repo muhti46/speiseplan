@@ -1,8 +1,12 @@
-import { useEffect } from 'react';
-import { X, Clock, ChefHat, Flame, Users, Sparkles, ArrowLeftRight } from 'lucide-react';
-import { Recipe } from '../types/recipe';
+import { useEffect, useState } from 'react';
+import { X, Clock, ChefHat, Flame, Users, Sparkles, ArrowLeftRight, Lightbulb, Loader2, RefreshCw } from 'lucide-react';
+import { Recipe, RecipeDetail } from '../types/recipe';
+import { generateRecipeDetail } from '../services/ai/recipeDetail';
+import { getApiKey } from '../services/ai/apiKey';
+import { describeChatError } from '../services/ai/chat';
 import { getCategoryLabel } from '../services/labels';
 import { DEFAULT_PORTIONS } from '../services/shopping';
+import { formatIngredientAmount } from '../services/format';
 import { useLanguage } from '../i18n/LanguageContext';
 
 interface RecipeDetailModalProps {
@@ -10,23 +14,42 @@ interface RecipeDetailModalProps {
   onClose: () => void;
   /** Wenn gesetzt, erscheint neben dem Namen ein "Ändern"-Button (nur für Gänge im Wochenplan). */
   onChange?: () => void;
+  /** Bereits gespeicherte ausführliche Anleitung (in der aktuellen Sprache), falls vorhanden. */
+  detail?: RecipeDetail;
+  /** Wird mit einer neu erzeugten ausführlichen Anleitung aufgerufen; der Aufrufer speichert sie. */
+  onDetailCreated?: (detail: RecipeDetail) => void;
 }
 
-function formatIngredientAmount(amountPer10Pax: number, unit: string, portions: number): string {
-  const amount = (amountPer10Pax * portions) / 10;
-
-  if (unit === 'g' && amount >= 1000) {
-    return `${(amount / 1000).toFixed(amount % 1000 === 0 ? 0 : 1)} kg`;
-  }
-  if (unit === 'ml' && amount >= 1000) {
-    return `${(amount / 1000).toFixed(amount % 1000 === 0 ? 0 : 1)} l`;
-  }
-  const rounded = Math.round(amount * 10) / 10;
-  return `${rounded} ${unit}`;
-}
-
-export default function RecipeDetailModal({ recipe, onClose, onChange }: RecipeDetailModalProps) {
+export default function RecipeDetailModal({
+  recipe,
+  onClose,
+  onChange,
+  detail,
+  onDetailCreated,
+}: RecipeDetailModalProps) {
   const { lang, t } = useLanguage();
+  const [view, setView] = useState<'short' | 'long'>('long');
+  const [isCreating, setIsCreating] = useState(false);
+  const [detailError, setDetailError] = useState<string | null>(null);
+
+  async function handleCreateDetail() {
+    setDetailError(null);
+    const apiKey = getApiKey();
+    if (!apiKey) return setDetailError(t.aiFillNoKey);
+    if (!navigator.onLine) return setDetailError(t.aiFillOffline);
+    setIsCreating(true);
+    try {
+      const created = await generateRecipeDetail(apiKey, recipe, lang);
+      onDetailCreated?.(created);
+      setView('long');
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Ausführliche Anleitung fehlgeschlagen', err);
+      setDetailError(`${t.detailFailed} (${describeChatError(err).message})`);
+    } finally {
+      setIsCreating(false);
+    }
+  }
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -129,19 +152,106 @@ export default function RecipeDetailModal({ recipe, onClose, onChange }: RecipeD
           </section>
 
           <section>
-            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-400">
-              {t.steps}
-            </h3>
-            <ol className="space-y-3">
-              {recipe.instructions.map((step, index) => (
-                <li key={index} className="flex gap-3 text-sm text-slate-700">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-800">
-                    {index + 1}
-                  </span>
-                  <span className="pt-0.5">{step}</span>
-                </li>
-              ))}
-            </ol>
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
+                {detail && view === 'long' ? t.detailTitle : t.steps}
+              </h3>
+              {detail && (
+                <div className="flex rounded-full bg-slate-100 p-0.5 text-xs font-medium">
+                  {(['short', 'long'] as const).map((v) => (
+                    <button
+                      key={v}
+                      type="button"
+                      onClick={() => setView(v)}
+                      className={`rounded-full px-3 py-1 ${
+                        view === v ? 'bg-white text-brand-800 shadow-sm' : 'text-slate-500'
+                      }`}
+                    >
+                      {v === 'short' ? t.detailShort : t.detailLong}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {detail && view === 'long' ? (
+              <>
+                <ol className="space-y-4">
+                  {detail.steps.map((step, index) => (
+                    <li key={index} className="flex gap-3">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-800">
+                        {index + 1}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="flex flex-wrap items-center gap-2 text-base font-semibold text-slate-800">
+                          {step.title}
+                          {step.minutes !== undefined && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">
+                              <Clock size={12} />
+                              {t.detailMinutes(step.minutes)}
+                            </span>
+                          )}
+                        </p>
+                        <p className="mt-1 text-base leading-relaxed text-slate-700">{step.text}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+
+                {detail.tips.length > 0 && (
+                  <div className="mt-5 rounded-xl bg-amber-50 p-3">
+                    <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-amber-900">
+                      <Lightbulb size={16} />
+                      {t.detailTips}
+                    </p>
+                    <ul className="list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-amber-950">
+                      {detail.tips.map((tip, index) => (
+                        <li key={index}>{tip}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <div className="mt-4 flex items-center justify-between gap-2 text-xs text-slate-400">
+                  <span>{t.detailAiNote}</span>
+                  <button
+                    type="button"
+                    onClick={handleCreateDetail}
+                    disabled={isCreating}
+                    className="inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-1 font-medium text-brand-700 hover:bg-brand-50 disabled:opacity-50"
+                  >
+                    {isCreating ? <Loader2 size={12} className="animate-spin" aria-hidden /> : <RefreshCw size={12} />}
+                    {t.detailRegenerate}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <ol className="space-y-3">
+                {recipe.instructions.map((step, index) => (
+                  <li key={index} className="flex gap-3 text-sm text-slate-700">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-800">
+                      {index + 1}
+                    </span>
+                    <span className="pt-0.5">{step}</span>
+                  </li>
+                ))}
+              </ol>
+            )}
+
+            {!detail && onDetailCreated && (
+              <div className="mt-5">
+                <button
+                  type="button"
+                  onClick={handleCreateDetail}
+                  disabled={isCreating}
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm active:scale-95 disabled:opacity-60"
+                >
+                  {isCreating ? <Loader2 size={16} className="animate-spin" aria-hidden /> : <Sparkles size={16} />}
+                  {isCreating ? t.detailCreating : t.detailCreate}
+                </button>
+              </div>
+            )}
+            {detailError && <p className="mt-2 text-sm text-red-600">{detailError}</p>}
           </section>
         </div>
       </div>
