@@ -212,3 +212,12 @@ export function getNextIsoWeek(date: Date): { calendarWeek: number; year: number
 export function calculateCalendarWeek(date: Date): number {
   return getIsoWeek(date).calendarWeek;
 }
+
+/** Montag und Sonntag der ISO-Woche `calendarWeek` im ISO-Jahr `year` (lokale Datumswerte). */
+export function getWeekRange(calendarWeek: number, year: number): { start: Date; end: Date } {
+  const jan4 = new Date(year, 0, 4);
+  const mondayOfWeek1 = new Date(year, 0, 4 - ((jan4.getDay() + 6) % 7));
+  const start = new Date(mondayOfWeek1.getFullYear(), mondayOfWeek1.getMonth(), mondayOfWeek1.getDate() + (calendarWeek - 1) * 7);
+  const end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 6);
+  return { start, end };
+}

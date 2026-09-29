@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyBeilageChange, applyMealSwap, generateWeeklyPlan, getIsoWeek, getNextIsoWeek } from './generator';
+import { applyBeilageChange, applyMealSwap, generateWeeklyPlan, getIsoWeek, getNextIsoWeek, getWeekRange } from './generator';
 import { Recipe } from '../types/recipe';
 import recipesData from '../data/recipes.json';
 
@@ -81,5 +81,16 @@ describe('ISO weeks', () => {
     expect(getNextIsoWeek(new Date(2027, 11, 20))).toEqual({ calendarWeek: 52, year: 2027 });
     // 2027 hat nur 52 Wochen: die Woche nach KW 52 ist KW 1 des Jahres 2028
     expect(getNextIsoWeek(new Date(2027, 11, 27))).toEqual({ calendarWeek: 1, year: 2028 });
+  });
+});
+
+describe('getWeekRange', () => {
+  it('returns Monday to Sunday of the ISO week', () => {
+    const { start, end } = getWeekRange(40, 2026);
+    expect([start.getFullYear(), start.getMonth(), start.getDate()]).toEqual([2026, 8, 28]);
+    expect([end.getFullYear(), end.getMonth(), end.getDate()]).toEqual([2026, 9, 4]);
+    // KW 1 / 2026 beginnt am 29.12.2025
+    expect(getWeekRange(1, 2026).start.getDate()).toBe(29);
+    expect(getWeekRange(1, 2026).start.getFullYear()).toBe(2025);
   });
 });
