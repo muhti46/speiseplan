@@ -1,6 +1,7 @@
 import Dexie, { Table } from 'dexie';
 import { WeeklyPlan } from '../types/menu';
 import { Recipe } from '../types/recipe';
+import { ChatConversation } from '../types/ai';
 import recipesData from '../data/recipes.json';
 
 function seedRecipes(): Recipe[] {
@@ -10,6 +11,7 @@ function seedRecipes(): Recipe[] {
 class SpeiseplanDB extends Dexie {
   plans!: Table<WeeklyPlan, string>;
   recipes!: Table<Recipe, string>;
+  chatConversations!: Table<ChatConversation, string>;
 
   constructor() {
     super('speiseplan-db');
@@ -26,6 +28,11 @@ class SpeiseplanDB extends Dexie {
       .upgrade(async (tx) => {
         await tx.table('recipes').bulkPut(seedRecipes());
       });
+    this.version(3).stores({
+      plans: 'id, year, calendarWeek, isFinalized, createdAt',
+      recipes: 'id, course, proteinCategory, subCategory',
+      chatConversations: 'id, updatedAt',
+    });
 
     // Läuft nur einmal, wenn die Datenbank komplett neu (ohne Vorgängerversion) angelegt wird.
     this.on('populate', async (tx) => {
@@ -97,4 +104,17 @@ export async function deleteRecipe(id: string): Promise<void> {
 
 export async function getAllRecipes(): Promise<Recipe[]> {
   return db.recipes.toArray();
+}
+
+export async function saveConversation(conversation: ChatConversation): Promise<void> {
+  await db.chatConversations.put(conversation);
+}
+
+export async function deleteConversation(id: string): Promise<void> {
+  await db.chatConversations.delete(id);
+}
+
+export async function getAllConversations(): Promise<ChatConversation[]> {
+  const list = await db.chatConversations.toArray();
+  return list.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 }
