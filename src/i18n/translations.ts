@@ -26,6 +26,8 @@ interface Translation {
   needPlanForShopping: string;
   archivedPlans: string;
   noArchivedPlans: string;
+  archiveBadgeFinal: string;
+  archiveBadgeDraft: string;
   noShoppingListFor: (title: string) => string;
   rerollDay: string;
   close: string;
@@ -131,7 +133,9 @@ export const translations: Record<Lang, Translation> = {
     shoppingFri: 'Einkauf Freitag (Do–Fr)',
     needPlanForShopping: 'Erzeuge zuerst einen Wochenplan im Tab „Speiseplan“.',
     archivedPlans: 'Archivierte Wochenpläne',
-    noArchivedPlans: 'Noch keine freigegebenen Pläne gespeichert.',
+    noArchivedPlans: 'Noch keine Wochenpläne. Jeder erzeugte Plan wird hier automatisch abgelegt.',
+    archiveBadgeFinal: 'Freigegeben',
+    archiveBadgeDraft: 'Entwurf',
     noShoppingListFor: (title) => `Noch keine Einkaufsliste für ${title}. Erzeuge zuerst einen Wochenplan.`,
     rerollDay: 'Tag neu würfeln',
     close: 'Schließen',
@@ -262,7 +266,9 @@ export const translations: Record<Lang, Translation> = {
     shoppingFri: 'Cuma Alışverişi (Per–Cum)',
     needPlanForShopping: 'Önce "Yemek Planı" sekmesinde bir haftalık plan oluştur.',
     archivedPlans: 'Arşivlenmiş Haftalık Planlar',
-    noArchivedPlans: 'Henüz onaylanmış bir plan kaydedilmedi.',
+    noArchivedPlans: 'Henüz haftalık plan yok. Oluşturulan her plan buraya otomatik kaydedilir.',
+    archiveBadgeFinal: 'Onaylandı',
+    archiveBadgeDraft: 'Taslak',
     noShoppingListFor: (title) => `${title} için henüz alışveriş listesi yok. Önce bir haftalık plan oluştur.`,
     rerollDay: 'Günü Yeniden Ata',
     close: 'Kapat',

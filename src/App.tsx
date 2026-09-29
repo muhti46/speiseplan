@@ -38,6 +38,13 @@ import ChatPanel from './components/ChatPanel';
 import { useLanguage } from './i18n/LanguageContext';
 import { LANGUAGES, Lang } from './i18n/translations';
 
+/** Führt Pläne per Id zusammen (`incoming` gewinnt) und sortiert neueste zuerst. */
+function upsertPlans(existing: WeeklyPlan[], incoming: WeeklyPlan[]): WeeklyPlan[] {
+  const byId = new Map(existing.map((p) => [p.id, p]));
+  incoming.forEach((p) => byId.set(p.id, p));
+  return Array.from(byId.values()).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
 export default function App() {
   const { lang, setLang, t } = useLanguage();
   const [activeTab, setActiveTab] = useState('plan');
@@ -72,7 +79,8 @@ export default function App() {
   }
 
   useEffect(() => {
-    getAllPlans().then(setArchive);
+    // Bereits im State befindliche (frischere) Pläne dürfen vom DB-Stand nicht überschrieben werden.
+    getAllPlans().then((stored) => setArchive((prev) => upsertPlans(stored, prev)));
     getAllRecipes().then((stored) => {
       if (stored.length > 0) setRecipes(stored);
     });
@@ -84,8 +92,14 @@ export default function App() {
       .finally(() => setPlanLoaded(true));
   }, []);
 
+  // Jede Änderung am Plan (Erzeugen, Tauschen, Abhaken, Freigeben) wird sofort als aktueller Plan
+  // gespeichert UND ins Archiv geschrieben. Die Plan-Id enthält Jahr+KW, d.h. pro Woche gibt es
+  // genau einen Archiv-Eintrag, der bei Änderungen derselben Woche aktualisiert wird.
   useEffect(() => {
-    if (planLoaded && plan) saveCurrentPlan(plan);
+    if (!planLoaded || !plan) return;
+    saveCurrentPlan(plan);
+    savePlan(plan);
+    setArchive((prev) => upsertPlans(prev, [plan]));
   }, [plan, planLoaded]);
 
   const now = useMemo(() => new Date(), []);
@@ -107,7 +121,6 @@ export default function App() {
       shoppingListFri: preserveChecked(plan.shoppingListFri, lists.shoppingListFri),
     };
     setPlan(updated);
-    if (updated.isFinalized) savePlan(updated);
     setSelected({ ...selected, recipe });
     setShowPicker(false);
     setShowAddForSlot(false);
@@ -125,7 +138,6 @@ export default function App() {
     if (!plan || !beilageDay) return;
     const updated = applyBeilageChange(plan, beilageDay, beilage);
     setPlan(updated);
-    if (updated.isFinalized) savePlan(updated);
     setBeilageDay(null);
     setShowAddBeilage(false);
   }
@@ -153,12 +165,9 @@ export default function App() {
     setPlan({ ...updated, shoppingListMon, shoppingListFri });
   }
 
-  async function handleFinalize() {
+  function handleFinalize() {
     if (!plan) return;
-    const finalized: WeeklyPlan = { ...plan, isFinalized: true };
-    await savePlan(finalized);
-    setPlan(finalized);
-    setArchive(await getAllPlans());
+    setPlan({ ...plan, isFinalized: true });
   }
 
   function toggleItem(list: 'shoppingListMon' | 'shoppingListFri', item: ShoppingItem) {
@@ -168,9 +177,6 @@ export default function App() {
     );
     const updatedPlan = { ...plan, [list]: updatedList };
     setPlan(updatedPlan);
-    if (plan.isFinalized) {
-      savePlan(updatedPlan);
-    }
   }
 
   return (
@@ -357,7 +363,16 @@ export default function App() {
                       onClick={() => setViewingArchiveId(p.id)}
                       className="flex w-full items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-sm active:bg-slate-50"
                     >
-                      <span className="font-medium text-slate-700">{t.weekLabel(p.calendarWeek, p.year)}</span>
+                      <span className="flex items-center gap-2">
+                        <span className="font-medium text-slate-700">{t.weekLabel(p.calendarWeek, p.year)}</span>
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                            p.isFinalized ? 'bg-brand-100 text-brand-800' : 'bg-slate-100 text-slate-500'
+                          }`}
+                        >
+                          {p.isFinalized ? t.archiveBadgeFinal : t.archiveBadgeDraft}
+                        </span>
+                      </span>
                       <span className="flex items-center gap-2 text-xs text-slate-400">
                         {new Date(p.createdAt).toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'de-DE')}
                         <ChevronRight size={16} />
