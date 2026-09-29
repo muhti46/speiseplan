@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CalendarDays, ShoppingCart, Archive, Sparkles, FileDown, Languages, MessageCircle, Plus } from 'lucide-react';
 import recipesData from './data/recipes.json';
-import { Recipe } from './types/recipe';
+import { Course, Recipe } from './types/recipe';
 import { DayOfWeek, ShoppingItem, WeeklyPlan } from './types/menu';
-import { calculateCalendarWeek, generateWeeklyPlan, rerollDay } from './services/generator';
-import { buildShoppingLists } from './services/shopping';
+import { applyMealSwap, calculateCalendarWeek, generateWeeklyPlan, rerollDay } from './services/generator';
+import { buildShoppingLists, preserveChecked } from './services/shopping';
 import { exportWeeklyPlanPdf } from './services/pdf';
 import {
   getAllPlans,
@@ -19,6 +19,7 @@ import Tabs, { TabItem } from './components/Tabs';
 import DayMenuCard from './components/DayMenuCard';
 import CheckboxList from './components/CheckboxList';
 import RecipeDetailModal from './components/RecipeDetailModal';
+import RecipePickerModal from './components/RecipePickerModal';
 import AddRecipeModal from './components/AddRecipeModal';
 import ChatPanel from './components/ChatPanel';
 import { useLanguage } from './i18n/LanguageContext';
@@ -30,7 +31,10 @@ export default function App() {
   const [plan, setPlan] = useState<WeeklyPlan | null>(null);
   const [archive, setArchive] = useState<WeeklyPlan[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  // `dayOfWeek`/`course` sind nur gesetzt, wenn das Rezept ein Gang im Wochenplan ist (änderbar).
+  const [selected, setSelected] = useState<{ recipe: Recipe; dayOfWeek?: DayOfWeek; course?: Course } | null>(null);
+  const [showPicker, setShowPicker] = useState(false);
+  const [showAddForSlot, setShowAddForSlot] = useState(false);
   const [recipes, setRecipes] = useState<Recipe[]>(recipesData as Recipe[]);
   const [recentRecipeIds, setRecentRecipeIds] = useState<string[]>([]);
   const [showAddRecipe, setShowAddRecipe] = useState(false);
@@ -74,6 +78,23 @@ export default function App() {
   function handleRecipeAdd(recipe: Recipe) {
     setRecipes((prev) => [...prev, recipe]);
     saveRecipe(recipe);
+  }
+
+  /** Ersetzt den geöffneten Gang (Vorspeise/Hauptspeise/Nachspeise) des Tages manuell durch `recipe`. */
+  function handleAssignMeal(recipe: Recipe) {
+    if (!plan || !selected?.dayOfWeek || !selected.course) return;
+    const swapped = applyMealSwap(plan, selected.dayOfWeek, selected.course, recipe);
+    const lists = buildShoppingLists(swapped);
+    const updated: WeeklyPlan = {
+      ...swapped,
+      shoppingListMon: preserveChecked(plan.shoppingListMon, lists.shoppingListMon),
+      shoppingListFri: preserveChecked(plan.shoppingListFri, lists.shoppingListFri),
+    };
+    setPlan(updated);
+    if (updated.isFinalized) savePlan(updated);
+    setSelected({ ...selected, recipe });
+    setShowPicker(false);
+    setShowAddForSlot(false);
   }
 
   async function handleGenerate() {
@@ -184,7 +205,9 @@ export default function App() {
                   key={day.dayOfWeek}
                   day={day}
                   onReroll={() => handleReroll(day.dayOfWeek)}
-                  onOpenRecipe={setSelectedRecipe}
+                  onOpenRecipe={(recipe, course) =>
+                    setSelected({ recipe, dayOfWeek: course ? day.dayOfWeek : undefined, course })
+                  }
                 />
               ))}
 
@@ -268,8 +291,40 @@ export default function App() {
         <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
       </div>
 
-      {selectedRecipe && (
-        <RecipeDetailModal recipe={selectedRecipe} onClose={() => setSelectedRecipe(null)} />
+      {selected && (
+        <RecipeDetailModal
+          recipe={selected.recipe}
+          // Solange ein darüberliegendes Fenster offen ist, soll Escape nur dieses schließen.
+          onClose={() => {
+            if (!showPicker && !showAddForSlot) setSelected(null);
+          }}
+          onChange={selected.course ? () => setShowPicker(true) : undefined}
+        />
+      )}
+
+      {selected?.course && showPicker && (
+        <RecipePickerModal
+          course={selected.course}
+          currentId={selected.recipe.id}
+          recipes={recipes}
+          onSelect={handleAssignMeal}
+          onCreateNew={() => {
+            setShowPicker(false);
+            setShowAddForSlot(true);
+          }}
+          onClose={() => setShowPicker(false)}
+        />
+      )}
+
+      {selected?.course && showAddForSlot && (
+        <AddRecipeModal
+          fixedCourse={selected.course}
+          onSave={(recipe) => {
+            handleRecipeAdd(recipe);
+            handleAssignMeal(recipe);
+          }}
+          onClose={() => setShowAddForSlot(false)}
+        />
       )}
 
       {showAddRecipe && (

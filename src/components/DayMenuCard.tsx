@@ -1,13 +1,14 @@
 import { Clock, Shuffle, Soup, UtensilsCrossed, IceCreamCone, Salad } from 'lucide-react';
 import { DayMenu } from '../types/menu';
-import { Recipe } from '../types/recipe';
+import { Course, Recipe } from '../types/recipe';
 import { getBeilageRecipe } from '../data/beilagen';
 import { useLanguage } from '../i18n/LanguageContext';
 
 interface DayMenuCardProps {
   day: DayMenu;
   onReroll: () => void;
-  onOpenRecipe: (recipe: Recipe) => void;
+  /** `course` ist nur für die drei Gänge gesetzt (änderbar), nicht für die Beilage. */
+  onOpenRecipe: (recipe: Recipe, course?: Course) => void;
 }
 
 export default function DayMenuCard({ day, onReroll, onOpenRecipe }: DayMenuCardProps) {
@@ -39,7 +40,7 @@ export default function DayMenuCard({ day, onReroll, onOpenRecipe }: DayMenuCard
           <Soup size={16} className="mt-0.5 shrink-0 text-brand-600" />
           <button
             type="button"
-            onClick={() => onOpenRecipe(day.vorspeise)}
+            onClick={() => onOpenRecipe(day.vorspeise, 'vorspeise')}
             className="cursor-pointer text-left underline-offset-2 hover:text-brand-700 hover:underline"
           >
             {day.vorspeise.name}
@@ -49,7 +50,7 @@ export default function DayMenuCard({ day, onReroll, onOpenRecipe }: DayMenuCard
           <UtensilsCrossed size={16} className="mt-0.5 shrink-0 text-brand-600" />
           <button
             type="button"
-            onClick={() => onOpenRecipe(day.hauptspeise)}
+            onClick={() => onOpenRecipe(day.hauptspeise, 'hauptspeise')}
             className="cursor-pointer text-left underline-offset-2 hover:text-brand-700 hover:underline"
           >
             {day.hauptspeise.name}
@@ -75,7 +76,7 @@ export default function DayMenuCard({ day, onReroll, onOpenRecipe }: DayMenuCard
           <IceCreamCone size={16} className="mt-0.5 shrink-0 text-brand-600" />
           <button
             type="button"
-            onClick={() => onOpenRecipe(day.nachspeise)}
+            onClick={() => onOpenRecipe(day.nachspeise, 'nachspeise')}
             className="cursor-pointer text-left underline-offset-2 hover:text-brand-700 hover:underline"
           >
             {day.nachspeise.name}

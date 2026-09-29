@@ -7,6 +7,8 @@ import { useLanguage } from '../i18n/LanguageContext';
 interface AddRecipeModalProps {
   onSave: (recipe: Recipe) => void;
   onClose: () => void;
+  /** Wenn gesetzt, ist der Gang vorgegeben und nicht änderbar (Neues Gericht für einen Wochenplan-Slot). */
+  fixedCourse?: Course;
 }
 
 interface IngredientRow {
@@ -24,10 +26,10 @@ function emptyIngredient(): IngredientRow {
   return { item: '', amountPer10Pax: '', unit: '', storeCategory: 'gemuese' };
 }
 
-export default function AddRecipeModal({ onSave, onClose }: AddRecipeModalProps) {
+export default function AddRecipeModal({ onSave, onClose, fixedCourse }: AddRecipeModalProps) {
   const { t } = useLanguage();
   const [name, setName] = useState('');
-  const [course, setCourse] = useState<Course>('hauptspeise');
+  const [course, setCourse] = useState<Course>(fixedCourse ?? 'hauptspeise');
   const [subCategory, setSubCategory] = useState<SubCategory>('suppe');
   const [proteinCategory, setProteinCategory] = useState<ProteinCategory>('vegetarisch');
   const [beilage, setBeilage] = useState('');
@@ -138,6 +140,7 @@ export default function AddRecipeModal({ onSave, onClose }: AddRecipeModalProps)
             <select
               value={course}
               onChange={(e) => setCourse(e.target.value as Course)}
+              disabled={fixedCourse !== undefined}
               className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-brand-600 focus:outline-none"
             >
               {COURSES.map((c) => (

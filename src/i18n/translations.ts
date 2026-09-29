@@ -88,6 +88,12 @@ interface Translation {
   addRecipeUnitPlaceholder: string;
   addRecipeSave: string;
   addRecipeCancel: string;
+  changeMeal: string;
+  pickMealTitle: string;
+  pickMealSearch: string;
+  pickMealNew: string;
+  pickMealEmpty: string;
+  pickMealCurrent: string;
 }
 
 export const translations: Record<Lang, Translation> = {
@@ -198,6 +204,12 @@ export const translations: Record<Lang, Translation> = {
     addRecipeUnitPlaceholder: 'Einheit',
     addRecipeSave: 'Speichern',
     addRecipeCancel: 'Abbrechen',
+    changeMeal: 'Ändern',
+    pickMealTitle: 'Gericht auswählen',
+    pickMealSearch: 'Suchen…',
+    pickMealNew: 'Neues Gericht hinzufügen',
+    pickMealEmpty: 'Nichts gefunden.',
+    pickMealCurrent: 'Aktuell gewählt',
   },
   tr: {
     langName: 'Türkçe',
@@ -306,5 +318,11 @@ export const translations: Record<Lang, Translation> = {
     addRecipeUnitPlaceholder: 'Birim',
     addRecipeSave: 'Kaydet',
     addRecipeCancel: 'Vazgeç',
+    changeMeal: 'Değiştir',
+    pickMealTitle: 'Yemek seç',
+    pickMealSearch: 'Ara…',
+    pickMealNew: 'Yeni yemek ekle',
+    pickMealEmpty: 'Sonuç bulunamadı.',
+    pickMealCurrent: 'Şu an seçili',
   },
 };

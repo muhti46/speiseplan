@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { X, Clock, ChefHat, Flame, Users, Sparkles } from 'lucide-react';
+import { X, Clock, ChefHat, Flame, Users, Sparkles, ArrowLeftRight } from 'lucide-react';
 import { Recipe } from '../types/recipe';
 import { getCategoryLabel } from '../services/labels';
 import { DEFAULT_PORTIONS } from '../services/shopping';
@@ -8,6 +8,8 @@ import { useLanguage } from '../i18n/LanguageContext';
 interface RecipeDetailModalProps {
   recipe: Recipe;
   onClose: () => void;
+  /** Wenn gesetzt, erscheint neben dem Namen ein "Ändern"-Button (nur für Gänge im Wochenplan). */
+  onChange?: () => void;
 }
 
 function formatIngredientAmount(amountPer10Pax: number, unit: string, portions: number): string {
@@ -23,7 +25,7 @@ function formatIngredientAmount(amountPer10Pax: number, unit: string, portions: 
   return `${rounded} ${unit}`;
 }
 
-export default function RecipeDetailModal({ recipe, onClose }: RecipeDetailModalProps) {
+export default function RecipeDetailModal({ recipe, onClose, onChange }: RecipeDetailModalProps) {
   const { lang, t } = useLanguage();
 
   useEffect(() => {
@@ -59,9 +61,21 @@ export default function RecipeDetailModal({ recipe, onClose }: RecipeDetailModal
                 </span>
               )}
             </span>
-            <h2 id="recipe-modal-title" className="text-lg font-bold text-slate-800">
-              {recipe.name}
-            </h2>
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 id="recipe-modal-title" className="text-lg font-bold text-slate-800">
+                {recipe.name}
+              </h2>
+              {onChange && (
+                <button
+                  type="button"
+                  onClick={onChange}
+                  className="inline-flex items-center gap-1 rounded-full border border-brand-600 px-2.5 py-1 text-xs font-medium text-brand-700 active:scale-95"
+                >
+                  <ArrowLeftRight size={12} />
+                  {t.changeMeal}
+                </button>
+              )}
+            </div>
           </div>
           <button
             type="button"

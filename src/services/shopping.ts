@@ -82,3 +82,9 @@ export function groupByAisle(
     items: items.filter((i) => i.storeCategory === category),
   }));
 }
+
+/** Übernimmt den Abhak-Status aus einer alten Liste in eine neu berechnete (gleicher Artikel + Einheit). */
+export function preserveChecked(oldItems: ShoppingItem[], newItems: ShoppingItem[]): ShoppingItem[] {
+  const checked = new Set(oldItems.filter((i) => i.checked).map((i) => `${i.item}__${i.unit}`));
+  return newItems.map((i) => (checked.has(`${i.item}__${i.unit}`) ? { ...i, checked: true } : i));
+}
