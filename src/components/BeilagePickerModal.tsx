@@ -1,17 +1,17 @@
 import { FormEvent, useEffect, useState } from 'react';
-import { Check, X } from 'lucide-react';
-import { BEILAGE_DETAILS } from '../data/beilagen';
+import { Check, Plus, X } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 
 interface BeilagePickerModalProps {
   current: string;
+  /** Alle wählbaren Beilagen-Namen (fest hinterlegte + selbst angelegte). */
+  beilagen: string[];
+  onCreateNew: () => void;
   onSelect: (beilage: string) => void;
   onClose: () => void;
 }
 
-const KNOWN_BEILAGEN = Object.keys(BEILAGE_DETAILS).sort((a, b) => a.localeCompare(b, 'de'));
-
-export default function BeilagePickerModal({ current, onSelect, onClose }: BeilagePickerModalProps) {
+export default function BeilagePickerModal({ current, beilagen, onCreateNew, onSelect, onClose }: BeilagePickerModalProps) {
   const { t } = useLanguage();
   const [custom, setCustom] = useState('');
 
@@ -28,9 +28,9 @@ export default function BeilagePickerModal({ current, onSelect, onClose }: Beila
     if (custom.trim()) onSelect(custom.trim());
   }
 
-  const options = [{ value: '—', label: t.noBeilage }, ...KNOWN_BEILAGEN.map((b) => ({ value: b, label: b }))];
+  const options = [{ value: '—', label: t.noBeilage }, ...beilagen.map((b) => ({ value: b, label: b }))];
   // Eine bereits gesetzte eigene Beilage (nicht in der Liste) trotzdem als aktuell anzeigen.
-  if (current !== '—' && !KNOWN_BEILAGEN.includes(current)) options.splice(1, 0, { value: current, label: current });
+  if (current !== '—' && !beilagen.includes(current)) options.splice(1, 0, { value: current, label: current });
 
   return (
     <div
@@ -58,6 +58,17 @@ export default function BeilagePickerModal({ current, onSelect, onClose }: Beila
             className="shrink-0 rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
           >
             <X size={20} />
+          </button>
+        </div>
+
+        <div className="border-b border-slate-100 p-4 pb-0">
+          <button
+            type="button"
+            onClick={onCreateNew}
+            className="flex w-full items-center justify-center gap-2 rounded-full border border-dashed border-brand-600 px-4 py-2 text-sm font-medium text-brand-700 active:scale-95"
+          >
+            <Plus size={16} />
+            {t.beilageNew}
           </button>
         </div>
 

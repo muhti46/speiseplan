@@ -12,6 +12,8 @@ interface AddRecipeModalProps {
   onClose: () => void;
   /** Wenn gesetzt, ist der Gang vorgegeben und nicht änderbar (Neues Gericht für einen Wochenplan-Slot). */
   fixedCourse?: Course;
+  /** Neue Beilage anlegen: kein Gang/Protein, Rezept wird als Beilage (subCategory beilage) gespeichert. */
+  beilageMode?: boolean;
 }
 
 interface IngredientRow {
@@ -29,7 +31,7 @@ function emptyIngredient(): IngredientRow {
   return { item: '', amountPer10Pax: '', unit: '', storeCategory: 'gemuese' };
 }
 
-export default function AddRecipeModal({ onSave, onClose, fixedCourse }: AddRecipeModalProps) {
+export default function AddRecipeModal({ onSave, onClose, fixedCourse, beilageMode = false }: AddRecipeModalProps) {
   const { t } = useLanguage();
   const [name, setName] = useState('');
   const [course, setCourse] = useState<Course>(fixedCourse ?? 'hauptspeise');
@@ -72,8 +74,8 @@ export default function AddRecipeModal({ onSave, onClose, fixedCourse }: AddReci
 
     setIsFilling(true);
     try {
-      const draft = await generateRecipeDraft(apiKey, name, course);
-      if (draft.subCategory) setSubCategory(draft.subCategory);
+      const draft = await generateRecipeDraft(apiKey, name, course, beilageMode ? 'beilage' : 'gericht');
+      if (draft.subCategory && !beilageMode) setSubCategory(draft.subCategory);
       if (draft.proteinCategory) setProteinCategory(draft.proteinCategory);
       setBeilage(draft.beilage ?? '');
       setPrepTimeMinutes(String(draft.prepTimeMinutes));
@@ -104,9 +106,15 @@ export default function AddRecipeModal({ onSave, onClose, fixedCourse }: AddReci
     const raw = {
       name,
       course,
-      subCategory: course === 'hauptspeise' ? undefined : course === 'nachspeise' ? 'dessert' : subCategory,
-      proteinCategory: course === 'hauptspeise' ? proteinCategory : undefined,
-      beilage: course === 'hauptspeise' ? beilage : undefined,
+      subCategory: beilageMode
+        ? 'beilage'
+        : course === 'hauptspeise'
+          ? undefined
+          : course === 'nachspeise'
+            ? 'dessert'
+            : subCategory,
+      proteinCategory: course === 'hauptspeise' && !beilageMode ? proteinCategory : undefined,
+      beilage: course === 'hauptspeise' && !beilageMode ? beilage : undefined,
       prepTimeMinutes: Number(prepTimeMinutes),
       cookTimeMinutes: Number(cookTimeMinutes),
       instructions: instructions
@@ -144,7 +152,7 @@ export default function AddRecipeModal({ onSave, onClose, fixedCourse }: AddReci
       >
         <div className="flex items-start justify-between border-b border-slate-100 p-4">
           <h2 id="add-recipe-modal-title" className="text-lg font-bold text-slate-800">
-            {t.addRecipeTitle}
+            {beilageMode ? t.addBeilageTitle : t.addRecipeTitle}
           </h2>
           <button
             type="button"
@@ -157,6 +165,7 @@ export default function AddRecipeModal({ onSave, onClose, fixedCourse }: AddReci
         </div>
 
         <form onSubmit={handleSubmit} className="flex-1 space-y-4 overflow-y-auto p-4">
+          {!beilageMode && (
           <div>
             <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">
               {t.addRecipeCourse}
@@ -174,6 +183,7 @@ export default function AddRecipeModal({ onSave, onClose, fixedCourse }: AddReci
               ))}
             </select>
           </div>
+          )}
           <div>
             <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">
               {t.addRecipeName}
@@ -182,7 +192,7 @@ export default function AddRecipeModal({ onSave, onClose, fixedCourse }: AddReci
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder={t.addRecipeNamePlaceholder}
+              placeholder={beilageMode ? t.addBeilageNamePlaceholder : t.addRecipeNamePlaceholder}
               required
               className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-brand-600 focus:outline-none"
             />
@@ -218,7 +228,7 @@ export default function AddRecipeModal({ onSave, onClose, fixedCourse }: AddReci
             </div>
           )}
 
-          {course === 'hauptspeise' && (
+          {course === 'hauptspeise' && !beilageMode && (
             <>
               <div>
                 <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">

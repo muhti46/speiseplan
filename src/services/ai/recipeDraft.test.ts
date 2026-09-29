@@ -58,4 +58,16 @@ describe('generateRecipeDraft', () => {
     expect(call.config.responseMimeType).toBe('application/json');
     expect(call.contents[0].parts[0].text).toContain('"Gurkensalat"');
   });
+
+  it('builds a beilage draft: no protein needed, subCategory beilage, beilage-specific prompt and schema', async () => {
+    reply({ ...base, proteinCategory: 'rind', beilage: 'Reis', subCategory: 'suppe' });
+    const draft = await generateRecipeDraft('key', 'Couscous', 'hauptspeise', 'beilage');
+    expect(draft.subCategory).toBe('beilage');
+    expect(draft.course).toBe('hauptspeise');
+    expect(draft.proteinCategory).toBeUndefined();
+    expect(draft.beilage).toBeUndefined();
+    const call = generateContent.mock.calls[0][0];
+    expect(call.contents[0].parts[0].text).toContain('Beilage "Couscous"');
+    expect(Object.keys(call.config.responseSchema.properties)).not.toContain('proteinCategory');
+  });
 });

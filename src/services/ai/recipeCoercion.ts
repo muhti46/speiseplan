@@ -50,8 +50,11 @@ export function coerceRecipe(raw: unknown, source: RecipeSource = 'ai'): Recipe 
     subCategory = r.subCategory as SubCategory;
   }
 
+  // Beilagen (course hauptspeise + subCategory beilage) gehören nicht in die 5-Tage-Protein-Regel.
+  const isBeilage = course === 'hauptspeise' && subCategory === 'beilage';
+
   let proteinCategory: ProteinCategory | undefined;
-  if (course === 'hauptspeise') {
+  if (course === 'hauptspeise' && !isBeilage) {
     if (!PROTEIN_CATEGORIES.includes(r.proteinCategory as ProteinCategory)) {
       return {
         error: `Hauptspeisen benötigen ein gültiges Feld "proteinCategory" (${PROTEIN_CATEGORIES.join(', ')}).`,
@@ -97,7 +100,8 @@ export function coerceRecipe(raw: unknown, source: RecipeSource = 'ai'): Recipe 
     ingredients.push({ item, amountPer10Pax, unit, storeCategory });
   }
 
-  const beilage = course === 'hauptspeise' && typeof r.beilage === 'string' ? r.beilage.trim() : undefined;
+  const beilage =
+    course === 'hauptspeise' && !isBeilage && typeof r.beilage === 'string' ? r.beilage.trim() : undefined;
 
   return {
     id: `${source}-${slugify(name)}-${Date.now()}`,

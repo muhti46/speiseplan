@@ -48,4 +48,18 @@ describe('coerceRecipe', () => {
     const result = coerceRecipe({ ...validHauptspeise, instructions: [] });
     expect(isCoercionError(result)).toBe(true);
   });
+
+  it('accepts a beilage without proteinCategory and drops beilage/protein fields', () => {
+    const { proteinCategory, beilage, ...rest } = validHauptspeise;
+    void proteinCategory;
+    void beilage;
+    const result = coerceRecipe({ ...rest, name: 'Couscous', subCategory: 'beilage', beilage: 'Reis' }, 'manual');
+    expect(isCoercionError(result)).toBe(false);
+    if (!isCoercionError(result)) {
+      expect(result.subCategory).toBe('beilage');
+      expect(result.proteinCategory).toBeUndefined();
+      expect(result.beilage).toBeUndefined();
+      expect(result.source).toBe('manual');
+    }
+  });
 });

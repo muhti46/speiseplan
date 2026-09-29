@@ -26,6 +26,8 @@ interface Translation {
   needPlanForShopping: string;
   archivedPlans: string;
   noArchivedPlans: string;
+  archiveBadgeFinal: string;
+  archiveBadgeDraft: string;
   noShoppingListFor: (title: string) => string;
   rerollDay: string;
   close: string;
@@ -105,6 +107,12 @@ interface Translation {
   aiFillOffline: string;
   aiFillFailed: string;
   aiFillHint: string;
+  addBeilageTitle: string;
+  addBeilageNamePlaceholder: string;
+  beilageNew: string;
+  archiveBack: string;
+  archiveLoad: string;
+  archiveLoadConfirm: string;
 }
 
 export const translations: Record<Lang, Translation> = {
@@ -125,7 +133,9 @@ export const translations: Record<Lang, Translation> = {
     shoppingFri: 'Einkauf Freitag (Do–Fr)',
     needPlanForShopping: 'Erzeuge zuerst einen Wochenplan im Tab „Speiseplan“.',
     archivedPlans: 'Archivierte Wochenpläne',
-    noArchivedPlans: 'Noch keine freigegebenen Pläne gespeichert.',
+    noArchivedPlans: 'Noch keine Wochenpläne. Jeder erzeugte Plan wird hier automatisch abgelegt.',
+    archiveBadgeFinal: 'Freigegeben',
+    archiveBadgeDraft: 'Entwurf',
     noShoppingListFor: (title) => `Noch keine Einkaufsliste für ${title}. Erzeuge zuerst einen Wochenplan.`,
     rerollDay: 'Tag neu würfeln',
     close: 'Schließen',
@@ -231,6 +241,12 @@ export const translations: Record<Lang, Translation> = {
     aiFillNoKey: 'Bitte zuerst im Chat-Tab den Gemini API-Key eingeben.',
     aiFillOffline: 'Für die KI wird eine Internetverbindung benötigt.',
     aiFillFailed: 'Die KI konnte kein Rezept erstellen.',
+    addBeilageTitle: 'Beilage hinzufügen',
+    addBeilageNamePlaceholder: 'z.B. Couscous',
+    beilageNew: 'Neue Beilage mit Rezept hinzufügen',
+    archiveBack: 'Zurück zum Archiv',
+    archiveLoad: 'Als aktuellen Plan öffnen',
+    archiveLoadConfirm: 'Den aktuellen Wochenplan durch diesen Plan ersetzen?',
     aiFillHint: 'Name eingeben, dann füllt die KI Zutaten, Schritte und Zeiten aus - danach prüfen und speichern.',
   },
   tr: {
@@ -250,7 +266,9 @@ export const translations: Record<Lang, Translation> = {
     shoppingFri: 'Cuma Alışverişi (Per–Cum)',
     needPlanForShopping: 'Önce "Yemek Planı" sekmesinde bir haftalık plan oluştur.',
     archivedPlans: 'Arşivlenmiş Haftalık Planlar',
-    noArchivedPlans: 'Henüz onaylanmış bir plan kaydedilmedi.',
+    noArchivedPlans: 'Henüz haftalık plan yok. Oluşturulan her plan buraya otomatik kaydedilir.',
+    archiveBadgeFinal: 'Onaylandı',
+    archiveBadgeDraft: 'Taslak',
     noShoppingListFor: (title) => `${title} için henüz alışveriş listesi yok. Önce bir haftalık plan oluştur.`,
     rerollDay: 'Günü Yeniden Ata',
     close: 'Kapat',
@@ -356,6 +374,12 @@ export const translations: Record<Lang, Translation> = {
     aiFillNoKey: 'Önce Sohbet sekmesinde Gemini API anahtarını gir.',
     aiFillOffline: 'Yapay zeka için internet bağlantısı gerekli.',
     aiFillFailed: 'Yapay zeka tarif oluşturamadı.',
+    addBeilageTitle: 'Garnitür ekle',
+    addBeilageNamePlaceholder: 'örn. Kuskus',
+    beilageNew: 'Tarifli yeni garnitür ekle',
+    archiveBack: 'Arşive dön',
+    archiveLoad: 'Güncel plan olarak aç',
+    archiveLoadConfirm: 'Güncel haftalık plan bu planla değiştirilsin mi?',
     aiFillHint: 'Adı yaz, yapay zeka malzemeleri, adımları ve süreleri doldursun - sonra kontrol edip kaydet.',
   },
 };

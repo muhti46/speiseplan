@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyBeilageChange, applyMealSwap, generateWeeklyPlan } from './generator';
+import { applyBeilageChange, applyMealSwap, generateWeeklyPlan, getIsoWeek, getNextIsoWeek } from './generator';
 import { Recipe } from '../types/recipe';
 import recipesData from '../data/recipes.json';
 
@@ -62,5 +62,24 @@ describe('applyBeilageChange', () => {
     expect(changed.days[1].beilage).toBe('Couscous');
     expect(changed.days.filter((d) => d.dayOfWeek !== target)).toEqual(plan.days.filter((d) => d.dayOfWeek !== target));
     expect(applyBeilageChange(plan, target, '   ').days[1].beilage).toBe('—');
+  });
+});
+
+describe('ISO weeks', () => {
+  it('computes the ISO week and ISO year', () => {
+    expect(getIsoWeek(new Date(2026, 8, 29))).toEqual({ calendarWeek: 40, year: 2026 });
+    // 29.12.2025 (Montag) gehört bereits zu KW 1 des ISO-Jahres 2026
+    expect(getIsoWeek(new Date(2025, 11, 29))).toEqual({ calendarWeek: 1, year: 2026 });
+    // 1.1.2027 (Freitag) gehört noch zu KW 53 des ISO-Jahres 2026
+    expect(getIsoWeek(new Date(2027, 0, 1))).toEqual({ calendarWeek: 53, year: 2026 });
+  });
+
+  it('plans for the following week, including across the year boundary', () => {
+    expect(getNextIsoWeek(new Date(2026, 8, 29))).toEqual({ calendarWeek: 41, year: 2026 });
+    expect(getNextIsoWeek(new Date(2026, 11, 28))).toEqual({ calendarWeek: 1, year: 2027 });
+    expect(getNextIsoWeek(new Date(2026, 11, 21))).toEqual({ calendarWeek: 53, year: 2026 });
+    expect(getNextIsoWeek(new Date(2027, 11, 20))).toEqual({ calendarWeek: 52, year: 2027 });
+    // 2027 hat nur 52 Wochen: die Woche nach KW 52 ist KW 1 des Jahres 2028
+    expect(getNextIsoWeek(new Date(2027, 11, 27))).toEqual({ calendarWeek: 1, year: 2028 });
   });
 });

@@ -1,9 +1,20 @@
-import { useEffect, useMemo, useState } from 'react';
-import { CalendarDays, ShoppingCart, Archive, Sparkles, FileDown, Languages, MessageCircle, Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import {
+  CalendarDays,
+  ShoppingCart,
+  Archive,
+  Sparkles,
+  FileDown,
+  Languages,
+  MessageCircle,
+  Plus,
+  ChevronRight,
+  ArrowLeft,
+} from 'lucide-react';
 import recipesData from './data/recipes.json';
 import { Course, Recipe } from './types/recipe';
 import { DayOfWeek, ShoppingItem, WeeklyPlan } from './types/menu';
-import { applyBeilageChange, applyMealSwap, calculateCalendarWeek, generateWeeklyPlan, rerollDay } from './services/generator';
+import { applyBeilageChange, applyMealSwap, generateWeeklyPlan, getNextIsoWeek, rerollDay } from './services/generator';
 import { buildShoppingLists, preserveChecked } from './services/shopping';
 import { exportWeeklyPlanPdf } from './services/pdf';
 import {
@@ -21,10 +32,18 @@ import CheckboxList from './components/CheckboxList';
 import RecipeDetailModal from './components/RecipeDetailModal';
 import RecipePickerModal from './components/RecipePickerModal';
 import BeilagePickerModal from './components/BeilagePickerModal';
+import { allBeilageNames, findBeilageRecipe } from './data/beilagen';
 import AddRecipeModal from './components/AddRecipeModal';
 import ChatPanel from './components/ChatPanel';
 import { useLanguage } from './i18n/LanguageContext';
 import { LANGUAGES, Lang } from './i18n/translations';
+
+/** Führt Pläne per Id zusammen (`incoming` gewinnt) und sortiert neueste zuerst. */
+function upsertPlans(existing: WeeklyPlan[], incoming: WeeklyPlan[]): WeeklyPlan[] {
+  const byId = new Map(existing.map((p) => [p.id, p]));
+  incoming.forEach((p) => byId.set(p.id, p));
+  return Array.from(byId.values()).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
 
 export default function App() {
   const { lang, setLang, t } = useLanguage();
@@ -37,6 +56,8 @@ export default function App() {
   const [showPicker, setShowPicker] = useState(false);
   const [showAddForSlot, setShowAddForSlot] = useState(false);
   const [beilageDay, setBeilageDay] = useState<DayOfWeek | null>(null);
+  const [showAddBeilage, setShowAddBeilage] = useState(false);
+  const [viewingArchiveId, setViewingArchiveId] = useState<string | null>(null);
   const [recipes, setRecipes] = useState<Recipe[]>(recipesData as Recipe[]);
   const [recentRecipeIds, setRecentRecipeIds] = useState<string[]>([]);
   const [showAddRecipe, setShowAddRecipe] = useState(false);
@@ -58,7 +79,8 @@ export default function App() {
   }
 
   useEffect(() => {
-    getAllPlans().then(setArchive);
+    // Bereits im State befindliche (frischere) Pläne dürfen vom DB-Stand nicht überschrieben werden.
+    getAllPlans().then((stored) => setArchive((prev) => upsertPlans(stored, prev)));
     getAllRecipes().then((stored) => {
       if (stored.length > 0) setRecipes(stored);
     });
@@ -70,12 +92,19 @@ export default function App() {
       .finally(() => setPlanLoaded(true));
   }, []);
 
+  // Jede Änderung am Plan (Erzeugen, Tauschen, Abhaken, Freigeben) wird sofort als aktueller Plan
+  // gespeichert UND ins Archiv geschrieben. Die Plan-Id enthält Jahr+KW, d.h. pro Woche gibt es
+  // genau einen Archiv-Eintrag, der bei Änderungen derselben Woche aktualisiert wird.
   useEffect(() => {
-    if (planLoaded && plan) saveCurrentPlan(plan);
+    if (!planLoaded || !plan) return;
+    saveCurrentPlan(plan);
+    savePlan(plan);
+    setArchive((prev) => upsertPlans(prev, [plan]));
   }, [plan, planLoaded]);
 
-  const now = useMemo(() => new Date(), []);
-  const currentWeek = calculateCalendarWeek(now);
+  // Der Plan gilt immer für die kommende Woche (passend zur Anzeige "Nächste Woche"). Bei jedem
+  // Rendern frisch berechnet, damit eine über den Wochenwechsel offene App nicht veraltet.
+  const nextWeek = getNextIsoWeek(new Date());
 
   function handleRecipeAdd(recipe: Recipe) {
     setRecipes((prev) => [...prev, recipe]);
@@ -93,18 +122,25 @@ export default function App() {
       shoppingListFri: preserveChecked(plan.shoppingListFri, lists.shoppingListFri),
     };
     setPlan(updated);
-    if (updated.isFinalized) savePlan(updated);
     setSelected({ ...selected, recipe });
     setShowPicker(false);
     setShowAddForSlot(false);
+  }
+
+  /** Macht einen archivierten Plan zum aktuellen Plan (ersetzt den bisherigen). */
+  function handleLoadArchived(archived: WeeklyPlan) {
+    if (plan && plan.id !== archived.id && !window.confirm(t.archiveLoadConfirm)) return;
+    setPlan(archived);
+    setViewingArchiveId(null);
+    setActiveTab('plan');
   }
 
   function handleAssignBeilage(beilage: string) {
     if (!plan || !beilageDay) return;
     const updated = applyBeilageChange(plan, beilageDay, beilage);
     setPlan(updated);
-    if (updated.isFinalized) savePlan(updated);
     setBeilageDay(null);
+    setShowAddBeilage(false);
   }
 
   async function handleGenerate() {
@@ -112,8 +148,8 @@ export default function App() {
     try {
       const recentRecipeIds = await getRecentRecipeIds(4);
       const newPlan = generateWeeklyPlan(recipes, {
-        calendarWeek: currentWeek,
-        year: now.getFullYear(),
+        calendarWeek: nextWeek.calendarWeek,
+        year: nextWeek.year,
         recentRecipeIds,
       });
       const { shoppingListMon, shoppingListFri } = buildShoppingLists(newPlan);
@@ -130,12 +166,9 @@ export default function App() {
     setPlan({ ...updated, shoppingListMon, shoppingListFri });
   }
 
-  async function handleFinalize() {
+  function handleFinalize() {
     if (!plan) return;
-    const finalized: WeeklyPlan = { ...plan, isFinalized: true };
-    await savePlan(finalized);
-    setPlan(finalized);
-    setArchive(await getAllPlans());
+    setPlan({ ...plan, isFinalized: true });
   }
 
   function toggleItem(list: 'shoppingListMon' | 'shoppingListFri', item: ShoppingItem) {
@@ -145,9 +178,6 @@ export default function App() {
     );
     const updatedPlan = { ...plan, [list]: updatedList };
     setPlan(updatedPlan);
-    if (plan.isFinalized) {
-      savePlan(updatedPlan);
-    }
   }
 
   return (
@@ -178,26 +208,28 @@ export default function App() {
       <main className="flex-1 space-y-4 p-4">
         {activeTab === 'plan' && (
           <section className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="space-y-3">
               <h2 className="text-base font-semibold text-slate-700">
-                {plan ? t.weekLabel(plan.calendarWeek, plan.year) : t.nextWeek(currentWeek + 1)}
+                {plan ? t.weekLabel(plan.calendarWeek, plan.year) : t.nextWeek(nextWeek.calendarWeek)}
               </h2>
-              <div className="flex items-center gap-2">
+              <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => setShowAddRecipe(true)}
-                  aria-label={t.addRecipeTitle}
-                  className="flex items-center gap-2 rounded-full border border-slate-300 px-3 py-2 text-sm font-medium text-slate-600 active:scale-95"
+                  className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-2.5 text-sm font-semibold leading-tight text-brand-800 shadow-sm transition-colors hover:bg-brand-100 active:scale-95"
                 >
-                  <Plus size={16} />
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white">
+                    <Plus size={14} strokeWidth={3} />
+                  </span>
+                  {t.addRecipeTitle}
                 </button>
                 <button
                   type="button"
                   onClick={handleGenerate}
                   disabled={isGenerating}
-                  className="flex items-center gap-2 rounded-full bg-brand-700 px-4 py-2 text-sm font-medium text-white active:scale-95 disabled:opacity-60"
+                  className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-brand-700 px-3 py-2.5 text-sm font-semibold leading-tight text-white shadow-sm transition-colors hover:bg-brand-800 active:scale-95 disabled:opacity-60"
                 >
-                  <Sparkles size={16} />
+                  <Sparkles size={16} className="shrink-0" />
                   {plan ? t.regenerate : t.generate}
                 </button>
               </div>
@@ -215,6 +247,7 @@ export default function App() {
                   key={day.dayOfWeek}
                   day={day}
                   onReroll={() => handleReroll(day.dayOfWeek)}
+                  beilageRecipe={findBeilageRecipe(day.beilage, recipes)}
                   onChangeBeilage={() => setBeilageDay(day.dayOfWeek)}
                   onOpenRecipe={(recipe, course) =>
                     setSelected({ recipe, dayOfWeek: course ? day.dayOfWeek : undefined, course })
@@ -270,32 +303,90 @@ export default function App() {
             plan={plan}
             recipes={recipes}
             recentRecipeIds={recentRecipeIds}
-            calendarWeek={currentWeek}
-            year={now.getFullYear()}
+            calendarWeek={nextWeek.calendarWeek}
+            year={nextWeek.year}
             onPlanUpdate={setPlan}
             onRecipeAdd={handleRecipeAdd}
           />
         )}
 
-        {activeTab === 'archiv' && (
-          <section className="space-y-3">
-            <h2 className="text-base font-semibold text-slate-700">{t.archivedPlans}</h2>
-            {archive.length === 0 && <p className="text-sm text-slate-400">{t.noArchivedPlans}</p>}
-            <ul className="space-y-2">
-              {archive.map((p) => (
-                <li
-                  key={p.id}
-                  className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm"
+        {activeTab === 'archiv' && (() => {
+          const viewed = archive.find((p) => p.id === viewingArchiveId);
+          if (viewed) {
+            return (
+              <section className="space-y-4">
+                <button
+                  type="button"
+                  onClick={() => setViewingArchiveId(null)}
+                  className="flex items-center gap-1.5 text-sm font-medium text-brand-700"
                 >
-                  <span>{t.weekLabel(p.calendarWeek, p.year)}</span>
-                  <span className="text-xs text-slate-400">
-                    {new Date(p.createdAt).toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'de-DE')}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+                  <ArrowLeft size={16} />
+                  {t.archiveBack}
+                </button>
+                <h2 className="text-base font-semibold text-slate-700">
+                  {t.weekLabel(viewed.calendarWeek, viewed.year)}
+                </h2>
+                {viewed.days.map((day) => (
+                  <DayMenuCard
+                    key={day.dayOfWeek}
+                    day={day}
+                    beilageRecipe={findBeilageRecipe(day.beilage, recipes)}
+                    onOpenRecipe={(recipe) => setSelected({ recipe })}
+                  />
+                ))}
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => handleLoadArchived(viewed)}
+                    className="flex-1 rounded-full border border-brand-700 px-4 py-2 text-sm font-medium text-brand-700 active:scale-95"
+                  >
+                    {t.archiveLoad}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => exportWeeklyPlanPdf(viewed, lang)}
+                    className="flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600"
+                  >
+                    <FileDown size={16} />
+                    {t.pdf}
+                  </button>
+                </div>
+              </section>
+            );
+          }
+          return (
+            <section className="space-y-3">
+              <h2 className="text-base font-semibold text-slate-700">{t.archivedPlans}</h2>
+              {archive.length === 0 && <p className="text-sm text-slate-400">{t.noArchivedPlans}</p>}
+              <ul className="space-y-2">
+                {archive.map((p) => (
+                  <li key={p.id}>
+                    <button
+                      type="button"
+                      onClick={() => setViewingArchiveId(p.id)}
+                      className="flex w-full items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-sm active:bg-slate-50"
+                    >
+                      <span className="flex items-center gap-2">
+                        <span className="font-medium text-slate-700">{t.weekLabel(p.calendarWeek, p.year)}</span>
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                            p.isFinalized ? 'bg-brand-100 text-brand-800' : 'bg-slate-100 text-slate-500'
+                          }`}
+                        >
+                          {p.isFinalized ? t.archiveBadgeFinal : t.archiveBadgeDraft}
+                        </span>
+                      </span>
+                      <span className="flex items-center gap-2 text-xs text-slate-400">
+                        {new Date(p.createdAt).toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'de-DE')}
+                        <ChevronRight size={16} />
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          );
+        })()}
       </main>
 
       <div className="sm:hidden">
@@ -338,11 +429,24 @@ export default function App() {
         />
       )}
 
-      {beilageDay && plan && (
+      {beilageDay && plan && !showAddBeilage && (
         <BeilagePickerModal
           current={plan.days.find((d) => d.dayOfWeek === beilageDay)?.beilage ?? '—'}
+          beilagen={allBeilageNames(recipes)}
+          onCreateNew={() => setShowAddBeilage(true)}
           onSelect={handleAssignBeilage}
           onClose={() => setBeilageDay(null)}
+        />
+      )}
+
+      {beilageDay && plan && showAddBeilage && (
+        <AddRecipeModal
+          beilageMode
+          onSave={(recipe) => {
+            handleRecipeAdd(recipe);
+            handleAssignBeilage(recipe.name);
+          }}
+          onClose={() => setShowAddBeilage(false)}
         />
       )}
 
