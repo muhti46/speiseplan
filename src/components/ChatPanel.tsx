@@ -41,6 +41,9 @@ export default function ChatPanel({
   const [messages, setMessages] = useState<ChatMessage[]>(() => getChatHistory().messages);
   const [apiHistory, setApiHistory] = useState<ChatMessage[]>(() => getChatHistory().apiHistory);
   const [isSending, setIsSending] = useState(false);
+  // Nur die zuletzt frisch eingetroffene Assistant-Nachricht bekommt den Tipp-Effekt,
+  // aus dem localStorage geladene Nachrichten starten ohne animatingMessageId.
+  const [animatingMessageId, setAnimatingMessageId] = useState<string | null>(null);
 
   useEffect(() => {
     saveChatHistory(messages, apiHistory);
@@ -59,6 +62,7 @@ export default function ChatPanel({
     clearChatHistory();
     setMessages([]);
     setApiHistory([]);
+    setAnimatingMessageId(null);
   }
 
   async function handleSend(text: string) {
@@ -91,8 +95,11 @@ export default function ChatPanel({
         onRecipeAdd,
       });
       const assistantText = reply || t.chatError;
-      setMessages((prev) => [...prev, { role: 'assistant', text: assistantText }]);
+      const assistantId =
+        typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : `msg-${Date.now()}`;
+      setMessages((prev) => [...prev, { role: 'assistant', text: assistantText, id: assistantId }]);
       setApiHistory((prev) => [...prev, { role: 'user', text }, { role: 'assistant', text: assistantText }]);
+      setAnimatingMessageId(assistantId);
     } catch (err) {
       const { status, message } = describeChatError(err);
       // eslint-disable-next-line no-console
@@ -143,7 +150,12 @@ export default function ChatPanel({
         <ApiKeySettings onSaved={() => setHasKey(true)} />
       ) : (
         <>
-          <ChatMessageList messages={messages} isSending={isSending} />
+          <ChatMessageList
+            messages={messages}
+            isSending={isSending}
+            animatingMessageId={animatingMessageId}
+            onAnimationDone={() => setAnimatingMessageId(null)}
+          />
           <ChatInput disabled={isSending} onSend={handleSend} />
         </>
       )}

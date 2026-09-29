@@ -1,4 +1,4 @@
-import { Course, Ingredient, ProteinCategory, Recipe, StoreCategory, SubCategory } from '../../types/recipe';
+import { Course, Ingredient, ProteinCategory, Recipe, RecipeSource, StoreCategory, SubCategory } from '../../types/recipe';
 
 const COURSES: Course[] = ['vorspeise', 'hauptspeise', 'nachspeise'];
 const SUB_CATEGORIES: SubCategory[] = ['suppe', 'salat', 'beilage', 'dessert'];
@@ -28,7 +28,7 @@ function slugify(name: string): string {
  * Hauptspeisen) einen Fehler zurück statt still einen Default zu setzen -
  * ein falscher Default würde die 5-Tage-Protein-Regel unbemerkt verletzen.
  */
-export function coerceRecipe(raw: unknown): Recipe | CoercionError {
+export function coerceRecipe(raw: unknown, source: RecipeSource = 'ai'): Recipe | CoercionError {
   if (typeof raw !== 'object' || raw === null) {
     return { error: 'Rezept-Daten fehlen oder sind kein Objekt.' };
   }
@@ -100,13 +100,13 @@ export function coerceRecipe(raw: unknown): Recipe | CoercionError {
   const beilage = course === 'hauptspeise' && typeof r.beilage === 'string' ? r.beilage.trim() : undefined;
 
   return {
-    id: `ai-${slugify(name)}-${Date.now()}`,
+    id: `${source}-${slugify(name)}-${Date.now()}`,
     name,
     course,
     subCategory,
     proteinCategory,
     beilage: beilage || undefined,
-    source: 'ai',
+    source,
     prepTimeMinutes,
     cookTimeMinutes,
     totalTimeMinutes: prepTimeMinutes + cookTimeMinutes,

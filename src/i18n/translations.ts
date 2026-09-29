@@ -69,6 +69,22 @@ interface Translation {
   aiRecipeBadge: string;
   chatApiKeyInvalid: string;
   chatApiKeyValidating: string;
+  addRecipeTitle: string;
+  addRecipeName: string;
+  addRecipeNamePlaceholder: string;
+  addRecipeCourse: string;
+  addRecipeSubCategory: string;
+  addRecipeProtein: string;
+  addRecipeBeilage: string;
+  addRecipeBeilagePlaceholder: string;
+  addRecipeInstructionsPlaceholder: string;
+  addRecipeIngredientAdd: string;
+  addRecipeIngredientRemove: string;
+  addRecipeItemPlaceholder: string;
+  addRecipeAmountPlaceholder: string;
+  addRecipeUnitPlaceholder: string;
+  addRecipeSave: string;
+  addRecipeCancel: string;
 }
 
 export const translations: Record<Lang, Translation> = {
@@ -160,6 +176,22 @@ export const translations: Record<Lang, Translation> = {
     aiRecipeBadge: 'KI-generiert',
     chatApiKeyInvalid: 'Dieser API-Key wurde von Gemini abgelehnt. Bitte prüfen und erneut versuchen.',
     chatApiKeyValidating: 'Wird geprüft…',
+    addRecipeTitle: 'Rezept hinzufügen',
+    addRecipeName: 'Name',
+    addRecipeNamePlaceholder: 'z.B. Linsen-Curry',
+    addRecipeCourse: 'Gang',
+    addRecipeSubCategory: 'Art',
+    addRecipeProtein: 'Proteinkategorie',
+    addRecipeBeilage: 'Beilage (optional)',
+    addRecipeBeilagePlaceholder: 'z.B. Reis',
+    addRecipeInstructionsPlaceholder: 'Ein Schritt pro Zeile',
+    addRecipeIngredientAdd: 'Zutat',
+    addRecipeIngredientRemove: 'Zutat entfernen',
+    addRecipeItemPlaceholder: 'Zutat',
+    addRecipeAmountPlaceholder: 'Menge/10',
+    addRecipeUnitPlaceholder: 'Einheit',
+    addRecipeSave: 'Speichern',
+    addRecipeCancel: 'Abbrechen',
   },
   tr: {
     langName: 'Türkçe',
@@ -249,5 +281,21 @@ export const translations: Record<Lang, Translation> = {
     aiRecipeBadge: 'Yapay Zeka ile Oluşturuldu',
     chatApiKeyInvalid: 'Bu API anahtarı Gemini tarafından reddedildi. Lütfen kontrol edip tekrar dene.',
     chatApiKeyValidating: 'Kontrol ediliyor…',
+    addRecipeTitle: 'Yemek Ekle',
+    addRecipeName: 'İsim',
+    addRecipeNamePlaceholder: 'örn. Mercimek Köftesi',
+    addRecipeCourse: 'Kategori',
+    addRecipeSubCategory: 'Tür',
+    addRecipeProtein: 'Protein Kategorisi',
+    addRecipeBeilage: 'Garnitür (opsiyonel)',
+    addRecipeBeilagePlaceholder: 'örn. Pirinç',
+    addRecipeInstructionsPlaceholder: 'Her satıra bir adım',
+    addRecipeIngredientAdd: 'Malzeme',
+    addRecipeIngredientRemove: 'Malzemeyi kaldır',
+    addRecipeItemPlaceholder: 'Malzeme',
+    addRecipeAmountPlaceholder: 'Miktar/10',
+    addRecipeUnitPlaceholder: 'Birim',
+    addRecipeSave: 'Kaydet',
+    addRecipeCancel: 'Vazgeç',
   },
 };

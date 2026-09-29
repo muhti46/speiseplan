@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { CalendarDays, ShoppingCart, Archive, Sparkles, FileDown, Languages, MessageCircle } from 'lucide-react';
+import { CalendarDays, ShoppingCart, Archive, Sparkles, FileDown, Languages, MessageCircle, Plus } from 'lucide-react';
 import recipesData from './data/recipes.json';
 import { Recipe } from './types/recipe';
 import { DayOfWeek, ShoppingItem, WeeklyPlan } from './types/menu';
@@ -11,6 +11,7 @@ import Tabs, { TabItem } from './components/Tabs';
 import DayMenuCard from './components/DayMenuCard';
 import CheckboxList from './components/CheckboxList';
 import RecipeDetailModal from './components/RecipeDetailModal';
+import AddRecipeModal from './components/AddRecipeModal';
 import ChatPanel from './components/ChatPanel';
 import { useLanguage } from './i18n/LanguageContext';
 import { LANGUAGES, Lang } from './i18n/translations';
@@ -24,6 +25,7 @@ export default function App() {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [recipes, setRecipes] = useState<Recipe[]>(recipesData as Recipe[]);
   const [recentRecipeIds, setRecentRecipeIds] = useState<string[]>([]);
+  const [showAddRecipe, setShowAddRecipe] = useState(false);
 
   const TABS: TabItem[] = [
     { id: 'plan', label: t.tabs.plan, icon: CalendarDays },
@@ -126,15 +128,25 @@ export default function App() {
               <h2 className="text-base font-semibold text-slate-700">
                 {plan ? t.weekLabel(plan.calendarWeek, plan.year) : t.nextWeek(currentWeek + 1)}
               </h2>
-              <button
-                type="button"
-                onClick={handleGenerate}
-                disabled={isGenerating}
-                className="flex items-center gap-2 rounded-full bg-brand-700 px-4 py-2 text-sm font-medium text-white active:scale-95 disabled:opacity-60"
-              >
-                <Sparkles size={16} />
-                {plan ? t.regenerate : t.generate}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddRecipe(true)}
+                  aria-label={t.addRecipeTitle}
+                  className="flex items-center gap-2 rounded-full border border-slate-300 px-3 py-2 text-sm font-medium text-slate-600 active:scale-95"
+                >
+                  <Plus size={16} />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleGenerate}
+                  disabled={isGenerating}
+                  className="flex items-center gap-2 rounded-full bg-brand-700 px-4 py-2 text-sm font-medium text-white active:scale-95 disabled:opacity-60"
+                >
+                  <Sparkles size={16} />
+                  {plan ? t.regenerate : t.generate}
+                </button>
+              </div>
             </div>
 
             {!plan && (
@@ -235,6 +247,10 @@ export default function App() {
 
       {selectedRecipe && (
         <RecipeDetailModal recipe={selectedRecipe} onClose={() => setSelectedRecipe(null)} />
+      )}
+
+      {showAddRecipe && (
+        <AddRecipeModal onSave={handleRecipeAdd} onClose={() => setShowAddRecipe(false)} />
       )}
     </div>
   );
