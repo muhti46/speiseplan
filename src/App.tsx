@@ -208,26 +208,28 @@ export default function App() {
       <main className="flex-1 space-y-4 p-4">
         {activeTab === 'plan' && (
           <section className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="space-y-3">
               <h2 className="text-base font-semibold text-slate-700">
                 {plan ? t.weekLabel(plan.calendarWeek, plan.year) : t.nextWeek(nextWeek.calendarWeek)}
               </h2>
-              <div className="flex items-center gap-2">
+              <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => setShowAddRecipe(true)}
-                  aria-label={t.addRecipeTitle}
-                  className="flex items-center gap-2 rounded-full border border-slate-300 px-3 py-2 text-sm font-medium text-slate-600 active:scale-95"
+                  className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-2.5 text-sm font-semibold leading-tight text-brand-800 shadow-sm transition-colors hover:bg-brand-100 active:scale-95"
                 >
-                  <Plus size={16} />
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white">
+                    <Plus size={14} strokeWidth={3} />
+                  </span>
+                  {t.addRecipeTitle}
                 </button>
                 <button
                   type="button"
                   onClick={handleGenerate}
                   disabled={isGenerating}
-                  className="flex items-center gap-2 rounded-full bg-brand-700 px-4 py-2 text-sm font-medium text-white active:scale-95 disabled:opacity-60"
+                  className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-brand-700 px-3 py-2.5 text-sm font-semibold leading-tight text-white shadow-sm transition-colors hover:bg-brand-800 active:scale-95 disabled:opacity-60"
                 >
-                  <Sparkles size={16} />
+                  <Sparkles size={16} className="shrink-0" />
                   {plan ? t.regenerate : t.generate}
                 </button>
               </div>
