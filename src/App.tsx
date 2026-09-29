@@ -3,7 +3,7 @@ import { CalendarDays, ShoppingCart, Archive, Sparkles, FileDown, Languages, Mes
 import recipesData from './data/recipes.json';
 import { Course, Recipe } from './types/recipe';
 import { DayOfWeek, ShoppingItem, WeeklyPlan } from './types/menu';
-import { applyMealSwap, calculateCalendarWeek, generateWeeklyPlan, rerollDay } from './services/generator';
+import { applyBeilageChange, applyMealSwap, calculateCalendarWeek, generateWeeklyPlan, rerollDay } from './services/generator';
 import { buildShoppingLists, preserveChecked } from './services/shopping';
 import { exportWeeklyPlanPdf } from './services/pdf';
 import {
@@ -20,6 +20,7 @@ import DayMenuCard from './components/DayMenuCard';
 import CheckboxList from './components/CheckboxList';
 import RecipeDetailModal from './components/RecipeDetailModal';
 import RecipePickerModal from './components/RecipePickerModal';
+import BeilagePickerModal from './components/BeilagePickerModal';
 import AddRecipeModal from './components/AddRecipeModal';
 import ChatPanel from './components/ChatPanel';
 import { useLanguage } from './i18n/LanguageContext';
@@ -35,6 +36,7 @@ export default function App() {
   const [selected, setSelected] = useState<{ recipe: Recipe; dayOfWeek?: DayOfWeek; course?: Course } | null>(null);
   const [showPicker, setShowPicker] = useState(false);
   const [showAddForSlot, setShowAddForSlot] = useState(false);
+  const [beilageDay, setBeilageDay] = useState<DayOfWeek | null>(null);
   const [recipes, setRecipes] = useState<Recipe[]>(recipesData as Recipe[]);
   const [recentRecipeIds, setRecentRecipeIds] = useState<string[]>([]);
   const [showAddRecipe, setShowAddRecipe] = useState(false);
@@ -95,6 +97,14 @@ export default function App() {
     setSelected({ ...selected, recipe });
     setShowPicker(false);
     setShowAddForSlot(false);
+  }
+
+  function handleAssignBeilage(beilage: string) {
+    if (!plan || !beilageDay) return;
+    const updated = applyBeilageChange(plan, beilageDay, beilage);
+    setPlan(updated);
+    if (updated.isFinalized) savePlan(updated);
+    setBeilageDay(null);
   }
 
   async function handleGenerate() {
@@ -205,6 +215,7 @@ export default function App() {
                   key={day.dayOfWeek}
                   day={day}
                   onReroll={() => handleReroll(day.dayOfWeek)}
+                  onChangeBeilage={() => setBeilageDay(day.dayOfWeek)}
                   onOpenRecipe={(recipe, course) =>
                     setSelected({ recipe, dayOfWeek: course ? day.dayOfWeek : undefined, course })
                   }
@@ -324,6 +335,14 @@ export default function App() {
             handleAssignMeal(recipe);
           }}
           onClose={() => setShowAddForSlot(false)}
+        />
+      )}
+
+      {beilageDay && plan && (
+        <BeilagePickerModal
+          current={plan.days.find((d) => d.dayOfWeek === beilageDay)?.beilage ?? '—'}
+          onSelect={handleAssignBeilage}
+          onClose={() => setBeilageDay(null)}
         />
       )}
 

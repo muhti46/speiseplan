@@ -182,6 +182,14 @@ export function applyMealSwap(plan: WeeklyPlan, dayOfWeek: DayOfWeek, course: Co
   };
 }
 
+/** Setzt die Beilage eines Tages manuell ("—" = keine Beilage). */
+export function applyBeilageChange(plan: WeeklyPlan, dayOfWeek: DayOfWeek, beilage: string): WeeklyPlan {
+  return {
+    ...plan,
+    days: plan.days.map((d) => (d.dayOfWeek === dayOfWeek ? { ...d, beilage: beilage.trim() || '—' } : d)),
+  };
+}
+
 export function calculateCalendarWeek(date: Date): number {
   const target = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
   const dayNumber = (target.getUTCDay() + 6) % 7;

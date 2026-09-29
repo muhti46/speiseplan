@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyMealSwap, generateWeeklyPlan } from './generator';
+import { applyBeilageChange, applyMealSwap, generateWeeklyPlan } from './generator';
 import { Recipe } from '../types/recipe';
 import recipesData from '../data/recipes.json';
 
@@ -51,5 +51,16 @@ describe('applyMealSwap', () => {
     const updatedDay = updated.days.find((d) => d.dayOfWeek === day.dayOfWeek)!;
 
     expect(updatedDay.beilage).toBe('Couscous');
+  });
+});
+
+describe('applyBeilageChange', () => {
+  it('changes only the targeted day and falls back to "—" for empty input', () => {
+    const plan = makePlan();
+    const target = plan.days[1].dayOfWeek;
+    const changed = applyBeilageChange(plan, target, '  Couscous ');
+    expect(changed.days[1].beilage).toBe('Couscous');
+    expect(changed.days.filter((d) => d.dayOfWeek !== target)).toEqual(plan.days.filter((d) => d.dayOfWeek !== target));
+    expect(applyBeilageChange(plan, target, '   ').days[1].beilage).toBe('—');
   });
 });
