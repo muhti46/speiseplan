@@ -16,6 +16,7 @@ import { Course, Recipe, RecipeDetail } from './types/recipe';
 import { recipeDetailKey } from './services/ai/recipeDetail';
 import { DayOfWeek, ShoppingItem, WeeklyPlan } from './types/menu';
 import { applyBeilageChange, applyMealSwap, generateWeeklyPlan, getNextIsoWeek, rerollDay } from './services/generator';
+import { formatWeekRange } from './services/format';
 import { buildShoppingLists, preserveChecked } from './services/shopping';
 import { exportWeeklyPlanPdf } from './services/pdf';
 import {
@@ -335,6 +336,9 @@ export default function App() {
                 </button>
                 <h2 className="text-base font-semibold text-slate-700">
                   {t.weekLabel(viewed.calendarWeek, viewed.year)}
+                  <span className="ml-2 text-sm font-normal text-slate-500">
+                    {formatWeekRange(viewed.calendarWeek, viewed.year)}
+                  </span>
                 </h2>
                 {viewed.days.map((day) => (
                   <DayMenuCard
@@ -387,7 +391,7 @@ export default function App() {
                         </span>
                       </span>
                       <span className="flex items-center gap-2 text-xs text-slate-400">
-                        {new Date(p.createdAt).toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'de-DE')}
+                        {formatWeekRange(p.calendarWeek, p.year)}
                         <ChevronRight size={16} />
                       </span>
                     </button>
