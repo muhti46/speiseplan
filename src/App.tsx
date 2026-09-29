@@ -12,18 +12,21 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import recipesData from './data/recipes.json';
-import { Course, Recipe } from './types/recipe';
+import { Course, Recipe, RecipeDetail } from './types/recipe';
+import { recipeDetailKey } from './services/ai/recipeDetail';
 import { DayOfWeek, ShoppingItem, WeeklyPlan } from './types/menu';
 import { applyBeilageChange, applyMealSwap, generateWeeklyPlan, getNextIsoWeek, rerollDay } from './services/generator';
 import { buildShoppingLists, preserveChecked } from './services/shopping';
 import { exportWeeklyPlanPdf } from './services/pdf';
 import {
   getAllPlans,
+  getAllRecipeDetails,
   getAllRecipes,
   getCurrentPlan,
   getRecentRecipeIds,
   saveCurrentPlan,
   saveRecipe,
+  saveRecipeDetail,
   savePlan,
 } from './services/storage';
 import Tabs, { TabItem } from './components/Tabs';
@@ -58,6 +61,7 @@ export default function App() {
   const [beilageDay, setBeilageDay] = useState<DayOfWeek | null>(null);
   const [showAddBeilage, setShowAddBeilage] = useState(false);
   const [viewingArchiveId, setViewingArchiveId] = useState<string | null>(null);
+  const [details, setDetails] = useState<Record<string, RecipeDetail>>({});
   const [recipes, setRecipes] = useState<Recipe[]>(recipesData as Recipe[]);
   const [recentRecipeIds, setRecentRecipeIds] = useState<string[]>([]);
   const [showAddRecipe, setShowAddRecipe] = useState(false);
@@ -85,6 +89,7 @@ export default function App() {
       if (stored.length > 0) setRecipes(stored);
     });
     getRecentRecipeIds(4).then(setRecentRecipeIds);
+    getAllRecipeDetails().then((list) => setDetails(Object.fromEntries(list.map((d) => [d.key, d]))));
     getCurrentPlan()
       .then((stored) => {
         if (stored) setPlan((prev) => prev ?? stored);
@@ -105,6 +110,11 @@ export default function App() {
   // Der Plan gilt immer für die kommende Woche (passend zur Anzeige "Nächste Woche"). Bei jedem
   // Rendern frisch berechnet, damit eine über den Wochenwechsel offene App nicht veraltet.
   const nextWeek = getNextIsoWeek(new Date());
+
+  function handleDetailCreated(detail: RecipeDetail) {
+    setDetails((prev) => ({ ...prev, [detail.key]: detail }));
+    saveRecipeDetail(detail);
+  }
 
   function handleRecipeAdd(recipe: Recipe) {
     setRecipes((prev) => [...prev, recipe]);
@@ -396,6 +406,8 @@ export default function App() {
       {selected && (
         <RecipeDetailModal
           recipe={selected.recipe}
+          detail={details[recipeDetailKey(selected.recipe.id, lang)]}
+          onDetailCreated={handleDetailCreated}
           // Solange ein darüberliegendes Fenster offen ist, soll Escape nur dieses schließen.
           onClose={() => {
             if (!showPicker && !showAddForSlot) setSelected(null);
