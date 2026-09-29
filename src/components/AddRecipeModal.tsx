@@ -100,7 +100,7 @@ export default function AddRecipeModal({ onSave, onClose }: AddRecipeModalProps)
         aria-modal="true"
         aria-labelledby="add-recipe-modal-title"
         onClick={(event) => event.stopPropagation()}
-        className="flex max-h-[90vh] w-full flex-col rounded-t-2xl bg-white shadow-xl sm:max-w-md sm:rounded-2xl"
+        className="flex max-h-[calc(var(--app-height)*0.9)] w-full flex-col rounded-t-2xl bg-white shadow-xl sm:max-w-md sm:rounded-2xl"
       >
         <div className="flex items-start justify-between border-b border-slate-100 p-4">
           <h2 id="add-recipe-modal-title" className="text-lg font-bold text-slate-800">

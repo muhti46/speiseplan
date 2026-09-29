@@ -1,7 +1,11 @@
+import plugin from 'tailwindcss/plugin';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
+    // Nur ein Breakpoint wird genutzt; er ist als eigene Variante unten definiert.
+    screens: {},
     extend: {
       colors: {
         brand: {
@@ -19,5 +23,11 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // `sm:` greift nicht, wenn index.html einen Handy im Chrome-"Desktop-Modus"
+    // erkannt hat (html.force-mobile) - sonst würde dort das Desktop-Layout erscheinen.
+    plugin(({ addVariant }) => {
+      addVariant('sm', '@media (min-width: 640px) { html:not(.force-mobile) & }');
+    }),
+  ],
 };

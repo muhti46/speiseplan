@@ -191,7 +191,7 @@ export default function ChatPanel({
   }
 
   return (
-    <section className="flex h-[calc(100vh-9rem)] flex-col sm:h-[calc(100vh-11rem)]">
+    <section className="flex h-[calc(var(--app-height)-9rem)] flex-col sm:h-[calc(var(--app-height)-11rem)]">
       <div className="flex items-center justify-between pb-2">
         <div className="min-w-0">
           <h2 className="text-base font-semibold text-slate-700">{t.chatTitle}</h2>
