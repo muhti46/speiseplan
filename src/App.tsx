@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   CalendarDays,
   ShoppingCart,
@@ -14,7 +14,7 @@ import {
 import recipesData from './data/recipes.json';
 import { Course, Recipe } from './types/recipe';
 import { DayOfWeek, ShoppingItem, WeeklyPlan } from './types/menu';
-import { applyBeilageChange, applyMealSwap, calculateCalendarWeek, generateWeeklyPlan, rerollDay } from './services/generator';
+import { applyBeilageChange, applyMealSwap, generateWeeklyPlan, getNextIsoWeek, rerollDay } from './services/generator';
 import { buildShoppingLists, preserveChecked } from './services/shopping';
 import { exportWeeklyPlanPdf } from './services/pdf';
 import {
@@ -102,8 +102,9 @@ export default function App() {
     setArchive((prev) => upsertPlans(prev, [plan]));
   }, [plan, planLoaded]);
 
-  const now = useMemo(() => new Date(), []);
-  const currentWeek = calculateCalendarWeek(now);
+  // Der Plan gilt immer für die kommende Woche (passend zur Anzeige "Nächste Woche"). Bei jedem
+  // Rendern frisch berechnet, damit eine über den Wochenwechsel offene App nicht veraltet.
+  const nextWeek = getNextIsoWeek(new Date());
 
   function handleRecipeAdd(recipe: Recipe) {
     setRecipes((prev) => [...prev, recipe]);
@@ -147,8 +148,8 @@ export default function App() {
     try {
       const recentRecipeIds = await getRecentRecipeIds(4);
       const newPlan = generateWeeklyPlan(recipes, {
-        calendarWeek: currentWeek,
-        year: now.getFullYear(),
+        calendarWeek: nextWeek.calendarWeek,
+        year: nextWeek.year,
         recentRecipeIds,
       });
       const { shoppingListMon, shoppingListFri } = buildShoppingLists(newPlan);
@@ -209,7 +210,7 @@ export default function App() {
           <section className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-base font-semibold text-slate-700">
-                {plan ? t.weekLabel(plan.calendarWeek, plan.year) : t.nextWeek(currentWeek + 1)}
+                {plan ? t.weekLabel(plan.calendarWeek, plan.year) : t.nextWeek(nextWeek.calendarWeek)}
               </h2>
               <div className="flex items-center gap-2">
                 <button
@@ -300,8 +301,8 @@ export default function App() {
             plan={plan}
             recipes={recipes}
             recentRecipeIds={recentRecipeIds}
-            calendarWeek={currentWeek}
-            year={now.getFullYear()}
+            calendarWeek={nextWeek.calendarWeek}
+            year={nextWeek.year}
             onPlanUpdate={setPlan}
             onRecipeAdd={handleRecipeAdd}
           />

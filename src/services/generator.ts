@@ -190,11 +190,25 @@ export function applyBeilageChange(plan: WeeklyPlan, dayOfWeek: DayOfWeek, beila
   };
 }
 
-export function calculateCalendarWeek(date: Date): number {
+/** ISO-Kalenderwoche samt ISO-Jahr (um den Jahreswechsel kann das vom Kalenderjahr abweichen). */
+export function getIsoWeek(date: Date): { calendarWeek: number; year: number } {
   const target = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
   const dayNumber = (target.getUTCDay() + 6) % 7;
-  target.setUTCDate(target.getUTCDate() - dayNumber + 3);
+  target.setUTCDate(target.getUTCDate() - dayNumber + 3); // Donnerstag dieser Woche
   const firstThursday = new Date(Date.UTC(target.getUTCFullYear(), 0, 4));
   const diff = target.getTime() - firstThursday.getTime();
-  return 1 + Math.round(diff / (7 * 24 * 60 * 60 * 1000));
+  return {
+    calendarWeek: 1 + Math.round(diff / (7 * 24 * 60 * 60 * 1000)),
+    year: target.getUTCFullYear(),
+  };
+}
+
+/** Die Woche, für die der nächste Speiseplan erstellt wird: die ISO-Woche nach dem Datum `date`. */
+export function getNextIsoWeek(date: Date): { calendarWeek: number; year: number } {
+  const next = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7);
+  return getIsoWeek(next);
+}
+
+export function calculateCalendarWeek(date: Date): number {
+  return getIsoWeek(date).calendarWeek;
 }
