@@ -12,6 +12,7 @@ class SpeiseplanDB extends Dexie {
   plans!: Table<WeeklyPlan, string>;
   recipes!: Table<Recipe, string>;
   chatConversations!: Table<ChatConversation, string>;
+  currentPlan!: Table<{ key: string; plan: WeeklyPlan }, string>;
 
   constructor() {
     super('speiseplan-db');
@@ -33,6 +34,14 @@ class SpeiseplanDB extends Dexie {
       recipes: 'id, course, proteinCategory, subCategory',
       chatConversations: 'id, updatedAt',
     });
+    // Der gerade bearbeitete Wochenplan (auch unfreigegeben) - bewusst getrennt von `plans`,
+    // damit Entwürfe nicht im Archiv auftauchen.
+    this.version(4).stores({
+      plans: 'id, year, calendarWeek, isFinalized, createdAt',
+      recipes: 'id, course, proteinCategory, subCategory',
+      chatConversations: 'id, updatedAt',
+      currentPlan: 'key',
+    });
 
     // Läuft nur einmal, wenn die Datenbank komplett neu (ohne Vorgängerversion) angelegt wird.
     this.on('populate', async (tx) => {
@@ -42,6 +51,16 @@ class SpeiseplanDB extends Dexie {
 }
 
 export const db = new SpeiseplanDB();
+
+const CURRENT_PLAN_KEY = 'current';
+
+export async function saveCurrentPlan(plan: WeeklyPlan): Promise<void> {
+  await db.currentPlan.put({ key: CURRENT_PLAN_KEY, plan });
+}
+
+export async function getCurrentPlan(): Promise<WeeklyPlan | undefined> {
+  return (await db.currentPlan.get(CURRENT_PLAN_KEY))?.plan;
+}
 
 export async function savePlan(plan: WeeklyPlan): Promise<void> {
   await db.plans.put(plan);

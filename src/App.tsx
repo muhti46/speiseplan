@@ -6,7 +6,15 @@ import { DayOfWeek, ShoppingItem, WeeklyPlan } from './types/menu';
 import { calculateCalendarWeek, generateWeeklyPlan, rerollDay } from './services/generator';
 import { buildShoppingLists } from './services/shopping';
 import { exportWeeklyPlanPdf } from './services/pdf';
-import { getAllPlans, getAllRecipes, getRecentRecipeIds, saveRecipe, savePlan } from './services/storage';
+import {
+  getAllPlans,
+  getAllRecipes,
+  getCurrentPlan,
+  getRecentRecipeIds,
+  saveCurrentPlan,
+  saveRecipe,
+  savePlan,
+} from './services/storage';
 import Tabs, { TabItem } from './components/Tabs';
 import DayMenuCard from './components/DayMenuCard';
 import CheckboxList from './components/CheckboxList';
@@ -26,6 +34,9 @@ export default function App() {
   const [recipes, setRecipes] = useState<Recipe[]>(recipesData as Recipe[]);
   const [recentRecipeIds, setRecentRecipeIds] = useState<string[]>([]);
   const [showAddRecipe, setShowAddRecipe] = useState(false);
+  // Erst nach dem Laden des gespeicherten Plans darf gespeichert werden, sonst würde der
+  // anfängliche leere State den gespeicherten Plan überschreiben.
+  const [planLoaded, setPlanLoaded] = useState(false);
 
   const TABS: TabItem[] = [
     { id: 'plan', label: t.tabs.plan, icon: CalendarDays },
@@ -46,7 +57,16 @@ export default function App() {
       if (stored.length > 0) setRecipes(stored);
     });
     getRecentRecipeIds(4).then(setRecentRecipeIds);
+    getCurrentPlan()
+      .then((stored) => {
+        if (stored) setPlan((prev) => prev ?? stored);
+      })
+      .finally(() => setPlanLoaded(true));
   }, []);
+
+  useEffect(() => {
+    if (planLoaded && plan) saveCurrentPlan(plan);
+  }, [plan, planLoaded]);
 
   const now = useMemo(() => new Date(), []);
   const currentWeek = calculateCalendarWeek(now);
