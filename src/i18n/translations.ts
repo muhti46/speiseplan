@@ -105,6 +105,9 @@ interface Translation {
   aiFillOffline: string;
   aiFillFailed: string;
   aiFillHint: string;
+  addBeilageTitle: string;
+  addBeilageNamePlaceholder: string;
+  beilageNew: string;
   archiveBack: string;
   archiveLoad: string;
   archiveLoadConfirm: string;
@@ -234,6 +237,9 @@ export const translations: Record<Lang, Translation> = {
     aiFillNoKey: 'Bitte zuerst im Chat-Tab den Gemini API-Key eingeben.',
     aiFillOffline: 'Für die KI wird eine Internetverbindung benötigt.',
     aiFillFailed: 'Die KI konnte kein Rezept erstellen.',
+    addBeilageTitle: 'Beilage hinzufügen',
+    addBeilageNamePlaceholder: 'z.B. Couscous',
+    beilageNew: 'Neue Beilage mit Rezept hinzufügen',
     archiveBack: 'Zurück zum Archiv',
     archiveLoad: 'Als aktuellen Plan öffnen',
     archiveLoadConfirm: 'Den aktuellen Wochenplan durch diesen Plan ersetzen?',
@@ -362,6 +368,9 @@ export const translations: Record<Lang, Translation> = {
     aiFillNoKey: 'Önce Sohbet sekmesinde Gemini API anahtarını gir.',
     aiFillOffline: 'Yapay zeka için internet bağlantısı gerekli.',
     aiFillFailed: 'Yapay zeka tarif oluşturamadı.',
+    addBeilageTitle: 'Garnitür ekle',
+    addBeilageNamePlaceholder: 'örn. Kuskus',
+    beilageNew: 'Tarifli yeni garnitür ekle',
     archiveBack: 'Arşive dön',
     archiveLoad: 'Güncel plan olarak aç',
     archiveLoadConfirm: 'Güncel haftalık plan bu planla değiştirilsin mi?',

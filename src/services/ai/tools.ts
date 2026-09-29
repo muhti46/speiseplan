@@ -103,6 +103,8 @@ export const chatToolDeclarations: FunctionDeclaration[] = [
 ];
 
 function findRecipe(recipes: Recipe[], course: Course, recipeId?: string, recipeName?: string): Recipe | undefined {
+  // Beilagen liegen im selben Pool (course hauptspeise), sind aber keine tauschbaren Gänge.
+  recipes = recipes.filter((r) => r.subCategory !== 'beilage');
   if (recipeId) return recipes.find((r) => r.id === recipeId && r.course === course);
   if (recipeName) {
     const needle = recipeName.trim().toLowerCase();

@@ -270,3 +270,22 @@ export const BEILAGE_DETAILS: Record<string, Recipe> = {
 export function getBeilageRecipe(label: string): Recipe | undefined {
   return BEILAGE_DETAILS[label];
 }
+
+/** Selbst angelegte Beilagen (im Rezept-Pool mit subCategory "beilage"). */
+export function userBeilagen(pool: Recipe[]): Recipe[] {
+  return pool.filter((r) => r.subCategory === 'beilage' && !BEILAGE_DETAILS[r.name]);
+}
+
+/** Alle wählbaren Beilagen-Namen: fest hinterlegte + selbst angelegte, alphabetisch. */
+export function allBeilageNames(pool: Recipe[]): string[] {
+  const names = new Set([...Object.keys(BEILAGE_DETAILS), ...userBeilagen(pool).map((r) => r.name)]);
+  return Array.from(names).sort((a, b) => a.localeCompare(b, 'de'));
+}
+
+/** Rezept zu einem Beilagen-Namen; ein selbst angelegtes gleichnamiges Rezept hat Vorrang. */
+export function findBeilageRecipe(label: string, pool: Recipe[]): Recipe | undefined {
+  return (
+    pool.find((r) => r.subCategory === 'beilage' && r.name.toLowerCase() === label.toLowerCase()) ??
+    getBeilageRecipe(label)
+  );
+}

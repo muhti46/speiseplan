@@ -35,6 +35,21 @@ const responseSchema: Schema = {
   required: ['prepTimeMinutes', 'cookTimeMinutes', 'instructions', 'ingredients'],
 };
 
+// Beilagen brauchen weder Protein-Kategorie noch Beilage/Unterkategorie.
+const { proteinCategory: _p, beilage: _b, subCategory: _s, ...beilageProperties } = responseSchema.properties ?? {};
+const beilageSchema: Schema = { ...responseSchema, properties: beilageProperties };
+
+function buildBeilagePrompt(name: string): string {
+  return `Erstelle ein Rezept für die Beilage "${name}" für die Großküche eines Kinderheims: als Beilage zu Hauptgerichten, 10 Portionen, Kinder und Jugendliche von 5 bis 17 Jahren, einfach und in höchstens ca. 45 Minuten machbar.
+
+Regeln:
+- Mengen in "amountPer10Pax" gelten für 10 Portionen. Einheit ausschließlich "g", "ml" oder "Stück" (z.B. Eier in Stück; Flüssigkeiten in ml; alles andere in g).
+- Zutatennamen und Zubereitungsschritte auf Deutsch. 3 bis 6 kurze, konkrete Schritte.
+- storeCategory je Zutat: gemuese = Obst und Gemüse, kuehlung = Fleisch/Fisch/Wurst, mopro = Milchprodukte/Eier/Käse, trocken = Trockensortiment/Konserven/Gewürze/Öl/Mehl/Reis/Nudeln, tk = Tiefkühlware.
+- Keine proteinCategory, keine subCategory und keine "beilage" angeben.
+- Ist der Name nicht deutsch (z.B. türkisch), erkenne die Beilage trotzdem und erstelle das passende Rezept.`;
+}
+
 function buildPrompt(name: string, course: Course): string {
   return `Erstelle ein Rezept für das Gericht "${name}" (Gang: ${COURSE_LABEL[course]}) für die Großküche eines Kinderheims: 10 Portionen, Kinder und Jugendliche von 5 bis 17 Jahren, alles zusammen in höchstens ca. 60 Minuten machbar.
 
@@ -52,12 +67,18 @@ Regeln:
  * (Zutaten, Schritte, Zeiten, Kategorie). Ergebnis ist ein Entwurf zum Prüfen,
  * wird hier NICHT gespeichert. Wirft bei API-/Formatfehlern einen Error.
  */
-export async function generateRecipeDraft(apiKey: string, name: string, course: Course): Promise<Recipe> {
+export async function generateRecipeDraft(
+  apiKey: string,
+  name: string,
+  course: Course,
+  kind: 'gericht' | 'beilage' = 'gericht',
+): Promise<Recipe> {
+  const isBeilage = kind === 'beilage';
   const client = createGeminiClient(apiKey);
   const response = await client.models.generateContent({
     model: GEMINI_MODEL,
-    contents: [{ role: 'user', parts: [{ text: buildPrompt(name.trim(), course) }] }],
-    config: { responseMimeType: 'application/json', responseSchema },
+    contents: [{ role: 'user', parts: [{ text: isBeilage ? buildBeilagePrompt(name.trim()) : buildPrompt(name.trim(), course) }] }],
+    config: { responseMimeType: 'application/json', responseSchema: isBeilage ? beilageSchema : responseSchema },
   });
 
   let raw: Record<string, unknown>;
@@ -68,14 +89,16 @@ export async function generateRecipeDraft(apiKey: string, name: string, course: 
   }
 
   // Gang bestimmt die erlaubten Felder, egal was das Modell zusätzlich liefert.
-  const normalized = {
-    ...raw,
-    name: name.trim(),
-    course,
-    subCategory: course === 'vorspeise' ? raw.subCategory : course === 'nachspeise' ? 'dessert' : undefined,
-    proteinCategory: course === 'hauptspeise' ? raw.proteinCategory : undefined,
-    beilage: course === 'hauptspeise' ? raw.beilage : undefined,
-  };
+  const normalized = isBeilage
+    ? { ...raw, name: name.trim(), course: 'hauptspeise', subCategory: 'beilage', proteinCategory: undefined, beilage: undefined }
+    : {
+        ...raw,
+        name: name.trim(),
+        course,
+        subCategory: course === 'vorspeise' ? raw.subCategory : course === 'nachspeise' ? 'dessert' : undefined,
+        proteinCategory: course === 'hauptspeise' ? raw.proteinCategory : undefined,
+        beilage: course === 'hauptspeise' ? raw.beilage : undefined,
+      };
   const result = coerceRecipe(normalized, 'manual');
   if (isCoercionError(result)) throw new Error(result.error);
   return result;

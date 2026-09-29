@@ -1,7 +1,6 @@
 import { Clock, Shuffle, Soup, UtensilsCrossed, IceCreamCone, Salad, Pencil } from 'lucide-react';
 import { DayMenu } from '../types/menu';
 import { Course, Recipe } from '../types/recipe';
-import { getBeilageRecipe } from '../data/beilagen';
 import { useLanguage } from '../i18n/LanguageContext';
 
 interface DayMenuCardProps {
@@ -11,14 +10,15 @@ interface DayMenuCardProps {
   /** `course` ist nur für die drei Gänge gesetzt (änderbar), nicht für die Beilage. */
   onOpenRecipe: (recipe: Recipe, course?: Course) => void;
   onChangeBeilage?: () => void;
+  /** Rezept zur gewählten Beilage (fest hinterlegt oder selbst angelegt), falls vorhanden. */
+  beilageRecipe?: Recipe;
 }
 
-export default function DayMenuCard({ day, onReroll, onOpenRecipe, onChangeBeilage }: DayMenuCardProps) {
+export default function DayMenuCard({ day, onReroll, onOpenRecipe, onChangeBeilage, beilageRecipe }: DayMenuCardProps) {
   const { t } = useLanguage();
   const proteinLabel = day.hauptspeise.proteinCategory
     ? t.proteinLabels[day.hauptspeise.proteinCategory]
     : undefined;
-  const beilageRecipe = getBeilageRecipe(day.beilage);
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">

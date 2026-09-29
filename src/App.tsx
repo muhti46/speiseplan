@@ -32,6 +32,7 @@ import CheckboxList from './components/CheckboxList';
 import RecipeDetailModal from './components/RecipeDetailModal';
 import RecipePickerModal from './components/RecipePickerModal';
 import BeilagePickerModal from './components/BeilagePickerModal';
+import { allBeilageNames, findBeilageRecipe } from './data/beilagen';
 import AddRecipeModal from './components/AddRecipeModal';
 import ChatPanel from './components/ChatPanel';
 import { useLanguage } from './i18n/LanguageContext';
@@ -48,6 +49,7 @@ export default function App() {
   const [showPicker, setShowPicker] = useState(false);
   const [showAddForSlot, setShowAddForSlot] = useState(false);
   const [beilageDay, setBeilageDay] = useState<DayOfWeek | null>(null);
+  const [showAddBeilage, setShowAddBeilage] = useState(false);
   const [viewingArchiveId, setViewingArchiveId] = useState<string | null>(null);
   const [recipes, setRecipes] = useState<Recipe[]>(recipesData as Recipe[]);
   const [recentRecipeIds, setRecentRecipeIds] = useState<string[]>([]);
@@ -125,6 +127,7 @@ export default function App() {
     setPlan(updated);
     if (updated.isFinalized) savePlan(updated);
     setBeilageDay(null);
+    setShowAddBeilage(false);
   }
 
   async function handleGenerate() {
@@ -235,6 +238,7 @@ export default function App() {
                   key={day.dayOfWeek}
                   day={day}
                   onReroll={() => handleReroll(day.dayOfWeek)}
+                  beilageRecipe={findBeilageRecipe(day.beilage, recipes)}
                   onChangeBeilage={() => setBeilageDay(day.dayOfWeek)}
                   onOpenRecipe={(recipe, course) =>
                     setSelected({ recipe, dayOfWeek: course ? day.dayOfWeek : undefined, course })
@@ -317,6 +321,7 @@ export default function App() {
                   <DayMenuCard
                     key={day.dayOfWeek}
                     day={day}
+                    beilageRecipe={findBeilageRecipe(day.beilage, recipes)}
                     onOpenRecipe={(recipe) => setSelected({ recipe })}
                   />
                 ))}
@@ -406,11 +411,24 @@ export default function App() {
         />
       )}
 
-      {beilageDay && plan && (
+      {beilageDay && plan && !showAddBeilage && (
         <BeilagePickerModal
           current={plan.days.find((d) => d.dayOfWeek === beilageDay)?.beilage ?? '—'}
+          beilagen={allBeilageNames(recipes)}
+          onCreateNew={() => setShowAddBeilage(true)}
           onSelect={handleAssignBeilage}
           onClose={() => setBeilageDay(null)}
+        />
+      )}
+
+      {beilageDay && plan && showAddBeilage && (
+        <AddRecipeModal
+          beilageMode
+          onSave={(recipe) => {
+            handleRecipeAdd(recipe);
+            handleAssignBeilage(recipe.name);
+          }}
+          onClose={() => setShowAddBeilage(false)}
         />
       )}
 
