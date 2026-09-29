@@ -88,6 +88,23 @@ interface Translation {
   addRecipeUnitPlaceholder: string;
   addRecipeSave: string;
   addRecipeCancel: string;
+  changeMeal: string;
+  pickMealTitle: string;
+  pickMealSearch: string;
+  pickMealNew: string;
+  pickMealEmpty: string;
+  pickMealCurrent: string;
+  noBeilage: string;
+  changeBeilage: string;
+  beilageLabel: string;
+  beilageCustomPlaceholder: string;
+  beilageCustomApply: string;
+  aiFill: string;
+  aiFilling: string;
+  aiFillNoKey: string;
+  aiFillOffline: string;
+  aiFillFailed: string;
+  aiFillHint: string;
 }
 
 export const translations: Record<Lang, Translation> = {
@@ -198,6 +215,23 @@ export const translations: Record<Lang, Translation> = {
     addRecipeUnitPlaceholder: 'Einheit',
     addRecipeSave: 'Speichern',
     addRecipeCancel: 'Abbrechen',
+    changeMeal: 'Ändern',
+    pickMealTitle: 'Gericht auswählen',
+    pickMealSearch: 'Suchen…',
+    pickMealNew: 'Neues Gericht hinzufügen',
+    pickMealEmpty: 'Nichts gefunden.',
+    pickMealCurrent: 'Aktuell gewählt',
+    noBeilage: 'Keine Beilage',
+    changeBeilage: 'Beilage ändern',
+    beilageLabel: 'Beilage',
+    beilageCustomPlaceholder: 'Eigene Beilage eingeben',
+    beilageCustomApply: 'Übernehmen',
+    aiFill: 'Mit KI ausfüllen',
+    aiFilling: 'KI erstellt Rezept…',
+    aiFillNoKey: 'Bitte zuerst im Chat-Tab den Gemini API-Key eingeben.',
+    aiFillOffline: 'Für die KI wird eine Internetverbindung benötigt.',
+    aiFillFailed: 'Die KI konnte kein Rezept erstellen.',
+    aiFillHint: 'Name eingeben, dann füllt die KI Zutaten, Schritte und Zeiten aus - danach prüfen und speichern.',
   },
   tr: {
     langName: 'Türkçe',
@@ -306,5 +340,22 @@ export const translations: Record<Lang, Translation> = {
     addRecipeUnitPlaceholder: 'Birim',
     addRecipeSave: 'Kaydet',
     addRecipeCancel: 'Vazgeç',
+    changeMeal: 'Değiştir',
+    pickMealTitle: 'Yemek seç',
+    pickMealSearch: 'Ara…',
+    pickMealNew: 'Yeni yemek ekle',
+    pickMealEmpty: 'Sonuç bulunamadı.',
+    pickMealCurrent: 'Şu an seçili',
+    noBeilage: 'Garnitür yok',
+    changeBeilage: 'Garnitürü değiştir',
+    beilageLabel: 'Garnitür',
+    beilageCustomPlaceholder: 'Kendi garnitürünü yaz',
+    beilageCustomApply: 'Uygula',
+    aiFill: 'Yapay zeka ile doldur',
+    aiFilling: 'Yapay zeka tarifi hazırlıyor…',
+    aiFillNoKey: 'Önce Sohbet sekmesinde Gemini API anahtarını gir.',
+    aiFillOffline: 'Yapay zeka için internet bağlantısı gerekli.',
+    aiFillFailed: 'Yapay zeka tarif oluşturamadı.',
+    aiFillHint: 'Adı yaz, yapay zeka malzemeleri, adımları ve süreleri doldursun - sonra kontrol edip kaydet.',
   },
 };

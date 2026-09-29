@@ -1,12 +1,17 @@
 import { FormEvent, useEffect, useState } from 'react';
-import { Plus, Trash2, X } from 'lucide-react';
+import { Loader2, Plus, Sparkles, Trash2, X } from 'lucide-react';
 import { Course, ProteinCategory, Recipe, StoreCategory, SubCategory } from '../types/recipe';
 import { coerceRecipe, isCoercionError } from '../services/ai/recipeCoercion';
+import { generateRecipeDraft } from '../services/ai/recipeDraft';
+import { getApiKey } from '../services/ai/apiKey';
+import { describeChatError } from '../services/ai/chat';
 import { useLanguage } from '../i18n/LanguageContext';
 
 interface AddRecipeModalProps {
   onSave: (recipe: Recipe) => void;
   onClose: () => void;
+  /** Wenn gesetzt, ist der Gang vorgegeben und nicht änderbar (Neues Gericht für einen Wochenplan-Slot). */
+  fixedCourse?: Course;
 }
 
 interface IngredientRow {
@@ -24,10 +29,10 @@ function emptyIngredient(): IngredientRow {
   return { item: '', amountPer10Pax: '', unit: '', storeCategory: 'gemuese' };
 }
 
-export default function AddRecipeModal({ onSave, onClose }: AddRecipeModalProps) {
+export default function AddRecipeModal({ onSave, onClose, fixedCourse }: AddRecipeModalProps) {
   const { t } = useLanguage();
   const [name, setName] = useState('');
-  const [course, setCourse] = useState<Course>('hauptspeise');
+  const [course, setCourse] = useState<Course>(fixedCourse ?? 'hauptspeise');
   const [subCategory, setSubCategory] = useState<SubCategory>('suppe');
   const [proteinCategory, setProteinCategory] = useState<ProteinCategory>('vegetarisch');
   const [beilage, setBeilage] = useState('');
@@ -36,6 +41,8 @@ export default function AddRecipeModal({ onSave, onClose }: AddRecipeModalProps)
   const [instructions, setInstructions] = useState('');
   const [ingredients, setIngredients] = useState<IngredientRow[]>([emptyIngredient()]);
   const [error, setError] = useState<string | null>(null);
+  const [isFilling, setIsFilling] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -55,6 +62,39 @@ export default function AddRecipeModal({ onSave, onClose }: AddRecipeModalProps)
 
   function removeIngredientRow(index: number) {
     setIngredients((prev) => (prev.length > 1 ? prev.filter((_, i) => i !== index) : prev));
+  }
+
+  async function handleAiFill() {
+    setAiError(null);
+    const apiKey = getApiKey();
+    if (!apiKey) return setAiError(t.aiFillNoKey);
+    if (!navigator.onLine) return setAiError(t.aiFillOffline);
+
+    setIsFilling(true);
+    try {
+      const draft = await generateRecipeDraft(apiKey, name, course);
+      if (draft.subCategory) setSubCategory(draft.subCategory);
+      if (draft.proteinCategory) setProteinCategory(draft.proteinCategory);
+      setBeilage(draft.beilage ?? '');
+      setPrepTimeMinutes(String(draft.prepTimeMinutes));
+      setCookTimeMinutes(String(draft.cookTimeMinutes));
+      setInstructions(draft.instructions.join('\n'));
+      setIngredients(
+        draft.ingredients.map((i) => ({
+          item: i.item,
+          amountPer10Pax: String(i.amountPer10Pax),
+          unit: i.unit,
+          storeCategory: i.storeCategory,
+        })),
+      );
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('KI-Rezeptentwurf fehlgeschlagen', err);
+      const { message } = describeChatError(err);
+      setAiError(`${t.aiFillFailed} (${message})`);
+    } finally {
+      setIsFilling(false);
+    }
   }
 
   function handleSubmit(event: FormEvent) {
@@ -119,6 +159,23 @@ export default function AddRecipeModal({ onSave, onClose }: AddRecipeModalProps)
         <form onSubmit={handleSubmit} className="flex-1 space-y-4 overflow-y-auto p-4">
           <div>
             <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">
+              {t.addRecipeCourse}
+            </label>
+            <select
+              value={course}
+              onChange={(e) => setCourse(e.target.value as Course)}
+              disabled={fixedCourse !== undefined}
+              className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-brand-600 focus:outline-none"
+            >
+              {COURSES.map((c) => (
+                <option key={c} value={c}>
+                  {t.courseLabels[c]}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">
               {t.addRecipeName}
             </label>
             <input
@@ -132,20 +189,17 @@ export default function AddRecipeModal({ onSave, onClose }: AddRecipeModalProps)
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">
-              {t.addRecipeCourse}
-            </label>
-            <select
-              value={course}
-              onChange={(e) => setCourse(e.target.value as Course)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-brand-600 focus:outline-none"
+            <button
+              type="button"
+              onClick={handleAiFill}
+              disabled={isFilling || !name.trim()}
+              className="flex w-full items-center justify-center gap-2 rounded-full border border-brand-600 px-4 py-2 text-sm font-medium text-brand-700 active:scale-95 disabled:opacity-50"
             >
-              {COURSES.map((c) => (
-                <option key={c} value={c}>
-                  {t.courseLabels[c]}
-                </option>
-              ))}
-            </select>
+              {isFilling ? <Loader2 size={16} className="animate-spin" aria-hidden /> : <Sparkles size={16} />}
+              {isFilling ? t.aiFilling : t.aiFill}
+            </button>
+            <p className="mt-1.5 text-xs text-slate-400">{t.aiFillHint}</p>
+            {aiError && <p className="mt-1.5 text-sm text-red-600">{aiError}</p>}
           </div>
 
           {course === 'vorspeise' && (
