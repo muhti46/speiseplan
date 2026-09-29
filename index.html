@@ -14,6 +14,32 @@
     <meta name="apple-mobile-web-app-title" content="Speiseplan" />
     <meta name="mobile-web-app-capable" content="yes" />
     <title>Kinderheim Speiseplan</title>
+    <script>
+      // Chromes "Desktop-Website"-Modus ignoriert den viewport-Meta-Tag und rendert mit
+      // ~980px Breite (winzig, Desktop-Layout) - auch in installierten Apps. Erkennen
+      // (Touch-Gerät, Layout viel breiter als der Bildschirm) und per Zoom auf die echte
+      // Bildschirmbreite zurückskalieren; html.force-mobile schaltet `sm:`-Styles ab.
+      (function () {
+        function fit() {
+          var d = document.documentElement;
+          var sw = window.screen ? window.screen.width : 0;
+          d.style.zoom = '';
+          var iw = window.innerWidth;
+          if (navigator.maxTouchPoints > 0 && sw > 0 && sw < 700 && iw > sw * 1.3) {
+            var z = iw / sw;
+            d.classList.add('force-mobile');
+            d.style.zoom = String(z);
+            // vh-Einheiten würden mitgezoomt - daher die sichtbare Höhe explizit setzen.
+            d.style.setProperty('--app-height', window.innerHeight / z + 'px');
+          } else {
+            d.classList.remove('force-mobile');
+            d.style.removeProperty('--app-height');
+          }
+        }
+        fit();
+        window.addEventListener('resize', fit);
+      })();
+    </script>
   </head>
   <body class="bg-slate-50">
     <div id="root"></div>
