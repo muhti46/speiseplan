@@ -19,19 +19,26 @@ function trimNumber(value: number, digits: number): string {
   return value.toFixed(digits).replace(/\.?0+$/, '').replace('.', ',');
 }
 
+/** Auf ein Vielfaches von `step` runden, mindestens `step` (kleine Mengen nie auf 0). */
+function roundTo(value: number, step: number): number {
+  return Math.max(step, Math.round(value / step) * step);
+}
+
+/** g/ml einkaufsgerecht runden: <100 auf 5, <1000 auf 10, ab 1000 auf 0,1 kg/l. */
+function formatMetric(amount: number, small: 'g' | 'ml', big: 'kg' | 'l'): string {
+  const rounded = amount < 100 ? roundTo(amount, 5) : amount < 1000 ? roundTo(amount, 10) : roundTo(amount, 100);
+  return rounded >= 1000 ? `${trimNumber(rounded / 1000, 1)} ${big}` : `${rounded} ${small}`;
+}
+
 /**
  * Menge einkaufs-/kochgerecht anzeigen: Stück immer aufgerundet auf ganze Stücke (4,4 Eier -> 5),
- * g/ml ab 1000 als kg/l (1,65 kg), sonst auf ganze g/ml gerundet.
+ * g/ml gerundet (1,98 kg -> 2 kg, 1,21 kg -> 1,2 kg), ab 1000 als kg/l.
  */
 export function formatAmount(amount: number, unit: string): string {
   const u = unit.trim();
   if (PIECE_UNIT.test(u)) return `${Math.ceil(amount - 1e-6)} Stück`;
-  if (u === 'g') {
-    return amount >= 1000 ? `${trimNumber(amount / 1000, 2)} kg` : `${Math.round(amount)} g`;
-  }
-  if (u === 'ml') {
-    return amount >= 1000 ? `${trimNumber(amount / 1000, 2)} l` : `${Math.round(amount)} ml`;
-  }
+  if (u === 'g') return formatMetric(amount, 'g', 'kg');
+  if (u === 'ml') return formatMetric(amount, 'ml', 'l');
   return `${trimNumber(Math.round(amount * 10) / 10, 1)} ${u}`;
 }
 

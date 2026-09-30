@@ -8,10 +8,14 @@ describe('formatAmount', () => {
     expect(formatAmount(4, 'Stück')).toBe('4 Stück');
     expect(formatAmount(4.0000001, 'Stk.')).toBe('4 Stück');
   });
-  it('converts g/ml to kg/l with comma and rounds small amounts', () => {
-    expect(formatAmount(1650, 'g')).toBe('1,65 kg');
-    expect(formatAmount(2000, 'g')).toBe('2 kg');
-    expect(formatAmount(333.33, 'g')).toBe('333 g');
+  it('rounds g/ml to shopping-friendly amounts and converts to kg/l', () => {
+    expect(formatAmount(1980, 'g')).toBe('2 kg');
+    expect(formatAmount(1210, 'g')).toBe('1,2 kg');
+    expect(formatAmount(1320, 'g')).toBe('1,3 kg');
+    expect(formatAmount(999, 'g')).toBe('1 kg');
+    expect(formatAmount(333.33, 'g')).toBe('330 g');
+    expect(formatAmount(37, 'g')).toBe('35 g');
+    expect(formatAmount(1, 'g')).toBe('5 g');
     expect(formatAmount(1500, 'ml')).toBe('1,5 l');
   });
   it('scales recipe ingredients', () => {
