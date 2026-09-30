@@ -5,9 +5,10 @@ import { useLanguage } from '../i18n/LanguageContext';
 interface ChatInputProps {
   disabled: boolean;
   onSend: (text: string) => void;
+  placeholder?: string;
 }
 
-export default function ChatInput({ disabled, onSend }: ChatInputProps) {
+export default function ChatInput({ disabled, onSend, placeholder }: ChatInputProps) {
   const { t } = useLanguage();
   const [value, setValue] = useState('');
 
@@ -31,7 +32,7 @@ export default function ChatInput({ disabled, onSend }: ChatInputProps) {
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder={t.chatPlaceholder}
+        placeholder={placeholder ?? t.chatPlaceholder}
         rows={1}
         disabled={disabled}
         className="flex-1 resize-none rounded-2xl border border-slate-300 px-3 py-2 text-sm focus:border-brand-600 focus:outline-none disabled:opacity-60"

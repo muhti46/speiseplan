@@ -8,6 +8,7 @@ import { getCategoryLabel } from '../services/labels';
 import { DEFAULT_PORTIONS } from '../services/shopping';
 import { formatIngredientAmount } from '../services/format';
 import { resizeImageFile } from '../services/image';
+import RecipeChat from './RecipeChat';
 import { useLanguage } from '../i18n/LanguageContext';
 
 interface RecipeDetailModalProps {
@@ -351,6 +352,8 @@ export default function RecipeDetailModal({
             )}
             {detailError && <p className="mt-2 text-sm text-red-600">{detailError}</p>}
           </section>
+
+          <RecipeChat recipe={recipe} detail={detail} />
         </div>
       </div>
     </div>
