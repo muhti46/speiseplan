@@ -1,6 +1,6 @@
 import Dexie, { Table } from 'dexie';
 import { WeeklyPlan } from '../types/menu';
-import { Recipe, RecipeDetail } from '../types/recipe';
+import { Recipe, RecipeDetail, RecipeTranslation } from '../types/recipe';
 import { ChatConversation, ChatMessage } from '../types/ai';
 import recipesData from '../data/recipes.json';
 
@@ -21,6 +21,7 @@ class SpeiseplanDB extends Dexie {
   chatConversations!: Table<ChatConversation, string>;
   currentPlan!: Table<{ key: string; plan: WeeklyPlan }, string>;
   recipeDetails!: Table<RecipeDetail, string>;
+  recipeTranslations!: Table<RecipeTranslation, string>;
   recipeChats!: Table<RecipeChat, string>;
   recipeImages!: Table<{ recipeId: string; dataUrl: string }, string>;
 
@@ -79,6 +80,17 @@ class SpeiseplanDB extends Dexie {
       recipeImages: 'recipeId',
       recipeChats: 'recipeId',
     });
+    // Übersetzte Kurz-Schritte je Rezept und Sprache.
+    this.version(8).stores({
+      plans: 'id, year, calendarWeek, isFinalized, createdAt',
+      recipes: 'id, course, proteinCategory, subCategory',
+      chatConversations: 'id, updatedAt',
+      currentPlan: 'key',
+      recipeDetails: 'key, recipeId',
+      recipeImages: 'recipeId',
+      recipeChats: 'recipeId',
+      recipeTranslations: 'key, recipeId',
+    });
 
     // Läuft nur einmal, wenn die Datenbank komplett neu (ohne Vorgängerversion) angelegt wird.
     this.on('populate', async (tx) => {
@@ -88,6 +100,18 @@ class SpeiseplanDB extends Dexie {
 }
 
 export const db = new SpeiseplanDB();
+
+export async function saveRecipeTranslation(translation: RecipeTranslation): Promise<void> {
+  await db.recipeTranslations.put(translation);
+}
+
+export async function getAllRecipeTranslations(): Promise<RecipeTranslation[]> {
+  return db.recipeTranslations.toArray();
+}
+
+export async function deleteRecipeTranslationsFor(recipeId: string): Promise<void> {
+  await db.recipeTranslations.where('recipeId').equals(recipeId).delete();
+}
 
 export async function saveRecipeChat(chat: RecipeChat): Promise<void> {
   await db.recipeChats.put(chat);
