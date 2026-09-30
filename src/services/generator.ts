@@ -243,3 +243,12 @@ export function replaceRecipeInPlan(plan: WeeklyPlan, recipe: Recipe): WeeklyPla
   });
   return { ...plan, days };
 }
+
+/**
+ * Ein Wochenplan ist änderbar, solange seine Woche die aktuelle oder eine kommende ist.
+ * Sobald die Woche vorbei ist (ab der Folgewoche), ist er gesperrt.
+ */
+export function isPlanEditable(plan: Pick<WeeklyPlan, 'calendarWeek' | 'year'>, today: Date = new Date()): boolean {
+  const current = getIsoWeek(today);
+  return plan.year * 100 + plan.calendarWeek >= current.year * 100 + current.calendarWeek;
+}

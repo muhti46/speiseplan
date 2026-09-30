@@ -128,6 +128,7 @@ interface Translation {
   archiveBack: string;
   archiveLoad: string;
   archiveLoadConfirm: string;
+  planLocked: string;
 }
 
 export const translations: Record<Lang, Translation> = {
@@ -276,8 +277,9 @@ export const translations: Record<Lang, Translation> = {
     detailFailed: 'Die KI konnte die Anleitung nicht erstellen.',
     detailMinutes: (m) => `ca. ${m} Min.`,
     archiveBack: 'Zurück zum Archiv',
-    archiveLoad: 'Als aktuellen Plan öffnen',
+    archiveLoad: 'Plan bearbeiten',
     archiveLoadConfirm: 'Den aktuellen Wochenplan durch diesen Plan ersetzen?',
+    planLocked: 'Diese Woche ist vorbei – der Plan kann nicht mehr geändert werden.',
     aiFillHint: 'Name eingeben, dann füllt die KI Zutaten, Schritte und Zeiten aus - danach prüfen und speichern.',
   },
   tr: {
@@ -425,8 +427,9 @@ export const translations: Record<Lang, Translation> = {
     detailFailed: 'Yapay zeka ayrıntılı tarifi oluşturamadı.',
     detailMinutes: (m) => `yaklaşık ${m} dk`,
     archiveBack: 'Arşive dön',
-    archiveLoad: 'Güncel plan olarak aç',
+    archiveLoad: 'Planı düzenle',
     archiveLoadConfirm: 'Güncel haftalık plan bu planla değiştirilsin mi?',
+    planLocked: 'Bu hafta geçti – plan artık değiştirilemez.',
     aiFillHint: 'Adı yaz, yapay zeka malzemeleri, adımları ve süreleri doldursun - sonra kontrol edip kaydet.',
   },
 };

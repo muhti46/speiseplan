@@ -10,12 +10,13 @@ import {
   Plus,
   ChevronRight,
   ArrowLeft,
+  Lock,
 } from 'lucide-react';
 import recipesData from './data/recipes.json';
 import { Course, Recipe, RecipeDetail } from './types/recipe';
 import { recipeDetailKey } from './services/ai/recipeDetail';
 import { DayOfWeek, ShoppingItem, WeeklyPlan } from './types/menu';
-import { applyBeilageChange, applyMealSwap, generateWeeklyPlan, getNextIsoWeek, replaceRecipeInPlan, rerollDay } from './services/generator';
+import { applyBeilageChange, applyMealSwap, generateWeeklyPlan, getNextIsoWeek, isPlanEditable, replaceRecipeInPlan, rerollDay } from './services/generator';
 import { formatWeekRange } from './services/format';
 import { buildShoppingLists, preserveChecked } from './services/shopping';
 import { exportWeeklyPlanPdf } from './services/pdf';
@@ -51,7 +52,9 @@ import { LANGUAGES, Lang } from './i18n/translations';
 function upsertPlans(existing: WeeklyPlan[], incoming: WeeklyPlan[]): WeeklyPlan[] {
   const byId = new Map(existing.map((p) => [p.id, p]));
   incoming.forEach((p) => byId.set(p.id, p));
-  return Array.from(byId.values()).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  return Array.from(byId.values()).sort(
+    (a, b) => b.year * 100 + b.calendarWeek - (a.year * 100 + a.calendarWeek) || b.createdAt.localeCompare(a.createdAt),
+  );
 }
 
 export default function App() {
@@ -119,6 +122,7 @@ export default function App() {
   // Der Plan gilt immer für die kommende Woche (passend zur Anzeige "Nächste Woche"). Bei jedem
   // Rendern frisch berechnet, damit eine über den Wochenwechsel offene App nicht veraltet.
   const nextWeek = getNextIsoWeek(new Date());
+  const planEditable = plan ? isPlanEditable(plan) : false;
 
   function handleDetailCreated(detail: RecipeDetail) {
     setDetails((prev) => ({ ...prev, [detail.key]: detail }));
@@ -135,7 +139,7 @@ export default function App() {
     const old = recipes.find((r) => r.id === recipe.id);
     setRecipes((prev) => prev.map((r) => (r.id === recipe.id ? recipe : r)));
     saveRecipe(recipe);
-    if (plan) {
+    if (plan && planEditable) {
       const replaced = replaceRecipeInPlan(plan, recipe);
       if (replaced !== plan) {
         const lists = buildShoppingLists(replaced);
@@ -179,7 +183,7 @@ export default function App() {
 
   /** Ersetzt den geöffneten Gang (Vorspeise/Hauptspeise/Nachspeise) des Tages manuell durch `recipe`. */
   function handleAssignMeal(recipe: Recipe) {
-    if (!plan || !selected?.dayOfWeek || !selected.course) return;
+    if (!plan || !planEditable || !selected?.dayOfWeek || !selected.course) return;
     const swapped = applyMealSwap(plan, selected.dayOfWeek, selected.course, recipe);
     const lists = buildShoppingLists(swapped);
     const updated: WeeklyPlan = {
@@ -195,14 +199,14 @@ export default function App() {
 
   /** Macht einen archivierten Plan zum aktuellen Plan (ersetzt den bisherigen). */
   function handleLoadArchived(archived: WeeklyPlan) {
-    if (plan && plan.id !== archived.id && !window.confirm(t.archiveLoadConfirm)) return;
+    if (!isPlanEditable(archived)) return;
     setPlan(archived);
     setViewingArchiveId(null);
     setActiveTab('plan');
   }
 
   function handleAssignBeilage(beilage: string) {
-    if (!plan || !beilageDay) return;
+    if (!plan || !planEditable || !beilageDay) return;
     const updated = applyBeilageChange(plan, beilageDay, beilage);
     setPlan(updated);
     setBeilageDay(null);
@@ -226,14 +230,14 @@ export default function App() {
   }
 
   function handleReroll(dayOfWeek: DayOfWeek) {
-    if (!plan) return;
+    if (!plan || !planEditable) return;
     const updated = rerollDay(recipes, plan, dayOfWeek);
     const { shoppingListMon, shoppingListFri } = buildShoppingLists(updated);
     setPlan({ ...updated, shoppingListMon, shoppingListFri });
   }
 
   function handleFinalize() {
-    if (!plan) return;
+    if (!plan || !planEditable) return;
     setPlan({ ...plan, isFinalized: true });
   }
 
@@ -311,21 +315,28 @@ export default function App() {
                 <DayMenuCard
                   key={day.dayOfWeek}
                   day={day}
-                  onReroll={() => handleReroll(day.dayOfWeek)}
+                  onReroll={planEditable ? () => handleReroll(day.dayOfWeek) : undefined}
                   beilageRecipe={findBeilageRecipe(day.beilage, recipes)}
-                  onChangeBeilage={() => setBeilageDay(day.dayOfWeek)}
+                  onChangeBeilage={planEditable ? () => setBeilageDay(day.dayOfWeek) : undefined}
                   onOpenRecipe={(recipe, course) =>
-                    setSelected({ recipe, dayOfWeek: course ? day.dayOfWeek : undefined, course })
+                    setSelected({ recipe, dayOfWeek: course && planEditable ? day.dayOfWeek : undefined, course: planEditable ? course : undefined })
                   }
                 />
               ))}
+
+            {plan && !planEditable && (
+              <p className="flex items-center gap-2 rounded-xl bg-slate-100 px-3 py-2 text-sm text-slate-600">
+                <Lock size={14} className="shrink-0" />
+                {t.planLocked}
+              </p>
+            )}
 
             {plan && (
               <div className="flex gap-3 pt-2">
                 <button
                   type="button"
                   onClick={handleFinalize}
-                  disabled={plan.isFinalized}
+                  disabled={plan.isFinalized || !planEditable}
                   className="flex-1 rounded-full border border-brand-700 px-4 py-2 text-sm font-medium text-brand-700 disabled:opacity-50"
                 >
                   {plan.isFinalized ? t.finalized : t.finalize}
@@ -365,7 +376,7 @@ export default function App() {
 
         {activeTab === 'chat' && (
           <ChatPanel
-            plan={plan}
+            plan={planEditable ? plan : null}
             recipes={recipes}
             recentRecipeIds={recentRecipeIds}
             calendarWeek={nextWeek.calendarWeek}
@@ -403,13 +414,20 @@ export default function App() {
                   />
                 ))}
                 <div className="flex gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => handleLoadArchived(viewed)}
-                    className="flex-1 rounded-full border border-brand-700 px-4 py-2 text-sm font-medium text-brand-700 active:scale-95"
-                  >
-                    {t.archiveLoad}
-                  </button>
+                  {isPlanEditable(viewed) ? (
+                    <button
+                      type="button"
+                      onClick={() => handleLoadArchived(viewed)}
+                      className="flex-1 rounded-full border border-brand-700 px-4 py-2 text-sm font-medium text-brand-700 active:scale-95"
+                    >
+                      {t.archiveLoad}
+                    </button>
+                  ) : (
+                    <p className="flex flex-1 items-center gap-2 text-xs text-slate-500">
+                      <Lock size={14} className="shrink-0" />
+                      {t.planLocked}
+                    </p>
+                  )}
                   <button
                     type="button"
                     onClick={() => exportWeeklyPlanPdf(viewed)}
@@ -436,6 +454,7 @@ export default function App() {
                     >
                       <span className="flex items-center gap-2">
                         <span className="font-medium text-slate-700">{t.weekLabel(p.calendarWeek, p.year)}</span>
+                        {!isPlanEditable(p) && <Lock size={12} className="text-slate-400" aria-hidden />}
                         <span
                           className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                             p.isFinalized ? 'bg-brand-100 text-brand-800' : 'bg-slate-100 text-slate-500'

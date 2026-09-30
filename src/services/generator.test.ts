@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyBeilageChange, applyMealSwap, generateWeeklyPlan, getIsoWeek, getNextIsoWeek, getWeekRange, replaceRecipeInPlan } from './generator';
+import { applyBeilageChange, applyMealSwap, generateWeeklyPlan, getIsoWeek, getNextIsoWeek, getWeekRange, replaceRecipeInPlan, isPlanEditable } from './generator';
 import { Recipe } from '../types/recipe';
 import recipesData from '../data/recipes.json';
 
@@ -111,5 +111,20 @@ describe('replaceRecipeInPlan', () => {
     const plan = applyBeilageChange(makePlan(), makePlan().days[0].dayOfWeek, 'Kartoffeln');
     const updated = replaceRecipeInPlan(plan, { ...plan.days[0].hauptspeise, beilage: 'Reis2' });
     expect(updated.days[0].beilage).toBe('Kartoffeln');
+  });
+});
+
+describe('isPlanEditable', () => {
+  const today = new Date(2026, 9, 1); // Donnerstag in KW 40
+  it('allows the current and following weeks, locks past weeks', () => {
+    expect(isPlanEditable({ calendarWeek: 40, year: 2026 }, today)).toBe(true);
+    expect(isPlanEditable({ calendarWeek: 41, year: 2026 }, today)).toBe(true);
+    expect(isPlanEditable({ calendarWeek: 39, year: 2026 }, today)).toBe(false);
+    expect(isPlanEditable({ calendarWeek: 52, year: 2025 }, today)).toBe(false);
+    expect(isPlanEditable({ calendarWeek: 1, year: 2027 }, today)).toBe(true);
+  });
+  it('locks a week once it is over (Monday of the following week)', () => {
+    expect(isPlanEditable({ calendarWeek: 40, year: 2026 }, new Date(2026, 9, 4))).toBe(true); // Sonntag
+    expect(isPlanEditable({ calendarWeek: 40, year: 2026 }, new Date(2026, 9, 5))).toBe(false); // Montag KW 41
   });
 });
