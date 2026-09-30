@@ -1,4 +1,4 @@
-import { Clock, Shuffle, Soup, UtensilsCrossed, IceCreamCone, Salad, Pencil } from 'lucide-react';
+import { Shuffle, Soup, UtensilsCrossed, IceCreamCone, Salad, Pencil } from 'lucide-react';
 import { DayMenu, DayOfWeek } from '../types/menu';
 import { Course, Recipe } from '../types/recipe';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -67,10 +67,6 @@ export default function DayMenuCard({ day, onReroll, onOpenRecipe, onChangeBeila
       <div className="mb-3 flex items-center justify-between">
         <div>
           <h3 className={`text-lg font-semibold ${theme.title}`}>{t.dayLabels[day.dayOfWeek]}</h3>
-          <p className="flex items-center gap-1 text-xs text-slate-500">
-            <Clock size={14} />
-            {t.startServe(day.prepStartTime, day.targetServeTime)}
-          </p>
         </div>
         {proteinLabel && (
           <span className={`rounded-full px-3 py-1 text-xs font-medium ${theme.badge}`}>
