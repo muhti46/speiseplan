@@ -65,6 +65,10 @@ export async function saveRecipeDetail(detail: RecipeDetail): Promise<void> {
   await db.recipeDetails.put(detail);
 }
 
+export async function deleteRecipeDetailsFor(recipeId: string): Promise<void> {
+  await db.recipeDetails.where('recipeId').equals(recipeId).delete();
+}
+
 export async function getAllRecipeDetails(): Promise<RecipeDetail[]> {
   return db.recipeDetails.toArray();
 }

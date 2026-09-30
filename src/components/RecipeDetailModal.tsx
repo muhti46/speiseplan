@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { X, Clock, ChefHat, Flame, Users, Sparkles, ArrowLeftRight, Lightbulb, Loader2, RefreshCw } from 'lucide-react';
+import { X, Clock, ChefHat, Flame, Users, Sparkles, ArrowLeftRight, Lightbulb, Loader2, RefreshCw, Pencil, Trash2 } from 'lucide-react';
 import { Recipe, RecipeDetail } from '../types/recipe';
 import { generateRecipeDetail } from '../services/ai/recipeDetail';
 import { getApiKey } from '../services/ai/apiKey';
@@ -14,6 +14,10 @@ interface RecipeDetailModalProps {
   onClose: () => void;
   /** Wenn gesetzt, erscheint neben dem Namen ein "Ändern"-Button (nur für Gänge im Wochenplan). */
   onChange?: () => void;
+  /** Rezept bearbeiten (Gang, Kategorie, Zutaten, Zubereitung). */
+  onEdit?: () => void;
+  /** Rezept aus dem Pool löschen (nur für selbst angelegte/KI-Rezepte). */
+  onDelete?: () => void;
   /** Bereits gespeicherte ausführliche Anleitung (in der aktuellen Sprache), falls vorhanden. */
   detail?: RecipeDetail;
   /** Wird mit einer neu erzeugten ausführlichen Anleitung aufgerufen; der Aufrufer speichert sie. */
@@ -24,6 +28,8 @@ export default function RecipeDetailModal({
   recipe,
   onClose,
   onChange,
+  onEdit,
+  onDelete,
   detail,
   onDetailCreated,
 }: RecipeDetailModalProps) {
@@ -99,6 +105,30 @@ export default function RecipeDetailModal({
                 </button>
               )}
             </div>
+            {(onEdit || onDelete) && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {onEdit && (
+                  <button
+                    type="button"
+                    onClick={onEdit}
+                    className="inline-flex items-center gap-1 rounded-full border border-slate-300 px-2.5 py-1 text-xs font-medium text-slate-600 active:scale-95"
+                  >
+                    <Pencil size={12} />
+                    {t.editRecipe}
+                  </button>
+                )}
+                {onDelete && (
+                  <button
+                    type="button"
+                    onClick={onDelete}
+                    className="inline-flex items-center gap-1 rounded-full border border-red-200 px-2.5 py-1 text-xs font-medium text-red-600 active:scale-95"
+                  >
+                    <Trash2 size={12} />
+                    {t.deleteRecipe}
+                  </button>
+                )}
+              </div>
+            )}
           </div>
           <button
             type="button"

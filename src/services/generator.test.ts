@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyBeilageChange, applyMealSwap, generateWeeklyPlan, getIsoWeek, getNextIsoWeek, getWeekRange } from './generator';
+import { applyBeilageChange, applyMealSwap, generateWeeklyPlan, getIsoWeek, getNextIsoWeek, getWeekRange, replaceRecipeInPlan } from './generator';
 import { Recipe } from '../types/recipe';
 import recipesData from '../data/recipes.json';
 
@@ -92,5 +92,24 @@ describe('getWeekRange', () => {
     // KW 1 / 2026 beginnt am 29.12.2025
     expect(getWeekRange(1, 2026).start.getDate()).toBe(29);
     expect(getWeekRange(1, 2026).start.getFullYear()).toBe(2025);
+  });
+});
+
+describe('replaceRecipeInPlan', () => {
+  it('replaces the edited recipe in matching slots only', () => {
+    const plan = makePlan();
+    const target = plan.days[0].hauptspeise;
+    const edited: Recipe = { ...target, name: 'Geändert', beilage: 'Couscous' };
+    const updated = replaceRecipeInPlan(plan, edited);
+    expect(updated.days[0].hauptspeise.name).toBe('Geändert');
+    expect(updated.days[0].beilage).toBe('Couscous');
+    expect(updated.days[1]).toEqual(plan.days[1]);
+    // Gangwechsel: Plan bleibt unverändert
+    expect(replaceRecipeInPlan(plan, { ...target, course: 'vorspeise' })).toEqual(plan);
+  });
+  it('keeps a manually chosen beilage', () => {
+    const plan = applyBeilageChange(makePlan(), makePlan().days[0].dayOfWeek, 'Kartoffeln');
+    const updated = replaceRecipeInPlan(plan, { ...plan.days[0].hauptspeise, beilage: 'Reis2' });
+    expect(updated.days[0].beilage).toBe('Kartoffeln');
   });
 });
