@@ -1,12 +1,8 @@
 import { Check } from 'lucide-react';
 import { ShoppingItem } from '../types/menu';
 import { groupByAisle } from '../services/shopping';
+import { formatAmount } from '../services/format';
 import { useLanguage } from '../i18n/LanguageContext';
-
-function formatAmount(item: ShoppingItem): string {
-  const rounded = Math.round(item.amount * 10) / 10;
-  return `${rounded} ${item.unit}`;
-}
 
 interface CheckboxListProps {
   title: string;
@@ -52,7 +48,7 @@ export default function CheckboxList({ title, items, onToggle }: CheckboxListPro
                   <span className={`flex-1 text-sm ${item.checked ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
                     {item.item}
                   </span>
-                  <span className="text-sm font-medium text-slate-500">{formatAmount(item)}</span>
+                  <span className="text-sm font-medium text-slate-500">{formatAmount(item.amount, item.unit)}</span>
                 </button>
               </li>
             ))}
