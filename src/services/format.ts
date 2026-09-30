@@ -12,18 +12,32 @@ export function formatHauptspeiseWithBeilage(day: DayMenu, lang: Lang): string {
   return `${hauptspeise.name} ${translations[lang].withConnector} ${beilage}`;
 }
 
-/** Menge (für 10 Personen hinterlegt) auf `portions` umgerechnet, mit kg/l-Umrechnung ab 1000. */
-export function formatIngredientAmount(amountPer10Pax: number, unit: string, portions: number): string {
-  const amount = (amountPer10Pax * portions) / 10;
+const PIECE_UNIT = /^(stück|stueck|stk\.?|st\.?|adet)$/i;
 
-  if (unit === 'g' && amount >= 1000) {
-    return `${(amount / 1000).toFixed(amount % 1000 === 0 ? 0 : 1)} kg`;
+/** Zahl mit höchstens `digits` Nachkommastellen und Komma, ohne überflüssige Nullen (1,5 / 2). */
+function trimNumber(value: number, digits: number): string {
+  return value.toFixed(digits).replace(/\.?0+$/, '').replace('.', ',');
+}
+
+/**
+ * Menge einkaufs-/kochgerecht anzeigen: Stück immer aufgerundet auf ganze Stücke (4,4 Eier -> 5),
+ * g/ml ab 1000 als kg/l (1,65 kg), sonst auf ganze g/ml gerundet.
+ */
+export function formatAmount(amount: number, unit: string): string {
+  const u = unit.trim();
+  if (PIECE_UNIT.test(u)) return `${Math.ceil(amount - 1e-6)} Stück`;
+  if (u === 'g') {
+    return amount >= 1000 ? `${trimNumber(amount / 1000, 2)} kg` : `${Math.round(amount)} g`;
   }
-  if (unit === 'ml' && amount >= 1000) {
-    return `${(amount / 1000).toFixed(amount % 1000 === 0 ? 0 : 1)} l`;
+  if (u === 'ml') {
+    return amount >= 1000 ? `${trimNumber(amount / 1000, 2)} l` : `${Math.round(amount)} ml`;
   }
-  const rounded = Math.round(amount * 10) / 10;
-  return `${rounded} ${unit}`;
+  return `${trimNumber(Math.round(amount * 10) / 10, 1)} ${u}`;
+}
+
+/** Menge (für 10 Personen hinterlegt) auf `portions` umgerechnet und formatiert. */
+export function formatIngredientAmount(amountPer10Pax: number, unit: string, portions: number): string {
+  return formatAmount((amountPer10Pax * portions) / 10, unit);
 }
 
 /** Zeitraum einer Kalenderwoche, z.B. "28.09. – 04.10.2026" (über den Jahreswechsel mit beiden Jahren). */

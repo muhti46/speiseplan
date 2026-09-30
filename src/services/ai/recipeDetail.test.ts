@@ -58,8 +58,8 @@ describe('generateRecipeDetail', () => {
     await generateRecipeDetail('key', recipe, 'tr');
     const call = generateContent.mock.calls[0][0];
     const prompt: string = call.contents[0].parts[0].text;
-    expect(prompt).toContain('Rote Linsen: 1.1 kg'); // 1000 g je 10 Personen → 11 Portionen
-    expect(prompt).toContain('Brühe: 2.2 l');
+    expect(prompt).toContain('Rote Linsen: 1,1 kg'); // 1000 g je 10 Personen → 11 Portionen
+    expect(prompt).toContain('Brühe: 2,2 l');
     expect(prompt).toContain('Türkisch');
     expect(call.config.responseMimeType).toBe('application/json');
   });

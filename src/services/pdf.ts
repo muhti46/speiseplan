@@ -29,8 +29,6 @@ export function exportWeeklyPlanPdf(plan: WeeklyPlan, lang: Lang): void {
     doc.setFont('helvetica', 'bold');
     doc.text(t.dayLabels[day.dayOfWeek], marginX, y);
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    doc.text(t.pdf_prepServe(day.prepStartTime, day.targetServeTime), marginX + 60, y);
     y += 6;
 
     doc.setFontSize(11);

@@ -37,7 +37,6 @@ interface Translation {
   total: string;
   ingredients: string;
   steps: string;
-  startServe: (start: string, serve: string) => string;
   beilage: (name: string) => string;
   withConnector: string;
   dayLabels: Record<DayOfWeek, string>;
@@ -47,7 +46,6 @@ interface Translation {
   aisleLabels: Record<StoreCategory, string>;
   pdf_headerTitle: (week: number, year: number) => string;
   pdf_subtitle: string;
-  pdf_prepServe: (start: string, serve: string) => string;
   pdf_vorspeise: string;
   pdf_hauptspeise: string;
   pdf_nachspeise: string;
@@ -159,8 +157,7 @@ export const translations: Record<Lang, Translation> = {
     total: 'Gesamtzeit',
     ingredients: 'Zutaten',
     steps: 'Zubereitungsschritte',
-    startServe: (start, serve) => `Start ${start} Uhr · Servieren ${serve} Uhr`,
-    beilage: (name) => `Beilage: ${name}`,
+      beilage: (name) => `Beilage: ${name}`,
     withConnector: 'mit',
     dayLabels: {
       Montag: 'Montag',
@@ -195,9 +192,8 @@ export const translations: Record<Lang, Translation> = {
       tk: 'Tiefkühlware',
     },
     pdf_headerTitle: (week, year) => `Speiseplan KW ${week} / ${year}`,
-    pdf_subtitle: 'Kinderheim Weilburg · täglich 18:00 Uhr servierfertig',
-    pdf_prepServe: (start, serve) => `Vorbereitung ab ${start} Uhr · Servieren ${serve} Uhr`,
-    pdf_vorspeise: 'Vorspeise',
+    pdf_subtitle: 'Kinderheim Weilburg',
+      pdf_vorspeise: 'Vorspeise',
     pdf_hauptspeise: 'Hauptspeise',
     pdf_nachspeise: 'Nachspeise',
     chatTitle: 'KI-Assistent',
@@ -307,8 +303,7 @@ export const translations: Record<Lang, Translation> = {
     total: 'Toplam Süre',
     ingredients: 'Malzemeler',
     steps: 'Hazırlanış',
-    startServe: (start, serve) => `Başlangıç ${start} · Servis ${serve}`,
-    beilage: (name) => `Garnitür: ${name}`,
+      beilage: (name) => `Garnitür: ${name}`,
     withConnector: 'ile',
     dayLabels: {
       Montag: 'Pazartesi',
@@ -343,9 +338,8 @@ export const translations: Record<Lang, Translation> = {
       tk: 'Dondurulmuş Ürünler',
     },
     pdf_headerTitle: (week, year) => `Yemek Planı ${week}. Hafta / ${year}`,
-    pdf_subtitle: 'Çocuk Yuvası Weilburg · her gün saat 18:00\'de servise hazır',
-    pdf_prepServe: (start, serve) => `Hazırlık başlangıcı ${start} · Servis ${serve}`,
-    pdf_vorspeise: 'Başlangıç',
+    pdf_subtitle: 'Çocuk Yuvası Weilburg',
+      pdf_vorspeise: 'Başlangıç',
     pdf_hauptspeise: 'Ana Yemek',
     pdf_nachspeise: 'Tatlı',
     chatTitle: 'Yapay Zeka Asistanı',
