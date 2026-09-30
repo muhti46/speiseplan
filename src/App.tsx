@@ -15,7 +15,7 @@ import recipesData from './data/recipes.json';
 import { Course, Recipe, RecipeDetail } from './types/recipe';
 import { recipeDetailKey } from './services/ai/recipeDetail';
 import { DayOfWeek, ShoppingItem, WeeklyPlan } from './types/menu';
-import { applyBeilageChange, applyMealSwap, generateWeeklyPlan, getNextIsoWeek, rerollDay } from './services/generator';
+import { applyBeilageChange, applyMealSwap, generateWeeklyPlan, getNextIsoWeek, replaceRecipeInPlan, rerollDay } from './services/generator';
 import { formatWeekRange } from './services/format';
 import { buildShoppingLists, preserveChecked } from './services/shopping';
 import { exportWeeklyPlanPdf } from './services/pdf';
@@ -28,6 +28,8 @@ import {
   saveCurrentPlan,
   saveRecipe,
   saveRecipeDetail,
+  deleteRecipe,
+  deleteRecipeDetailsFor,
   savePlan,
 } from './services/storage';
 import Tabs, { TabItem } from './components/Tabs';
@@ -66,6 +68,7 @@ export default function App() {
   const [recipes, setRecipes] = useState<Recipe[]>(recipesData as Recipe[]);
   const [recentRecipeIds, setRecentRecipeIds] = useState<string[]>([]);
   const [showAddRecipe, setShowAddRecipe] = useState(false);
+  const [editing, setEditing] = useState<Recipe | null>(null);
   // Erst nach dem Laden des gespeicherten Plans darf gespeichert werden, sonst würde der
   // anfängliche leere State den gespeicherten Plan überschreiben.
   const [planLoaded, setPlanLoaded] = useState(false);
@@ -120,6 +123,42 @@ export default function App() {
   function handleRecipeAdd(recipe: Recipe) {
     setRecipes((prev) => [...prev, recipe]);
     saveRecipe(recipe);
+  }
+
+  /** Speichert ein bearbeitetes Rezept und übernimmt es in den aktuellen Plan samt Einkaufslisten. */
+  function handleRecipeUpdate(recipe: Recipe) {
+    const old = recipes.find((r) => r.id === recipe.id);
+    setRecipes((prev) => prev.map((r) => (r.id === recipe.id ? recipe : r)));
+    saveRecipe(recipe);
+    if (plan) {
+      const replaced = replaceRecipeInPlan(plan, recipe);
+      if (replaced !== plan) {
+        const lists = buildShoppingLists(replaced);
+        setPlan({
+          ...replaced,
+          shoppingListMon: preserveChecked(plan.shoppingListMon, lists.shoppingListMon),
+          shoppingListFri: preserveChecked(plan.shoppingListFri, lists.shoppingListFri),
+        });
+      }
+    }
+    // Eine ausführliche KI-Anleitung passt nach geänderten Zutaten/Schritten nicht mehr.
+    if (
+      old &&
+      (JSON.stringify(old.instructions) !== JSON.stringify(recipe.instructions) ||
+        JSON.stringify(old.ingredients) !== JSON.stringify(recipe.ingredients))
+    ) {
+      deleteRecipeDetailsFor(recipe.id);
+      setDetails((prev) => Object.fromEntries(Object.entries(prev).filter(([, d]) => d.recipeId !== recipe.id)));
+    }
+    setSelected((prev) => (prev && prev.recipe.id === recipe.id ? { ...prev, recipe } : prev));
+  }
+
+  function handleRecipeDelete(recipe: Recipe) {
+    if (!window.confirm(t.deleteRecipeConfirm(recipe.name))) return;
+    setRecipes((prev) => prev.filter((r) => r.id !== recipe.id));
+    deleteRecipe(recipe.id);
+    deleteRecipeDetailsFor(recipe.id);
+    setSelected(null);
   }
 
   /** Ersetzt den geöffneten Gang (Vorspeise/Hauptspeise/Nachspeise) des Tages manuell durch `recipe`. */
@@ -414,9 +453,23 @@ export default function App() {
           onDetailCreated={handleDetailCreated}
           // Solange ein darüberliegendes Fenster offen ist, soll Escape nur dieses schließen.
           onClose={() => {
-            if (!showPicker && !showAddForSlot) setSelected(null);
+            if (!showPicker && !showAddForSlot && !editing) setSelected(null);
           }}
           onChange={selected.course ? () => setShowPicker(true) : undefined}
+          onEdit={() => setEditing(selected.recipe)}
+          onDelete={
+            selected.recipe.source === 'manual' || selected.recipe.source === 'ai'
+              ? () => handleRecipeDelete(selected.recipe)
+              : undefined
+          }
+        />
+      )}
+
+      {editing && (
+        <AddRecipeModal
+          initial={editing}
+          onSave={handleRecipeUpdate}
+          onClose={() => setEditing(null)}
         />
       )}
 

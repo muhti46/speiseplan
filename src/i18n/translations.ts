@@ -90,6 +90,10 @@ interface Translation {
   addRecipeUnitPlaceholder: string;
   addRecipeSave: string;
   addRecipeCancel: string;
+  editRecipeTitle: string;
+  editRecipe: string;
+  deleteRecipe: string;
+  deleteRecipeConfirm: (name: string) => string;
   changeMeal: string;
   pickMealTitle: string;
   pickMealSearch: string;
@@ -235,6 +239,11 @@ export const translations: Record<Lang, Translation> = {
     addRecipeUnitPlaceholder: 'Einheit',
     addRecipeSave: 'Speichern',
     addRecipeCancel: 'Abbrechen',
+    editRecipeTitle: 'Rezept bearbeiten',
+    editRecipe: 'Bearbeiten',
+    deleteRecipe: 'Aus Pool löschen',
+    deleteRecipeConfirm: (name) =>
+      `„${name}" aus dem Rezept-Pool löschen? Bereits geplante Wochen bleiben unverändert.`,
     changeMeal: 'Ändern',
     pickMealTitle: 'Gericht auswählen',
     pickMealSearch: 'Suchen…',
@@ -378,6 +387,11 @@ export const translations: Record<Lang, Translation> = {
     addRecipeUnitPlaceholder: 'Birim',
     addRecipeSave: 'Kaydet',
     addRecipeCancel: 'Vazgeç',
+    editRecipeTitle: 'Yemeği düzenle',
+    editRecipe: 'Düzenle',
+    deleteRecipe: 'Havuzdan sil',
+    deleteRecipeConfirm: (name) =>
+      `"${name}" yemek havuzundan silinsin mi? Daha önce planlanan haftalar değişmez.`,
     changeMeal: 'Değiştir',
     pickMealTitle: 'Yemek seç',
     pickMealSearch: 'Ara…',

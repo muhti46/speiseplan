@@ -221,3 +221,25 @@ export function getWeekRange(calendarWeek: number, year: number): { start: Date;
   const end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 6);
   return { start, end };
 }
+
+/**
+ * Übernimmt ein bearbeitetes Rezept in einen Plan: ersetzt es in allen Gängen mit gleicher Id und
+ * gleichem Gang (wechselt der Gang, bleibt der Plan unverändert). Eine manuell gewählte Beilage bleibt erhalten.
+ */
+export function replaceRecipeInPlan(plan: WeeklyPlan, recipe: Recipe): WeeklyPlan {
+  const courses: Course[] = ['vorspeise', 'hauptspeise', 'nachspeise'];
+  const days = plan.days.map((day) => {
+    const hit = courses.filter((c) => day[c].id === recipe.id && c === recipe.course);
+    if (hit.length === 0) return day;
+    const updated: DayMenu = { ...day };
+    for (const c of hit) {
+      if (c === 'hauptspeise' && day.beilage === beilageFor(day.hauptspeise)) {
+        updated.beilage = beilageFor(recipe);
+      }
+      updated[c] = recipe;
+    }
+    updated.prepStartTime = calculatePrepStartTime(updated.vorspeise, updated.hauptspeise, updated.nachspeise);
+    return updated;
+  });
+  return { ...plan, days };
+}

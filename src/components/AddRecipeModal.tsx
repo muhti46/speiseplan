@@ -14,6 +14,8 @@ interface AddRecipeModalProps {
   fixedCourse?: Course;
   /** Neue Beilage anlegen: kein Gang/Protein, Rezept wird als Beilage (subCategory beilage) gespeichert. */
   beilageMode?: boolean;
+  /** Bestehendes Rezept bearbeiten: Felder vorbelegt, Id und Herkunft bleiben beim Speichern erhalten. */
+  initial?: Recipe;
 }
 
 interface IngredientRow {
@@ -31,17 +33,27 @@ function emptyIngredient(): IngredientRow {
   return { item: '', amountPer10Pax: '', unit: '', storeCategory: 'gemuese' };
 }
 
-export default function AddRecipeModal({ onSave, onClose, fixedCourse, beilageMode = false }: AddRecipeModalProps) {
+export default function AddRecipeModal({ onSave, onClose, fixedCourse, beilageMode: beilageModeProp = false, initial }: AddRecipeModalProps) {
   const { t } = useLanguage();
-  const [name, setName] = useState('');
-  const [course, setCourse] = useState<Course>(fixedCourse ?? 'hauptspeise');
-  const [subCategory, setSubCategory] = useState<SubCategory>('suppe');
-  const [proteinCategory, setProteinCategory] = useState<ProteinCategory>('vegetarisch');
-  const [beilage, setBeilage] = useState('');
-  const [prepTimeMinutes, setPrepTimeMinutes] = useState('');
-  const [cookTimeMinutes, setCookTimeMinutes] = useState('');
-  const [instructions, setInstructions] = useState('');
-  const [ingredients, setIngredients] = useState<IngredientRow[]>([emptyIngredient()]);
+  const beilageMode = beilageModeProp || initial?.subCategory === 'beilage';
+  const [name, setName] = useState(initial?.name ?? '');
+  const [course, setCourse] = useState<Course>(fixedCourse ?? initial?.course ?? 'hauptspeise');
+  const [subCategory, setSubCategory] = useState<SubCategory>(initial?.subCategory === 'salat' ? 'salat' : 'suppe');
+  const [proteinCategory, setProteinCategory] = useState<ProteinCategory>(initial?.proteinCategory ?? 'vegetarisch');
+  const [beilage, setBeilage] = useState(initial?.beilage ?? '');
+  const [prepTimeMinutes, setPrepTimeMinutes] = useState(initial ? String(initial.prepTimeMinutes) : '');
+  const [cookTimeMinutes, setCookTimeMinutes] = useState(initial ? String(initial.cookTimeMinutes) : '');
+  const [instructions, setInstructions] = useState(initial ? initial.instructions.join('\n') : '');
+  const [ingredients, setIngredients] = useState<IngredientRow[]>(
+    initial
+      ? initial.ingredients.map((i) => ({
+          item: i.item,
+          amountPer10Pax: String(i.amountPer10Pax),
+          unit: i.unit,
+          storeCategory: i.storeCategory,
+        }))
+      : [emptyIngredient()],
+  );
   const [error, setError] = useState<string | null>(null);
   const [isFilling, setIsFilling] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
@@ -134,7 +146,7 @@ export default function AddRecipeModal({ onSave, onClose, fixedCourse, beilageMo
       setError(result.error);
       return;
     }
-    onSave(result);
+    onSave(initial ? { ...result, id: initial.id, source: initial.source } : result);
     onClose();
   }
 
@@ -152,7 +164,7 @@ export default function AddRecipeModal({ onSave, onClose, fixedCourse, beilageMo
       >
         <div className="flex items-start justify-between border-b border-slate-100 p-4">
           <h2 id="add-recipe-modal-title" className="text-lg font-bold text-slate-800">
-            {beilageMode ? t.addBeilageTitle : t.addRecipeTitle}
+            {initial ? t.editRecipeTitle : beilageMode ? t.addBeilageTitle : t.addRecipeTitle}
           </h2>
           <button
             type="button"
