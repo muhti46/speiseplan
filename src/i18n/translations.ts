@@ -89,6 +89,9 @@ interface Translation {
   addRecipeCancel: string;
   editRecipeTitle: string;
   editRecipe: string;
+  recipeChatTitle: string;
+  recipeChatPlaceholder: string;
+  recipeChatEmpty: string;
   photoAdd: string;
   photoChange: string;
   photoRemove: string;
@@ -240,6 +243,9 @@ export const translations: Record<Lang, Translation> = {
     addRecipeCancel: 'Abbrechen',
     editRecipeTitle: 'Rezept bearbeiten',
     editRecipe: 'Bearbeiten',
+    recipeChatTitle: 'Fragen zum Rezept',
+    recipeChatPlaceholder: 'Frage zu diesem Rezept …',
+    recipeChatEmpty: 'Frag z.B. „Kann ich das schon am Vortag vorbereiten?“ oder „Womit kann ich die Sahne ersetzen?“',
     photoAdd: 'Foto hinzufügen',
     photoChange: 'Foto ändern',
     photoRemove: 'Foto entfernen',
@@ -390,6 +396,9 @@ export const translations: Record<Lang, Translation> = {
     addRecipeCancel: 'Vazgeç',
     editRecipeTitle: 'Yemeği düzenle',
     editRecipe: 'Düzenle',
+    recipeChatTitle: 'Tarif hakkında sor',
+    recipeChatPlaceholder: 'Bu tarif hakkında bir soru yaz …',
+    recipeChatEmpty: 'Örneğin: „Bunu bir gün önceden hazırlayabilir miyim?“ veya „Kremanın yerine ne kullanabilirim?“',
     photoAdd: 'Fotoğraf ekle',
     photoChange: 'Fotoğrafı değiştir',
     photoRemove: 'Fotoğrafı sil',

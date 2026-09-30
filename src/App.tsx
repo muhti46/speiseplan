@@ -31,6 +31,7 @@ import {
   saveRecipeDetail,
   deleteRecipe,
   deleteRecipeDetailsFor,
+  deleteRecipeChat,
   saveRecipeImage,
   deleteRecipeImage,
   getAllRecipeImages,
@@ -178,6 +179,7 @@ export default function App() {
     deleteRecipe(recipe.id);
     deleteRecipeDetailsFor(recipe.id);
     handleImageChange(recipe.id, null);
+    deleteRecipeChat(recipe.id);
     setSelected(null);
   }
 

@@ -1,11 +1,18 @@
 import Dexie, { Table } from 'dexie';
 import { WeeklyPlan } from '../types/menu';
 import { Recipe, RecipeDetail } from '../types/recipe';
-import { ChatConversation } from '../types/ai';
+import { ChatConversation, ChatMessage } from '../types/ai';
 import recipesData from '../data/recipes.json';
 
 function seedRecipes(): Recipe[] {
   return (recipesData as Recipe[]).map((recipe) => ({ ...recipe, source: 'builtin' as const }));
+}
+
+/** Fragen/Antworten zu einem einzelnen Rezept (ein Verlauf je Rezept). */
+export interface RecipeChat {
+  recipeId: string;
+  messages: ChatMessage[];
+  updatedAt: string;
 }
 
 class SpeiseplanDB extends Dexie {
@@ -14,6 +21,7 @@ class SpeiseplanDB extends Dexie {
   chatConversations!: Table<ChatConversation, string>;
   currentPlan!: Table<{ key: string; plan: WeeklyPlan }, string>;
   recipeDetails!: Table<RecipeDetail, string>;
+  recipeChats!: Table<RecipeChat, string>;
   recipeImages!: Table<{ recipeId: string; dataUrl: string }, string>;
 
   constructor() {
@@ -61,6 +69,16 @@ class SpeiseplanDB extends Dexie {
       recipeDetails: 'key, recipeId',
       recipeImages: 'recipeId',
     });
+    // Rezept-Chat: ein Gesprächsverlauf je Rezept.
+    this.version(7).stores({
+      plans: 'id, year, calendarWeek, isFinalized, createdAt',
+      recipes: 'id, course, proteinCategory, subCategory',
+      chatConversations: 'id, updatedAt',
+      currentPlan: 'key',
+      recipeDetails: 'key, recipeId',
+      recipeImages: 'recipeId',
+      recipeChats: 'recipeId',
+    });
 
     // Läuft nur einmal, wenn die Datenbank komplett neu (ohne Vorgängerversion) angelegt wird.
     this.on('populate', async (tx) => {
@@ -70,6 +88,18 @@ class SpeiseplanDB extends Dexie {
 }
 
 export const db = new SpeiseplanDB();
+
+export async function saveRecipeChat(chat: RecipeChat): Promise<void> {
+  await db.recipeChats.put(chat);
+}
+
+export async function getRecipeChat(recipeId: string): Promise<RecipeChat | undefined> {
+  return db.recipeChats.get(recipeId);
+}
+
+export async function deleteRecipeChat(recipeId: string): Promise<void> {
+  await db.recipeChats.delete(recipeId);
+}
 
 export async function saveRecipeImage(recipeId: string, dataUrl: string): Promise<void> {
   await db.recipeImages.put({ recipeId, dataUrl });
