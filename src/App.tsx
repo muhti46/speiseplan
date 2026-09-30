@@ -317,7 +317,7 @@ export default function App() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => exportWeeklyPlanPdf(plan, lang)}
+                  onClick={() => exportWeeklyPlanPdf(plan)}
                   className="flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600"
                 >
                   <FileDown size={16} />
@@ -397,7 +397,7 @@ export default function App() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => exportWeeklyPlanPdf(viewed, lang)}
+                    onClick={() => exportWeeklyPlanPdf(viewed)}
                     className="flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600"
                   >
                     <FileDown size={16} />
