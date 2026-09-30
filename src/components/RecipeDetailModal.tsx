@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { X, Clock, ChefHat, Flame, Users, Sparkles, ArrowLeftRight, Lightbulb, Loader2, RefreshCw, Pencil, Trash2, Camera } from 'lucide-react';
-import { Recipe, RecipeDetail } from '../types/recipe';
+import { Recipe, RecipeDetail, RecipeTranslation } from '../types/recipe';
+import { translateInstructions } from '../services/ai/recipeTranslation';
 import { generateRecipeDetail } from '../services/ai/recipeDetail';
 import { getApiKey } from '../services/ai/apiKey';
 import { describeChatError } from '../services/ai/chat';
@@ -24,6 +25,9 @@ interface RecipeDetailModalProps {
   detail?: RecipeDetail;
   /** Foto des Gerichts (Data-URL), falls vorhanden. */
   image?: string;
+  /** Bereits gespeicherte Übersetzung der Kurz-Schritte in die aktuelle Sprache (nur wenn nicht Deutsch). */
+  translation?: RecipeTranslation;
+  onTranslationCreated?: (translation: RecipeTranslation) => void;
   /** Neues Foto (Data-URL) oder `null` zum Entfernen; der Aufrufer speichert es. */
   onImageChange?: (dataUrl: string | null) => void;
   /** Wird mit einer neu erzeugten ausführlichen Anleitung aufgerufen; der Aufrufer speichert sie. */
@@ -38,6 +42,8 @@ export default function RecipeDetailModal({
   onDelete,
   detail,
   image,
+  translation,
+  onTranslationCreated,
   onImageChange,
   onDetailCreated,
 }: RecipeDetailModalProps) {
@@ -47,6 +53,38 @@ export default function RecipeDetailModal({
   const [detailError, setDetailError] = useState<string | null>(null);
   const [photoError, setPhotoError] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [translateError, setTranslateError] = useState<string | null>(null);
+  const [translateAttempt, setTranslateAttempt] = useState(0);
+
+  // Kurz-Schritte liegen auf Deutsch vor: in anderer App-Sprache einmalig per KI übersetzen
+  // (und dauerhaft speichern). Schlägt es fehl, bleibt der deutsche Text und ein Retry-Button erscheint.
+  useEffect(() => {
+    if (lang === 'de' || translation || !onTranslationCreated) return;
+    const apiKey = getApiKey();
+    if (!apiKey || !navigator.onLine) return;
+    let cancelled = false;
+    setIsTranslating(true);
+    setTranslateError(null);
+    translateInstructions(apiKey, recipe, lang)
+      .then((created) => {
+        if (!cancelled) onTranslationCreated(created);
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error('Übersetzung fehlgeschlagen', err);
+        if (!cancelled) setTranslateError(`${t.translateFailed} (${describeChatError(err).message})`);
+      })
+      .finally(() => {
+        if (!cancelled) setIsTranslating(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recipe.id, lang, !!translation, translateAttempt]);
+
+  const shortSteps = lang !== 'de' && translation ? translation.steps : recipe.instructions;
 
   async function handlePhotoPicked(file: File | undefined) {
     if (!file || !onImageChange) return;
@@ -326,7 +364,7 @@ export default function RecipeDetailModal({
               </>
             ) : (
               <ol className="space-y-3">
-                {recipe.instructions.map((step, index) => (
+                {shortSteps.map((step, index) => (
                   <li key={index} className="flex gap-3 text-sm text-slate-700">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-800">
                       {index + 1}
@@ -335,6 +373,28 @@ export default function RecipeDetailModal({
                   </li>
                 ))}
               </ol>
+            )}
+
+            {lang !== 'de' && !translation && (isTranslating || translateError) && (
+              <div className="mt-2 flex items-center gap-2 text-xs text-slate-500">
+                {isTranslating ? (
+                  <>
+                    <Loader2 size={12} className="animate-spin" aria-hidden />
+                    {t.translating}
+                  </>
+                ) : (
+                  <>
+                    <span className="text-red-600">{translateError}</span>
+                    <button
+                      type="button"
+                      onClick={() => setTranslateAttempt((n) => n + 1)}
+                      className="shrink-0 font-medium text-brand-700"
+                    >
+                      {t.retry}
+                    </button>
+                  </>
+                )}
+              </div>
             )}
 
             {!detail && onDetailCreated && (

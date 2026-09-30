@@ -13,7 +13,7 @@ import {
   Lock,
 } from 'lucide-react';
 import recipesData from './data/recipes.json';
-import { Course, Recipe, RecipeDetail } from './types/recipe';
+import { Course, Recipe, RecipeDetail, RecipeTranslation } from './types/recipe';
 import { recipeDetailKey } from './services/ai/recipeDetail';
 import { DayOfWeek, ShoppingItem, WeeklyPlan } from './types/menu';
 import { applyBeilageChange, applyMealSwap, generateWeeklyPlan, getNextIsoWeek, isPlanEditable, replaceRecipeInPlan, rerollDay } from './services/generator';
@@ -32,6 +32,9 @@ import {
   deleteRecipe,
   deleteRecipeDetailsFor,
   deleteRecipeChat,
+  saveRecipeTranslation,
+  getAllRecipeTranslations,
+  deleteRecipeTranslationsFor,
   saveRecipeImage,
   deleteRecipeImage,
   getAllRecipeImages,
@@ -75,6 +78,7 @@ export default function App() {
   const [recipes, setRecipes] = useState<Recipe[]>(recipesData as Recipe[]);
   const [recentRecipeIds, setRecentRecipeIds] = useState<string[]>([]);
   const [showAddRecipe, setShowAddRecipe] = useState(false);
+  const [translations, setTranslations] = useState<Record<string, RecipeTranslation>>({});
   const [images, setImages] = useState<Record<string, string>>({});
   const [editing, setEditing] = useState<Recipe | null>(null);
   // Erst nach dem Laden des gespeicherten Plans darf gespeichert werden, sonst würde der
@@ -102,6 +106,7 @@ export default function App() {
     });
     getRecentRecipeIds(4).then(setRecentRecipeIds);
     getAllRecipeImages().then(setImages);
+    getAllRecipeTranslations().then((list) => setTranslations(Object.fromEntries(list.map((x) => [x.key, x]))));
     getAllRecipeDetails().then((list) => setDetails(Object.fromEntries(list.map((d) => [d.key, d]))));
     getCurrentPlan()
       .then((stored) => {
@@ -124,6 +129,11 @@ export default function App() {
   // Rendern frisch berechnet, damit eine über den Wochenwechsel offene App nicht veraltet.
   const nextWeek = getNextIsoWeek(new Date());
   const planEditable = plan ? isPlanEditable(plan) : false;
+
+  function handleTranslationCreated(translation: RecipeTranslation) {
+    setTranslations((prev) => ({ ...prev, [translation.key]: translation }));
+    saveRecipeTranslation(translation);
+  }
 
   function handleDetailCreated(detail: RecipeDetail) {
     setDetails((prev) => ({ ...prev, [detail.key]: detail }));
@@ -158,6 +168,10 @@ export default function App() {
         JSON.stringify(old.ingredients) !== JSON.stringify(recipe.ingredients))
     ) {
       deleteRecipeDetailsFor(recipe.id);
+      deleteRecipeTranslationsFor(recipe.id);
+      setTranslations((prev) =>
+        Object.fromEntries(Object.entries(prev).filter(([, x]) => x.recipeId !== recipe.id)),
+      );
       setDetails((prev) => Object.fromEntries(Object.entries(prev).filter(([, d]) => d.recipeId !== recipe.id)));
     }
     setSelected((prev) => (prev && prev.recipe.id === recipe.id ? { ...prev, recipe } : prev));
@@ -180,6 +194,7 @@ export default function App() {
     deleteRecipeDetailsFor(recipe.id);
     handleImageChange(recipe.id, null);
     deleteRecipeChat(recipe.id);
+    deleteRecipeTranslationsFor(recipe.id);
     setSelected(null);
   }
 
@@ -487,6 +502,8 @@ export default function App() {
           recipe={selected.recipe}
           detail={details[recipeDetailKey(selected.recipe.id, lang)]}
           image={images[selected.recipe.id]}
+          translation={translations[recipeDetailKey(selected.recipe.id, lang)]}
+          onTranslationCreated={handleTranslationCreated}
           onImageChange={(dataUrl) => handleImageChange(selected.recipe.id, dataUrl)}
           onDetailCreated={handleDetailCreated}
           // Solange ein darüberliegendes Fenster offen ist, soll Escape nur dieses schließen.

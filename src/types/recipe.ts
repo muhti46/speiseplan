@@ -48,3 +48,13 @@ export interface RecipeDetail {
   tips: string[];
   createdAt: string;
 }
+
+/** KI-Übersetzung der Kurz-Zubereitungsschritte in eine andere Sprache als Deutsch. */
+export interface RecipeTranslation {
+  /** `${recipeId}|${lang}` */
+  key: string;
+  recipeId: string;
+  lang: string;
+  steps: string[];
+  createdAt: string;
+}

@@ -89,6 +89,9 @@ interface Translation {
   addRecipeCancel: string;
   editRecipeTitle: string;
   editRecipe: string;
+  translating: string;
+  translateFailed: string;
+  retry: string;
   recipeChatTitle: string;
   recipeChatPlaceholder: string;
   recipeChatEmpty: string;
@@ -243,6 +246,9 @@ export const translations: Record<Lang, Translation> = {
     addRecipeCancel: 'Abbrechen',
     editRecipeTitle: 'Rezept bearbeiten',
     editRecipe: 'Bearbeiten',
+    translating: 'Wird übersetzt …',
+    translateFailed: 'Übersetzung fehlgeschlagen',
+    retry: 'Erneut versuchen',
     recipeChatTitle: 'Fragen zum Rezept',
     recipeChatPlaceholder: 'Frage zu diesem Rezept …',
     recipeChatEmpty: 'Frag z.B. „Kann ich das schon am Vortag vorbereiten?“ oder „Womit kann ich die Sahne ersetzen?“',
@@ -396,6 +402,9 @@ export const translations: Record<Lang, Translation> = {
     addRecipeCancel: 'Vazgeç',
     editRecipeTitle: 'Yemeği düzenle',
     editRecipe: 'Düzenle',
+    translating: 'Türkçeye çevriliyor …',
+    translateFailed: 'Çeviri başarısız oldu',
+    retry: 'Tekrar dene',
     recipeChatTitle: 'Tarif hakkında sor',
     recipeChatPlaceholder: 'Bu tarif hakkında bir soru yaz …',
     recipeChatEmpty: 'Örneğin: „Bunu bir gün önceden hazırlayabilir miyim?“ veya „Kremanın yerine ne kullanabilirim?“',
