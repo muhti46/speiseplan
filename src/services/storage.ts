@@ -14,6 +14,7 @@ class SpeiseplanDB extends Dexie {
   chatConversations!: Table<ChatConversation, string>;
   currentPlan!: Table<{ key: string; plan: WeeklyPlan }, string>;
   recipeDetails!: Table<RecipeDetail, string>;
+  recipeImages!: Table<{ recipeId: string; dataUrl: string }, string>;
 
   constructor() {
     super('speiseplan-db');
@@ -51,6 +52,15 @@ class SpeiseplanDB extends Dexie {
       currentPlan: 'key',
       recipeDetails: 'key, recipeId',
     });
+    // Fotos zu Rezepten (verkleinert als Data-URL), getrennt von den Rezepten, damit sie nicht in Pläne kopiert werden.
+    this.version(6).stores({
+      plans: 'id, year, calendarWeek, isFinalized, createdAt',
+      recipes: 'id, course, proteinCategory, subCategory',
+      chatConversations: 'id, updatedAt',
+      currentPlan: 'key',
+      recipeDetails: 'key, recipeId',
+      recipeImages: 'recipeId',
+    });
 
     // Läuft nur einmal, wenn die Datenbank komplett neu (ohne Vorgängerversion) angelegt wird.
     this.on('populate', async (tx) => {
@@ -60,6 +70,19 @@ class SpeiseplanDB extends Dexie {
 }
 
 export const db = new SpeiseplanDB();
+
+export async function saveRecipeImage(recipeId: string, dataUrl: string): Promise<void> {
+  await db.recipeImages.put({ recipeId, dataUrl });
+}
+
+export async function deleteRecipeImage(recipeId: string): Promise<void> {
+  await db.recipeImages.delete(recipeId);
+}
+
+export async function getAllRecipeImages(): Promise<Record<string, string>> {
+  const list = await db.recipeImages.toArray();
+  return Object.fromEntries(list.map((i) => [i.recipeId, i.dataUrl]));
+}
 
 export async function saveRecipeDetail(detail: RecipeDetail): Promise<void> {
   await db.recipeDetails.put(detail);

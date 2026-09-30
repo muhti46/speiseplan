@@ -11,7 +11,6 @@ export const LANGUAGES: Record<Lang, string> = {
 interface Translation {
   langName: string;
   appTitle: string;
-  appSubtitle: string;
   tabs: { plan: string; einkauf: string; archiv: string; chat: string };
   generate: string;
   regenerate: string;
@@ -90,6 +89,10 @@ interface Translation {
   addRecipeCancel: string;
   editRecipeTitle: string;
   editRecipe: string;
+  photoAdd: string;
+  photoChange: string;
+  photoRemove: string;
+  photoFailed: string;
   deleteRecipe: string;
   deleteRecipeConfirm: (name: string) => string;
   changeMeal: string;
@@ -130,8 +133,7 @@ interface Translation {
 export const translations: Record<Lang, Translation> = {
   de: {
     langName: 'Deutsch',
-    appTitle: 'Kinderheim Speiseplan',
-    appSubtitle: 'Weilburg · 10–12 Personen',
+    appTitle: 'Speiseplan',
     tabs: { plan: 'Speiseplan', einkauf: 'Einkauf', archiv: 'Archiv', chat: 'Chat' },
     generate: 'Wochenplan erzeugen',
     regenerate: 'Neu generieren',
@@ -237,6 +239,10 @@ export const translations: Record<Lang, Translation> = {
     addRecipeCancel: 'Abbrechen',
     editRecipeTitle: 'Rezept bearbeiten',
     editRecipe: 'Bearbeiten',
+    photoAdd: 'Foto hinzufügen',
+    photoChange: 'Foto ändern',
+    photoRemove: 'Foto entfernen',
+    photoFailed: 'Das Foto konnte nicht geladen werden.',
     deleteRecipe: 'Aus Pool löschen',
     deleteRecipeConfirm: (name) =>
       `„${name}" aus dem Rezept-Pool löschen? Bereits geplante Wochen bleiben unverändert.`,
@@ -276,8 +282,7 @@ export const translations: Record<Lang, Translation> = {
   },
   tr: {
     langName: 'Türkçe',
-    appTitle: 'Çocuk Yuvası Yemek Planı',
-    appSubtitle: 'Weilburg · 10-12 Kişi',
+    appTitle: 'Yemek Planı',
     tabs: { plan: 'Yemek Planı', einkauf: 'Alışveriş', archiv: 'Arşiv', chat: 'Sohbet' },
     generate: 'Haftalık Plan Oluştur',
     regenerate: 'Yeniden Oluştur',
@@ -383,6 +388,10 @@ export const translations: Record<Lang, Translation> = {
     addRecipeCancel: 'Vazgeç',
     editRecipeTitle: 'Yemeği düzenle',
     editRecipe: 'Düzenle',
+    photoAdd: 'Fotoğraf ekle',
+    photoChange: 'Fotoğrafı değiştir',
+    photoRemove: 'Fotoğrafı sil',
+    photoFailed: 'Fotoğraf yüklenemedi.',
     deleteRecipe: 'Havuzdan sil',
     deleteRecipeConfirm: (name) =>
       `"${name}" yemek havuzundan silinsin mi? Daha önce planlanan haftalar değişmez.`,

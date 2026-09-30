@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { X, Clock, ChefHat, Flame, Users, Sparkles, ArrowLeftRight, Lightbulb, Loader2, RefreshCw, Pencil, Trash2 } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { X, Clock, ChefHat, Flame, Users, Sparkles, ArrowLeftRight, Lightbulb, Loader2, RefreshCw, Pencil, Trash2, Camera } from 'lucide-react';
 import { Recipe, RecipeDetail } from '../types/recipe';
 import { generateRecipeDetail } from '../services/ai/recipeDetail';
 import { getApiKey } from '../services/ai/apiKey';
@@ -7,6 +7,7 @@ import { describeChatError } from '../services/ai/chat';
 import { getCategoryLabel } from '../services/labels';
 import { DEFAULT_PORTIONS } from '../services/shopping';
 import { formatIngredientAmount } from '../services/format';
+import { resizeImageFile } from '../services/image';
 import { useLanguage } from '../i18n/LanguageContext';
 
 interface RecipeDetailModalProps {
@@ -20,6 +21,10 @@ interface RecipeDetailModalProps {
   onDelete?: () => void;
   /** Bereits gespeicherte ausführliche Anleitung (in der aktuellen Sprache), falls vorhanden. */
   detail?: RecipeDetail;
+  /** Foto des Gerichts (Data-URL), falls vorhanden. */
+  image?: string;
+  /** Neues Foto (Data-URL) oder `null` zum Entfernen; der Aufrufer speichert es. */
+  onImageChange?: (dataUrl: string | null) => void;
   /** Wird mit einer neu erzeugten ausführlichen Anleitung aufgerufen; der Aufrufer speichert sie. */
   onDetailCreated?: (detail: RecipeDetail) => void;
 }
@@ -31,12 +36,28 @@ export default function RecipeDetailModal({
   onEdit,
   onDelete,
   detail,
+  image,
+  onImageChange,
   onDetailCreated,
 }: RecipeDetailModalProps) {
   const { lang, t } = useLanguage();
   const [view, setView] = useState<'short' | 'long'>('long');
   const [isCreating, setIsCreating] = useState(false);
   const [detailError, setDetailError] = useState<string | null>(null);
+  const [photoError, setPhotoError] = useState<string | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
+
+  async function handlePhotoPicked(file: File | undefined) {
+    if (!file || !onImageChange) return;
+    setPhotoError(null);
+    try {
+      onImageChange(await resizeImageFile(file));
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Foto konnte nicht verarbeitet werden', err);
+      setPhotoError(t.photoFailed);
+    }
+  }
 
   async function handleCreateDetail() {
     setDetailError(null);
@@ -141,6 +162,53 @@ export default function RecipeDetailModal({
         </div>
 
         <div className="flex-1 overflow-y-auto p-4">
+          {onImageChange && (
+            <div className="mb-4">
+              <input
+                ref={fileInput}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  handlePhotoPicked(e.target.files?.[0]);
+                  e.target.value = '';
+                }}
+              />
+              {image ? (
+                <>
+                  <img src={image} alt={recipe.name} className="max-h-64 w-full rounded-xl object-cover" />
+                  <div className="mt-2 flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => fileInput.current?.click()}
+                      className="inline-flex items-center gap-1 rounded-full border border-slate-300 px-2.5 py-1 text-xs font-medium text-slate-600 active:scale-95"
+                    >
+                      <Camera size={12} />
+                      {t.photoChange}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onImageChange(null)}
+                      className="inline-flex items-center gap-1 rounded-full border border-red-200 px-2.5 py-1 text-xs font-medium text-red-600 active:scale-95"
+                    >
+                      <Trash2 size={12} />
+                      {t.photoRemove}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => fileInput.current?.click()}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 px-4 py-4 text-sm font-medium text-slate-500 active:scale-95"
+                >
+                  <Camera size={18} />
+                  {t.photoAdd}
+                </button>
+              )}
+              {photoError && <p className="mt-1 text-sm text-red-600">{photoError}</p>}
+            </div>
+          )}
           <div className="mb-4 flex items-center gap-2 text-sm text-slate-600">
             <Users size={16} className="text-brand-600" />
             {t.portions(DEFAULT_PORTIONS - 1, DEFAULT_PORTIONS + 1)}

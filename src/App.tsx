@@ -30,6 +30,9 @@ import {
   saveRecipeDetail,
   deleteRecipe,
   deleteRecipeDetailsFor,
+  saveRecipeImage,
+  deleteRecipeImage,
+  getAllRecipeImages,
   savePlan,
 } from './services/storage';
 import Tabs, { TabItem } from './components/Tabs';
@@ -68,6 +71,7 @@ export default function App() {
   const [recipes, setRecipes] = useState<Recipe[]>(recipesData as Recipe[]);
   const [recentRecipeIds, setRecentRecipeIds] = useState<string[]>([]);
   const [showAddRecipe, setShowAddRecipe] = useState(false);
+  const [images, setImages] = useState<Record<string, string>>({});
   const [editing, setEditing] = useState<Recipe | null>(null);
   // Erst nach dem Laden des gespeicherten Plans darf gespeichert werden, sonst würde der
   // anfängliche leere State den gespeicherten Plan überschreiben.
@@ -93,6 +97,7 @@ export default function App() {
       if (stored.length > 0) setRecipes(stored);
     });
     getRecentRecipeIds(4).then(setRecentRecipeIds);
+    getAllRecipeImages().then(setImages);
     getAllRecipeDetails().then((list) => setDetails(Object.fromEntries(list.map((d) => [d.key, d]))));
     getCurrentPlan()
       .then((stored) => {
@@ -153,11 +158,22 @@ export default function App() {
     setSelected((prev) => (prev && prev.recipe.id === recipe.id ? { ...prev, recipe } : prev));
   }
 
+  function handleImageChange(recipeId: string, dataUrl: string | null) {
+    if (dataUrl) {
+      setImages((prev) => ({ ...prev, [recipeId]: dataUrl }));
+      saveRecipeImage(recipeId, dataUrl);
+    } else {
+      setImages(({ [recipeId]: _removed, ...rest }) => rest);
+      deleteRecipeImage(recipeId);
+    }
+  }
+
   function handleRecipeDelete(recipe: Recipe) {
     if (!window.confirm(t.deleteRecipeConfirm(recipe.name))) return;
     setRecipes((prev) => prev.filter((r) => r.id !== recipe.id));
     deleteRecipe(recipe.id);
     deleteRecipeDetailsFor(recipe.id);
+    handleImageChange(recipe.id, null);
     setSelected(null);
   }
 
@@ -238,7 +254,6 @@ export default function App() {
             <img src="/favicon.svg" alt="" width={32} height={32} className="rounded-lg" />
             <div>
               <h1 className="text-lg font-bold text-slate-800">{t.appTitle}</h1>
-              <p className="text-xs text-slate-500">{t.appSubtitle}</p>
             </div>
           </div>
           <button
@@ -450,6 +465,8 @@ export default function App() {
         <RecipeDetailModal
           recipe={selected.recipe}
           detail={details[recipeDetailKey(selected.recipe.id, lang)]}
+          image={images[selected.recipe.id]}
+          onImageChange={(dataUrl) => handleImageChange(selected.recipe.id, dataUrl)}
           onDetailCreated={handleDetailCreated}
           // Solange ein darüberliegendes Fenster offen ist, soll Escape nur dieses schließen.
           onClose={() => {
