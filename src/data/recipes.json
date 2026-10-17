@@ -831,5 +831,2329 @@
       { "item": "Zimt", "amountPer10Pax": 10, "unit": "g", "storeCategory": "trocken" },
       { "item": "Sahne", "amountPer10Pax": 400, "unit": "ml", "storeCategory": "mopro" }
     ]
+  },
+  {
+    "id": "vs-suppe-06",
+    "name": "Gemüsecremesuppe",
+    "course": "vorspeise",
+    "subCategory": "suppe",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 25,
+    "totalTimeMinutes": 40,
+    "instructions": [
+      "Karotten, Kartoffeln, Lauch und Sellerie putzen und würfeln.",
+      "Zwiebel in Öl andünsten, Gemüse zugeben und mit Brühe auffüllen.",
+      "20 Minuten weich kochen und fein pürieren.",
+      "Sahne einrühren und mit Salz, Pfeffer und Muskat abschmecken."
+    ],
+    "ingredients": [
+      { "item": "Karotten", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Kartoffeln", "amountPer10Pax": 500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Lauch", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Sellerie", "amountPer10Pax": 150, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 100, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Gemüsebrühe", "amountPer10Pax": 1800, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Sahne", "amountPer10Pax": 200, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Rapsöl", "amountPer10Pax": 30, "unit": "ml", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "vs-suppe-07",
+    "name": "Erbsensuppe mit Croutons",
+    "course": "vorspeise",
+    "subCategory": "suppe",
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 25,
+    "totalTimeMinutes": 35,
+    "instructions": [
+      "Zwiebel in Öl andünsten, TK-Erbsen und Kartoffeln zugeben.",
+      "Mit Brühe auffüllen und 15 Minuten kochen, dann pürieren.",
+      "Brot würfeln und in Butter goldbraun rösten.",
+      "Suppe mit Salz, Pfeffer abschmecken und mit Croutons servieren."
+    ],
+    "ingredients": [
+      { "item": "Erbsen (TK)", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "tk" },
+      { "item": "Kartoffeln", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 100, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Gemüsebrühe", "amountPer10Pax": 1800, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Toastbrot", "amountPer10Pax": 200, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Butter", "amountPer10Pax": 50, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Sahne", "amountPer10Pax": 100, "unit": "ml", "storeCategory": "mopro" }
+    ]
+  },
+  {
+    "id": "vs-suppe-08",
+    "name": "Maissuppe",
+    "course": "vorspeise",
+    "subCategory": "suppe",
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 20,
+    "totalTimeMinutes": 30,
+    "instructions": [
+      "Zwiebel in Butter andünsten, Mais zugeben.",
+      "Mit Brühe und Milch auffüllen, 15 Minuten köcheln.",
+      "Zwei Drittel der Suppe pürieren und zurück in den Topf geben.",
+      "Mit Salz, Pfeffer und etwas Curry abschmecken."
+    ],
+    "ingredients": [
+      { "item": "Mais (Dose)", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Zwiebeln", "amountPer10Pax": 100, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Gemüsebrühe", "amountPer10Pax": 1200, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Milch", "amountPer10Pax": 500, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Butter", "amountPer10Pax": 40, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Mehl", "amountPer10Pax": 40, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Currypulver", "amountPer10Pax": 5, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "vs-suppe-09",
+    "name": "Nudelsuppe mit Gemüse",
+    "course": "vorspeise",
+    "subCategory": "suppe",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 20,
+    "totalTimeMinutes": 35,
+    "instructions": [
+      "Karotten, Sellerie und Lauch klein schneiden.",
+      "In Brühe 10 Minuten kochen.",
+      "Suppennudeln zugeben und weitere 8 Minuten garen.",
+      "Mit Salz, Pfeffer und Petersilie abschmecken."
+    ],
+    "ingredients": [
+      { "item": "Karotten", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Sellerie", "amountPer10Pax": 150, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Lauch", "amountPer10Pax": 200, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Gemüsebrühe", "amountPer10Pax": 2200, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Suppennudeln", "amountPer10Pax": 250, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Petersilie", "amountPer10Pax": 20, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "vs-suppe-10",
+    "name": "Linsensuppe",
+    "course": "vorspeise",
+    "subCategory": "suppe",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 35,
+    "totalTimeMinutes": 50,
+    "instructions": [
+      "Zwiebel, Karotten und Sellerie würfeln und in Öl anbraten.",
+      "Rote Linsen und Tomatenmark zugeben, mit Brühe auffüllen.",
+      "25 Minuten weich kochen, teilweise pürieren.",
+      "Mit Salz, Pfeffer, Kreuzkümmel und Zitronensaft abschmecken."
+    ],
+    "ingredients": [
+      { "item": "Rote Linsen", "amountPer10Pax": 400, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Karotten", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Sellerie", "amountPer10Pax": 100, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 150, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Tomatenmark", "amountPer10Pax": 50, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Gemüsebrühe", "amountPer10Pax": 2000, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Zitrone", "amountPer10Pax": 1, "unit": "Stk", "storeCategory": "gemuese" },
+      { "item": "Rapsöl", "amountPer10Pax": 30, "unit": "ml", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "vs-suppe-11",
+    "name": "Blumenkohlsuppe",
+    "course": "vorspeise",
+    "subCategory": "suppe",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 25,
+    "totalTimeMinutes": 40,
+    "instructions": [
+      "Blumenkohl in Röschen teilen, Kartoffel würfeln.",
+      "Zwiebel andünsten, Gemüse zugeben und mit Brühe aufgießen.",
+      "20 Minuten kochen und fein pürieren.",
+      "Mit Sahne, Muskat, Salz und Pfeffer abschmecken."
+    ],
+    "ingredients": [
+      { "item": "Blumenkohl", "amountPer10Pax": 1200, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Kartoffeln", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 100, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Gemüsebrühe", "amountPer10Pax": 1500, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Sahne", "amountPer10Pax": 200, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Butter", "amountPer10Pax": 30, "unit": "g", "storeCategory": "mopro" }
+    ]
+  },
+  {
+    "id": "vs-suppe-12",
+    "name": "Champignoncremesuppe",
+    "course": "vorspeise",
+    "subCategory": "suppe",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 20,
+    "totalTimeMinutes": 35,
+    "instructions": [
+      "Champignons putzen und in Scheiben schneiden.",
+      "Zwiebel in Butter andünsten, Pilze zugeben und anbraten.",
+      "Mit Mehl bestäuben, mit Brühe und Sahne aufgießen.",
+      "10 Minuten köcheln, mit Salz, Pfeffer und Petersilie abschmecken."
+    ],
+    "ingredients": [
+      { "item": "Champignons", "amountPer10Pax": 800, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 100, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Butter", "amountPer10Pax": 50, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Mehl", "amountPer10Pax": 40, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Gemüsebrühe", "amountPer10Pax": 1500, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Sahne", "amountPer10Pax": 250, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Petersilie", "amountPer10Pax": 20, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "vs-suppe-13",
+    "name": "Zucchinisuppe",
+    "course": "vorspeise",
+    "subCategory": "suppe",
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 20,
+    "totalTimeMinutes": 30,
+    "instructions": [
+      "Zucchini und Kartoffeln würfeln.",
+      "Zwiebel in Öl andünsten, Gemüse zugeben, mit Brühe auffüllen.",
+      "15 Minuten kochen und pürieren.",
+      "Mit Frischkäse, Salz, Pfeffer und Basilikum verfeinern."
+    ],
+    "ingredients": [
+      { "item": "Zucchini", "amountPer10Pax": 1200, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Kartoffeln", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 100, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Gemüsebrühe", "amountPer10Pax": 1500, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Frischkäse", "amountPer10Pax": 200, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Basilikum", "amountPer10Pax": 10, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Rapsöl", "amountPer10Pax": 30, "unit": "ml", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "vs-suppe-14",
+    "name": "Süßkartoffelsuppe",
+    "course": "vorspeise",
+    "subCategory": "suppe",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 25,
+    "totalTimeMinutes": 40,
+    "instructions": [
+      "Süßkartoffeln schälen und würfeln, Zwiebel hacken.",
+      "Zwiebel andünsten, Süßkartoffeln zugeben, mit Brühe auffüllen.",
+      "20 Minuten weich kochen und pürieren.",
+      "Mit Kokosmilch, Salz, Pfeffer und einer Prise Curry abschmecken."
+    ],
+    "ingredients": [
+      { "item": "Süßkartoffeln", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 100, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Gemüsebrühe", "amountPer10Pax": 1500, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Kokosmilch", "amountPer10Pax": 400, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Currypulver", "amountPer10Pax": 5, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Rapsöl", "amountPer10Pax": 30, "unit": "ml", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "vs-suppe-15",
+    "name": "Griesnockerlsuppe",
+    "course": "vorspeise",
+    "subCategory": "suppe",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 25,
+    "totalTimeMinutes": 45,
+    "instructions": [
+      "Butter schaumig rühren, Eier und Grieß einrühren, 15 Minuten quellen lassen.",
+      "Brühe zum Kochen bringen.",
+      "Mit zwei Löffeln Nockerl formen und in der Brühe 10 Minuten ziehen lassen.",
+      "Mit Schnittlauch und Muskat servieren."
+    ],
+    "ingredients": [
+      { "item": "Weichweizengrieß", "amountPer10Pax": 250, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Eier", "amountPer10Pax": 3, "unit": "Stk", "storeCategory": "kuehlung" },
+      { "item": "Butter", "amountPer10Pax": 60, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Gemüsebrühe", "amountPer10Pax": 2200, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Schnittlauch", "amountPer10Pax": 15, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "vs-salat-06",
+    "name": "Krautsalat mit Möhren",
+    "course": "vorspeise",
+    "subCategory": "salat",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 20,
+    "instructions": [
+      "Weißkohl fein hobeln, Karotten raspeln.",
+      "Kohl mit Salz kräftig durchkneten.",
+      "Essig, Öl, Zucker und Pfeffer zu einem Dressing verrühren.",
+      "Alles vermengen und 30 Minuten durchziehen lassen."
+    ],
+    "ingredients": [
+      { "item": "Weißkohl", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Karotten", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Essig", "amountPer10Pax": 60, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Rapsöl", "amountPer10Pax": 80, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Zucker", "amountPer10Pax": 20, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "vs-salat-07",
+    "name": "Griechischer Salat",
+    "course": "vorspeise",
+    "subCategory": "salat",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 20,
+    "instructions": [
+      "Gurke, Tomaten und Paprika in Stücke schneiden.",
+      "Zwiebel in Ringe, Feta würfeln.",
+      "Mit Essig, Olivenöl, Oregano, Salz und Pfeffer anmachen.",
+      "Feta und Oliven darübergeben."
+    ],
+    "ingredients": [
+      { "item": "Gurke", "amountPer10Pax": 500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Tomaten", "amountPer10Pax": 600, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Paprika", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 100, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Feta", "amountPer10Pax": 300, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Oliven", "amountPer10Pax": 100, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Olivenöl", "amountPer10Pax": 60, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Essig", "amountPer10Pax": 30, "unit": "ml", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "vs-salat-08",
+    "name": "Kartoffelsalat mit Gurke",
+    "course": "vorspeise",
+    "subCategory": "salat",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 25,
+    "totalTimeMinutes": 45,
+    "instructions": [
+      "Kartoffeln kochen, pellen und in Scheiben schneiden.",
+      "Zwiebel fein würfeln, mit heißer Brühe, Essig, Öl, Senf übergießen.",
+      "Mit den Kartoffeln und Gurkenscheiben vermengen.",
+      "1 Stunde ziehen lassen und abschmecken."
+    ],
+    "ingredients": [
+      { "item": "Kartoffeln", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Gurke", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 100, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Gemüsebrühe", "amountPer10Pax": 250, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Essig", "amountPer10Pax": 60, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Rapsöl", "amountPer10Pax": 80, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Senf", "amountPer10Pax": 20, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "vs-salat-09",
+    "name": "Rote-Bete-Salat",
+    "course": "vorspeise",
+    "subCategory": "salat",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 15,
+    "instructions": [
+      "Rote Bete (gekocht) in Scheiben oder Würfel schneiden.",
+      "Apfel raspeln und unterheben.",
+      "Mit Essig, Öl, Honig, Salz und Pfeffer anmachen.",
+      "Eine Stunde durchziehen lassen."
+    ],
+    "ingredients": [
+      { "item": "Rote Bete (gekocht)", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Äpfel", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Essig", "amountPer10Pax": 50, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Rapsöl", "amountPer10Pax": 50, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Honig", "amountPer10Pax": 20, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "vs-salat-10",
+    "name": "Maissalat mit Paprika",
+    "course": "vorspeise",
+    "subCategory": "salat",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 15,
+    "instructions": [
+      "Mais abtropfen lassen, Paprika und Gurke würfeln.",
+      "Frühlingszwiebeln in Ringe schneiden.",
+      "Joghurt, Essig, Öl, Salz und Pfeffer verrühren.",
+      "Alles vermengen und kurz ziehen lassen."
+    ],
+    "ingredients": [
+      { "item": "Mais (Dose)", "amountPer10Pax": 800, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Paprika", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Gurke", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Frühlingszwiebeln", "amountPer10Pax": 100, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Naturjoghurt", "amountPer10Pax": 200, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Essig", "amountPer10Pax": 30, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Rapsöl", "amountPer10Pax": 40, "unit": "ml", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "vs-salat-11",
+    "name": "Bunter Bohnensalat",
+    "course": "vorspeise",
+    "subCategory": "salat",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 15,
+    "instructions": [
+      "Bohnen und Kidneybohnen abspülen und abtropfen lassen.",
+      "Paprika und Zwiebel fein würfeln.",
+      "Mit Essig, Öl, Salz, Pfeffer und Petersilie vermengen.",
+      "30 Minuten durchziehen lassen."
+    ],
+    "ingredients": [
+      { "item": "Kidneybohnen (Dose)", "amountPer10Pax": 500, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Weiße Bohnen (Dose)", "amountPer10Pax": 500, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Paprika", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 100, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Essig", "amountPer10Pax": 50, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Rapsöl", "amountPer10Pax": 60, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Petersilie", "amountPer10Pax": 15, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "vs-salat-12",
+    "name": "Eisbergsalat mit Joghurt-Kräuter-Dressing",
+    "course": "vorspeise",
+    "subCategory": "salat",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 15,
+    "instructions": [
+      "Eisbergsalat in Streifen schneiden, waschen und abtropfen.",
+      "Radieschen und Gurke in Scheiben schneiden.",
+      "Joghurt mit Kräutern, Essig, Öl, Salz und Pfeffer verrühren.",
+      "Dressing erst kurz vor dem Servieren untermischen."
+    ],
+    "ingredients": [
+      { "item": "Eisbergsalat", "amountPer10Pax": 800, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Radieschen", "amountPer10Pax": 200, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Gurke", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Naturjoghurt", "amountPer10Pax": 300, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Kräuter (gemischt)", "amountPer10Pax": 30, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Essig", "amountPer10Pax": 30, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Rapsöl", "amountPer10Pax": 40, "unit": "ml", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "vs-salat-13",
+    "name": "Couscous-Salat mit Gemüse",
+    "course": "vorspeise",
+    "subCategory": "salat",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 10,
+    "totalTimeMinutes": 30,
+    "instructions": [
+      "Couscous mit heißer Brühe übergießen und 10 Minuten quellen lassen.",
+      "Gurke, Tomaten und Paprika würfeln.",
+      "Gemüse unter den Couscous heben.",
+      "Mit Zitronensaft, Öl, Salz, Pfeffer und Minze abschmecken."
+    ],
+    "ingredients": [
+      { "item": "Couscous", "amountPer10Pax": 400, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Gemüsebrühe", "amountPer10Pax": 500, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Gurke", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Tomaten", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Paprika", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zitrone", "amountPer10Pax": 2, "unit": "Stk", "storeCategory": "gemuese" },
+      { "item": "Olivenöl", "amountPer10Pax": 50, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Minze", "amountPer10Pax": 10, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "vs-salat-14",
+    "name": "Kohlrabi-Karotten-Rohkost",
+    "course": "vorspeise",
+    "subCategory": "salat",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 15,
+    "instructions": [
+      "Kohlrabi und Karotten schälen und grob raspeln.",
+      "Apfel ebenfalls raspeln.",
+      "Mit Zitronensaft, Öl, Honig, Salz anmachen.",
+      "Mit Petersilie bestreuen."
+    ],
+    "ingredients": [
+      { "item": "Kohlrabi", "amountPer10Pax": 700, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Karotten", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Äpfel", "amountPer10Pax": 200, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zitrone", "amountPer10Pax": 1, "unit": "Stk", "storeCategory": "gemuese" },
+      { "item": "Rapsöl", "amountPer10Pax": 40, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Honig", "amountPer10Pax": 20, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Petersilie", "amountPer10Pax": 15, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "vs-salat-15",
+    "name": "Nudelsalat mit Mais und Erbsen",
+    "course": "vorspeise",
+    "subCategory": "salat",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 15,
+    "totalTimeMinutes": 30,
+    "instructions": [
+      "Nudeln bissfest kochen, abschrecken und abtropfen.",
+      "Mais und aufgetaute Erbsen zugeben, Gurke würfeln.",
+      "Mayonnaise, Joghurt, Essig, Salz und Pfeffer verrühren.",
+      "Mit den Nudeln vermengen und 1 Stunde ziehen lassen."
+    ],
+    "ingredients": [
+      { "item": "Fusilli", "amountPer10Pax": 600, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Mais (Dose)", "amountPer10Pax": 300, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Erbsen (TK)", "amountPer10Pax": 300, "unit": "g", "storeCategory": "tk" },
+      { "item": "Gurke", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Mayonnaise", "amountPer10Pax": 150, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Naturjoghurt", "amountPer10Pax": 200, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Essig", "amountPer10Pax": 30, "unit": "ml", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-05",
+    "name": "Hähnchenbrust in Rahmsoße mit Nudeln",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Bandnudeln",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 35,
+    "totalTimeMinutes": 50,
+    "instructions": [
+      "Hähnchen würfeln und anbraten.",
+      "Zwiebel zugeben, mit Sahne und Brühe ablöschen.",
+      "10 Minuten köcheln.",
+      "Mit Nudeln servieren."
+    ],
+    "ingredients": [
+      { "item": "Hähnchenbrust", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Zwiebeln", "amountPer10Pax": 150, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Sahne", "amountPer10Pax": 500, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Hühnerbrühe", "amountPer10Pax": 300, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Bandnudeln", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-06",
+    "name": "Hähnchen-Gemüse-Pfanne mit Reis",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Reis",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 30,
+    "totalTimeMinutes": 50,
+    "instructions": [
+      "Hähnchen in Streifen schneiden und braten.",
+      "Gemüse zugeben und mitgaren.",
+      "Mit Brühe und Gewürzen abschmecken.",
+      "Mit Reis servieren."
+    ],
+    "ingredients": [
+      { "item": "Hähnchenbrust", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Paprika", "amountPer10Pax": 500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zucchini", "amountPer10Pax": 500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Karotten", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Reis", "amountPer10Pax": 900, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Sojasoße", "amountPer10Pax": 50, "unit": "ml", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-07",
+    "name": "Puten-Gyros mit Tzatziki und Pommes",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Pommes",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 30,
+    "totalTimeMinutes": 50,
+    "instructions": [
+      "Putenfleisch in Streifen mit Gyrosgewürz marinieren.",
+      "Scharf anbraten.",
+      "Pommes im Ofen backen.",
+      "Mit Tzatziki und Salat servieren."
+    ],
+    "ingredients": [
+      { "item": "Putenbrust", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Gyrosgewürz", "amountPer10Pax": 40, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Pommes (TK)", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "tk" },
+      { "item": "Naturjoghurt", "amountPer10Pax": 500, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Gurke", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 200, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-08",
+    "name": "Hähnchen-Nuggets mit Kartoffelpüree",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Kartoffelpüree",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 35,
+    "totalTimeMinutes": 60,
+    "instructions": [
+      "Hähnchenbrust würfeln, in Mehl, Ei, Semmelbrösel panieren.",
+      "In Öl goldbraun ausbacken.",
+      "Kartoffelpüree zubereiten.",
+      "Mit Erbsen servieren."
+    ],
+    "ingredients": [
+      { "item": "Hähnchenbrust", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Mehl", "amountPer10Pax": 100, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Eier", "amountPer10Pax": 3, "unit": "Stk", "storeCategory": "kuehlung" },
+      { "item": "Semmelbrösel", "amountPer10Pax": 250, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Kartoffeln", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Erbsen (TK)", "amountPer10Pax": 800, "unit": "g", "storeCategory": "tk" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-09",
+    "name": "Hähnchen Teriyaki mit Reis",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Reis",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 25,
+    "totalTimeMinutes": 45,
+    "instructions": [
+      "Hähnchen würfeln und anbraten.",
+      "Mit Teriyakisoße ablöschen und einkochen.",
+      "Brokkoli bissfest garen.",
+      "Mit Reis servieren."
+    ],
+    "ingredients": [
+      { "item": "Hähnchenbrust", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Teriyakisoße", "amountPer10Pax": 300, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Brokkoli", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Reis", "amountPer10Pax": 900, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-10",
+    "name": "Hühnerfrikassee mit Reis",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Reis",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 40,
+    "totalTimeMinutes": 60,
+    "instructions": [
+      "Hähnchen in Brühe gar kochen und würfeln.",
+      "Soße aus Butter, Mehl, Brühe und Sahne rühren.",
+      "Spargelstücke, Erbsen, Hähnchen zugeben.",
+      "Mit Reis servieren."
+    ],
+    "ingredients": [
+      { "item": "Hähnchenbrust", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Hühnerbrühe", "amountPer10Pax": 1000, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Sahne", "amountPer10Pax": 300, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Butter", "amountPer10Pax": 60, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Mehl", "amountPer10Pax": 60, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Erbsen (TK)", "amountPer10Pax": 500, "unit": "g", "storeCategory": "tk" },
+      { "item": "Reis", "amountPer10Pax": 900, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-11",
+    "name": "Putengeschnetzeltes mit Champignons",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Spätzle",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 30,
+    "totalTimeMinutes": 50,
+    "instructions": [
+      "Pute in Streifen schneiden und anbraten.",
+      "Champignons und Zwiebeln zugeben.",
+      "Mit Sahne ablöschen und köcheln.",
+      "Mit Spätzle servieren."
+    ],
+    "ingredients": [
+      { "item": "Putenbrust", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Champignons", "amountPer10Pax": 600, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 200, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Sahne", "amountPer10Pax": 400, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Spätzle", "amountPer10Pax": 1200, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-12",
+    "name": "Hähnchen-Spieße mit Paprika und Reis",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Reis",
+    "prepTimeMinutes": 30,
+    "cookTimeMinutes": 30,
+    "totalTimeMinutes": 60,
+    "instructions": [
+      "Hähnchen und Paprika abwechselnd auf Spieße stecken.",
+      "Mit Öl, Paprika, Knoblauch marinieren.",
+      "Im Ofen 20 Minuten grillen.",
+      "Mit Reis und Dip servieren."
+    ],
+    "ingredients": [
+      { "item": "Hähnchenbrust", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Paprika", "amountPer10Pax": 700, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Rapsöl", "amountPer10Pax": 60, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Reis", "amountPer10Pax": 900, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Naturjoghurt", "amountPer10Pax": 300, "unit": "g", "storeCategory": "mopro" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-13",
+    "name": "Hähnchen-Schnitzel mit Kartoffelsalat",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Kartoffelsalat",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 30,
+    "totalTimeMinutes": 55,
+    "instructions": [
+      "Hähnchenbrust plattieren und panieren.",
+      "In Öl ausbacken.",
+      "Kartoffelsalat zubereiten.",
+      "Mit Zitronenspalten servieren."
+    ],
+    "ingredients": [
+      { "item": "Hähnchenbrust", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Mehl", "amountPer10Pax": 100, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Eier", "amountPer10Pax": 3, "unit": "Stk", "storeCategory": "kuehlung" },
+      { "item": "Semmelbrösel", "amountPer10Pax": 250, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Kartoffeln", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zitrone", "amountPer10Pax": 2, "unit": "Stk", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-14",
+    "name": "Hähnchen-Lasagne",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Blattsalat",
+    "prepTimeMinutes": 35,
+    "cookTimeMinutes": 60,
+    "totalTimeMinutes": 95,
+    "instructions": [
+      "Hähnchenhack mit Zwiebel und Tomaten anbraten.",
+      "Béchamel kochen.",
+      "Lasagne schichten, Käse darüber.",
+      "45 Minuten bei 180 °C backen."
+    ],
+    "ingredients": [
+      { "item": "Hähnchenhack", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Lasagneplatten", "amountPer10Pax": 600, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Passierte Tomaten", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Milch", "amountPer10Pax": 1000, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Butter", "amountPer10Pax": 80, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Mehl", "amountPer10Pax": 80, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Gouda (gerieben)", "amountPer10Pax": 300, "unit": "g", "storeCategory": "mopro" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-15",
+    "name": "Hähnchenkeulen mit Backkartoffeln",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Backkartoffeln",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 70,
+    "totalTimeMinutes": 85,
+    "instructions": [
+      "Keulen mit Paprika und Salz würzen.",
+      "Mit Kartoffeln auf dem Blech 55 Minuten bei 200 °C backen.",
+      "Zwischendurch wenden.",
+      "Mit Gurkensalat servieren."
+    ],
+    "ingredients": [
+      { "item": "Hähnchenkeulen", "amountPer10Pax": 3500, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Kartoffeln", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Rapsöl", "amountPer10Pax": 60, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Paprikapulver", "amountPer10Pax": 20, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Gurke", "amountPer10Pax": 600, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-16",
+    "name": "Puten-Gulasch mit Nudeln",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Nudeln",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 45,
+    "totalTimeMinutes": 65,
+    "instructions": [
+      "Pute würfeln und anbraten.",
+      "Zwiebeln, Paprika zugeben, Tomatenmark rösten.",
+      "Mit Brühe 30 Minuten schmoren.",
+      "Mit Nudeln servieren."
+    ],
+    "ingredients": [
+      { "item": "Putenfleisch (Gulasch)", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Paprika", "amountPer10Pax": 600, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Tomatenmark", "amountPer10Pax": 60, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Hühnerbrühe", "amountPer10Pax": 800, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Nudeln", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-17",
+    "name": "Hähnchen Tikka Masala mit Basmatireis",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Basmatireis",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 40,
+    "totalTimeMinutes": 60,
+    "instructions": [
+      "Hähnchen würfeln und marinieren.",
+      "Anbraten und mit Tomaten, Sahne und Gewürzen köcheln.",
+      "15 Minuten ziehen lassen.",
+      "Mit Basmatireis servieren."
+    ],
+    "ingredients": [
+      { "item": "Hähnchenbrust", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Naturjoghurt", "amountPer10Pax": 200, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Passierte Tomaten", "amountPer10Pax": 800, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Sahne", "amountPer10Pax": 200, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Garam Masala", "amountPer10Pax": 30, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Basmatireis", "amountPer10Pax": 900, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-18",
+    "name": "Hähnchenbrust auf Ofengemüse",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Kartoffeln",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 55,
+    "totalTimeMinutes": 75,
+    "instructions": [
+      "Hähnchenbrust anbraten.",
+      "Auf Gemüse und Kartoffeln im Ofen legen.",
+      "45 Minuten bei 190 °C backen.",
+      "Mit Kräutern bestreuen."
+    ],
+    "ingredients": [
+      { "item": "Hähnchenbrust", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Karotten", "amountPer10Pax": 500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zucchini", "amountPer10Pax": 500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Kartoffeln", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Olivenöl", "amountPer10Pax": 60, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Kräuter (gemischt)", "amountPer10Pax": 30, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-19",
+    "name": "Puten-Cordon-bleu mit Kartoffelpüree",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Kartoffelpüree",
+    "prepTimeMinutes": 30,
+    "cookTimeMinutes": 40,
+    "totalTimeMinutes": 70,
+    "instructions": [
+      "Putenschnitzel einschneiden und mit Käse füllen.",
+      "Panieren und ausbacken.",
+      "Kartoffelpüree zubereiten.",
+      "Mit Karottengemüse servieren."
+    ],
+    "ingredients": [
+      { "item": "Putenschnitzel", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Gouda (Scheiben)", "amountPer10Pax": 250, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Mehl", "amountPer10Pax": 100, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Eier", "amountPer10Pax": 3, "unit": "Stk", "storeCategory": "kuehlung" },
+      { "item": "Semmelbrösel", "amountPer10Pax": 250, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Kartoffeln", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-20",
+    "name": "Hähnchen in Kokos-Curry mit Reis",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Reis",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 40,
+    "totalTimeMinutes": 60,
+    "instructions": [
+      "Hähnchen würfeln und anbraten.",
+      "Currypaste, Kokosmilch und Gemüse zugeben.",
+      "25 Minuten köcheln.",
+      "Mit Reis servieren."
+    ],
+    "ingredients": [
+      { "item": "Hähnchenbrust", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Kokosmilch", "amountPer10Pax": 800, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Currypulver", "amountPer10Pax": 30, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Paprika", "amountPer10Pax": 500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Reis", "amountPer10Pax": 900, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-21",
+    "name": "Hähnchenbrust-Gratin mit Brokkoli",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Baguette",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 55,
+    "totalTimeMinutes": 80,
+    "instructions": [
+      "Hähnchen und Brokkoli in eine Form legen.",
+      "Mit Sahne-Käse-Guss übergießen.",
+      "40 Minuten bei 180 °C überbacken.",
+      "Mit Baguette servieren."
+    ],
+    "ingredients": [
+      { "item": "Hähnchenbrust", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Brokkoli", "amountPer10Pax": 1200, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Sahne", "amountPer10Pax": 500, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Gouda (gerieben)", "amountPer10Pax": 300, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Baguette", "amountPer10Pax": 400, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-22",
+    "name": "Putenbraten mit Soße und Klößen",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Kartoffelklöße",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 90,
+    "totalTimeMinutes": 115,
+    "instructions": [
+      "Putenbraten würzen und anbraten.",
+      "Mit Gemüse und Brühe 75 Minuten schmoren.",
+      "Soße abbinden.",
+      "Mit Klößen und Rotkohl servieren."
+    ],
+    "ingredients": [
+      { "item": "Putenbraten", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Karotten", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Hühnerbrühe", "amountPer10Pax": 800, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Kartoffelklöße", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Rotkohl", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-23",
+    "name": "Hähnchen-Wraps mit Gemüse",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Salat",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 25,
+    "totalTimeMinutes": 50,
+    "instructions": [
+      "Hähnchen in Streifen braten.",
+      "Gemüse schneiden.",
+      "Wraps mit Joghurtsoße, Hähnchen und Gemüse füllen.",
+      "Einrollen und servieren."
+    ],
+    "ingredients": [
+      { "item": "Hähnchenbrust", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Wraps", "amountPer10Pax": 20, "unit": "Stk", "storeCategory": "trocken" },
+      { "item": "Eisbergsalat", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Tomaten", "amountPer10Pax": 500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Gurke", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Naturjoghurt", "amountPer10Pax": 400, "unit": "g", "storeCategory": "mopro" }
+    ]
+  },
+  {
+    "id": "hs-gefluegel-24",
+    "name": "Hähnchen-Nudel-Auflauf",
+    "course": "hauptspeise",
+    "proteinCategory": "gefluegel",
+    "beilage": "Blattsalat",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 55,
+    "totalTimeMinutes": 75,
+    "instructions": [
+      "Nudeln bissfest kochen.",
+      "Hähnchen in Würfeln anbraten, mit Brokkoli, Sahne und Käse mischen.",
+      "In eine Form füllen und mit Käse bestreuen.",
+      "35 Minuten bei 180 °C überbacken."
+    ],
+    "ingredients": [
+      { "item": "Hähnchenbrust", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Nudeln", "amountPer10Pax": 900, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Brokkoli", "amountPer10Pax": 800, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Sahne", "amountPer10Pax": 400, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Gouda (gerieben)", "amountPer10Pax": 300, "unit": "g", "storeCategory": "mopro" }
+    ]
+  },
+  {
+    "id": "hs-rind-05",
+    "name": "Rinderrouladen mit Rotkohl und Kartoffeln",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Kartoffeln",
+    "prepTimeMinutes": 40,
+    "cookTimeMinutes": 110,
+    "totalTimeMinutes": 150,
+    "instructions": [
+      "Rouladen mit Senf bestreichen, mit Gurke und Zwiebel belegen, aufrollen und fixieren.",
+      "Rouladen rundum anbraten, mit Brühe ablöschen.",
+      "90 Minuten schmoren, Soße binden.",
+      "Rotkohl und Kartoffeln garen und dazu servieren."
+    ],
+    "ingredients": [
+      { "item": "Rinderrouladen", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Senf", "amountPer10Pax": 60, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Gewürzgurken", "amountPer10Pax": 200, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Zwiebeln", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Rinderbrühe", "amountPer10Pax": 600, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Rotkohl", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Kartoffeln", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-rind-06",
+    "name": "Rindersauerbraten mit Klößen",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Kartoffelklöße",
+    "prepTimeMinutes": 30,
+    "cookTimeMinutes": 120,
+    "totalTimeMinutes": 150,
+    "instructions": [
+      "Fleisch mit Essig-Zwiebel-Beize würzen (am besten am Vortag).",
+      "Fleisch anbraten, mit Beize und Brühe ablöschen.",
+      "Zugedeckt 100 Minuten schmoren.",
+      "Soße binden, Klöße nach Packung zubereiten."
+    ],
+    "ingredients": [
+      { "item": "Rindfleisch (Schmorbraten)", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Essig", "amountPer10Pax": 200, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Zwiebeln", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Karotten", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Rinderbrühe", "amountPer10Pax": 600, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Kartoffelklöße", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-rind-07",
+    "name": "Königsberger Klopse mit Kartoffeln",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Kartoffeln",
+    "prepTimeMinutes": 30,
+    "cookTimeMinutes": 40,
+    "totalTimeMinutes": 70,
+    "instructions": [
+      "Hackfleisch mit Brötchen, Ei und Zwiebel zu Klopsen formen.",
+      "Klopse in Brühe 15 Minuten gar ziehen.",
+      "Soße aus Mehl, Butter, Brühe und Sahne rühren, Kapern zugeben.",
+      "Mit Salzkartoffeln servieren."
+    ],
+    "ingredients": [
+      { "item": "Rinderhack", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Brötchen", "amountPer10Pax": 200, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Eier", "amountPer10Pax": 2, "unit": "Stk", "storeCategory": "kuehlung" },
+      { "item": "Zwiebeln", "amountPer10Pax": 200, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Kapern", "amountPer10Pax": 60, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Sahne", "amountPer10Pax": 200, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Kartoffeln", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-rind-08",
+    "name": "Hackfleischpfanne mit Paprika und Reis",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Reis",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 30,
+    "totalTimeMinutes": 45,
+    "instructions": [
+      "Hackfleisch krümelig anbraten.",
+      "Zwiebeln, Paprika zugeben und mitbraten.",
+      "Mit Tomatenmark, passierten Tomaten und Gewürzen 15 Minuten köcheln.",
+      "Mit Reis servieren."
+    ],
+    "ingredients": [
+      { "item": "Rinderhack", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Paprika", "amountPer10Pax": 800, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Tomatenmark", "amountPer10Pax": 60, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Passierte Tomaten", "amountPer10Pax": 500, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Reis", "amountPer10Pax": 900, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-rind-09",
+    "name": "Chili con Carne mit Reis",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Reis",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 45,
+    "totalTimeMinutes": 65,
+    "instructions": [
+      "Hackfleisch mit Zwiebeln kräftig anbraten.",
+      "Tomatenmark, Tomaten, Mais und Kidneybohnen zugeben.",
+      "Mit Paprika und Kreuzkümmel 35 Minuten köcheln.",
+      "Mit Reis servieren."
+    ],
+    "ingredients": [
+      { "item": "Rinderhack", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Kidneybohnen (Dose)", "amountPer10Pax": 800, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Mais (Dose)", "amountPer10Pax": 400, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Stückige Tomaten", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Zwiebeln", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Reis", "amountPer10Pax": 900, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-rind-10",
+    "name": "Rindfleisch-Gemüse-Eintopf",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Brot",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 80,
+    "totalTimeMinutes": 105,
+    "instructions": [
+      "Rindfleisch würfeln und anbraten.",
+      "Gemüse und Kartoffeln würfeln, zugeben.",
+      "Mit Brühe auffüllen und 60 Minuten garen.",
+      "Mit Salz, Pfeffer, Majoran abschmecken."
+    ],
+    "ingredients": [
+      { "item": "Rindfleisch (Suppenfleisch)", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Kartoffeln", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Karotten", "amountPer10Pax": 500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Weißkohl", "amountPer10Pax": 500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 200, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Rinderbrühe", "amountPer10Pax": 2000, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Bauernbrot", "amountPer10Pax": 600, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-rind-11",
+    "name": "Rinderlasagne",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Blattsalat",
+    "prepTimeMinutes": 35,
+    "cookTimeMinutes": 60,
+    "totalTimeMinutes": 95,
+    "instructions": [
+      "Hackfleisch mit Zwiebel, Karotte und Tomaten zu Bolognese kochen.",
+      "Béchamel aus Butter, Mehl, Milch kochen.",
+      "Lasagneplatten, Bolognese und Béchamel schichten, mit Käse bestreuen.",
+      "45 Minuten bei 180 °C backen."
+    ],
+    "ingredients": [
+      { "item": "Rinderhack", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Lasagneplatten", "amountPer10Pax": 600, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Passierte Tomaten", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Milch", "amountPer10Pax": 1000, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Butter", "amountPer10Pax": 80, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Mehl", "amountPer10Pax": 80, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Gouda (gerieben)", "amountPer10Pax": 300, "unit": "g", "storeCategory": "mopro" }
+    ]
+  },
+  {
+    "id": "hs-rind-12",
+    "name": "Rinderhackbällchen in Tomatensoße mit Nudeln",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Nudeln",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 40,
+    "totalTimeMinutes": 65,
+    "instructions": [
+      "Hackmasse mit Ei, Semmelbrösel, Zwiebel würzen und Bällchen formen.",
+      "Bällchen anbraten.",
+      "In Tomatensoße 15 Minuten gar ziehen.",
+      "Mit Nudeln servieren."
+    ],
+    "ingredients": [
+      { "item": "Rinderhack", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Eier", "amountPer10Pax": 2, "unit": "Stk", "storeCategory": "kuehlung" },
+      { "item": "Semmelbrösel", "amountPer10Pax": 100, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Passierte Tomaten", "amountPer10Pax": 1200, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Zwiebeln", "amountPer10Pax": 200, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Penne", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-rind-13",
+    "name": "Rindergeschnetzeltes Züricher Art mit Rösti",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Rösti",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 35,
+    "totalTimeMinutes": 60,
+    "instructions": [
+      "Rindfleisch in Streifen schneiden und kurz anbraten.",
+      "Champignons und Zwiebeln zugeben.",
+      "Mit Brühe und Sahne ablöschen, 10 Minuten köcheln.",
+      "Mit Rösti servieren."
+    ],
+    "ingredients": [
+      { "item": "Rindfleisch (Geschnetzeltes)", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Champignons", "amountPer10Pax": 500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 200, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Sahne", "amountPer10Pax": 400, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Rinderbrühe", "amountPer10Pax": 300, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Rösti (TK)", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "tk" }
+    ]
+  },
+  {
+    "id": "hs-rind-14",
+    "name": "Rinderbraten mit Soße und Spätzle",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Spätzle",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 120,
+    "totalTimeMinutes": 145,
+    "instructions": [
+      "Braten salzen, pfeffern und rundum anbraten.",
+      "Mit Röstgemüse und Brühe im Ofen 100 Minuten schmoren.",
+      "Soße abpassieren und binden.",
+      "Mit Spätzle servieren."
+    ],
+    "ingredients": [
+      { "item": "Rinderbraten", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Zwiebeln", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Karotten", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Rinderbrühe", "amountPer10Pax": 800, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Tomatenmark", "amountPer10Pax": 50, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Spätzle", "amountPer10Pax": 1200, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-rind-15",
+    "name": "Rindfleisch-Kartoffel-Auflauf",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Blattsalat",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 60,
+    "totalTimeMinutes": 85,
+    "instructions": [
+      "Kartoffeln in Scheiben schneiden, Hackfleisch mit Zwiebeln anbraten.",
+      "Schichtweise in eine Form geben.",
+      "Mit Sahne-Eier-Guss übergießen und Käse bestreuen.",
+      "45 Minuten bei 180 °C backen."
+    ],
+    "ingredients": [
+      { "item": "Rinderhack", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Kartoffeln", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 200, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Sahne", "amountPer10Pax": 400, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Eier", "amountPer10Pax": 3, "unit": "Stk", "storeCategory": "kuehlung" },
+      { "item": "Gouda (gerieben)", "amountPer10Pax": 250, "unit": "g", "storeCategory": "mopro" }
+    ]
+  },
+  {
+    "id": "hs-rind-16",
+    "name": "Rindergulasch mit Nudeln und Paprika",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Bandnudeln",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 100,
+    "totalTimeMinutes": 125,
+    "instructions": [
+      "Rindfleisch würfeln und scharf anbraten.",
+      "Zwiebeln, Paprika zugeben und mit Tomatenmark rösten.",
+      "Mit Brühe 80 Minuten schmoren.",
+      "Mit Bandnudeln servieren."
+    ],
+    "ingredients": [
+      { "item": "Rindfleisch (Gulasch)", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Paprika", "amountPer10Pax": 600, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Tomatenmark", "amountPer10Pax": 80, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Rinderbrühe", "amountPer10Pax": 1000, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Bandnudeln", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-rind-17",
+    "name": "Burger-Pfanne mit Kartoffelspalten",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Kartoffelspalten",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 40,
+    "totalTimeMinutes": 65,
+    "instructions": [
+      "Hackfleisch zu flachen Patties formen und braten.",
+      "Kartoffelspalten würzen und im Ofen 35 Minuten backen.",
+      "Patties mit Käse überbacken.",
+      "Mit Salat und Soße anrichten."
+    ],
+    "ingredients": [
+      { "item": "Rinderhack", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Kartoffeln", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Gouda (Scheiben)", "amountPer10Pax": 200, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Eisbergsalat", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Tomaten", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Ketchup", "amountPer10Pax": 150, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-rind-18",
+    "name": "Rindfleisch-Wok mit Gemüse und Reis",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Reis",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 25,
+    "totalTimeMinutes": 50,
+    "instructions": [
+      "Rindfleisch in dünne Streifen schneiden und marinieren.",
+      "Gemüse in Streifen schneiden.",
+      "Fleisch scharf anbraten, Gemüse zugeben, mit Sojasoße ablöschen.",
+      "Mit Reis servieren."
+    ],
+    "ingredients": [
+      { "item": "Rindfleisch (Streifen)", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Paprika", "amountPer10Pax": 500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Karotten", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zucchini", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Sojasoße", "amountPer10Pax": 100, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Reis", "amountPer10Pax": 900, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-rind-19",
+    "name": "Rinderfrikadellen mit Kartoffelsalat",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Kartoffelsalat",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 25,
+    "totalTimeMinutes": 50,
+    "instructions": [
+      "Hackmasse aus Hack, Brötchen, Ei, Zwiebel und Senf bereiten.",
+      "Frikadellen formen und 12 Minuten braten.",
+      "Kartoffelsalat zubereiten.",
+      "Zusammen servieren."
+    ],
+    "ingredients": [
+      { "item": "Rinderhack", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Brötchen", "amountPer10Pax": 150, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Eier", "amountPer10Pax": 2, "unit": "Stk", "storeCategory": "kuehlung" },
+      { "item": "Zwiebeln", "amountPer10Pax": 150, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Kartoffeln", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Gewürzgurken", "amountPer10Pax": 200, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-rind-20",
+    "name": "Rindfleisch-Spinat-Cannelloni",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Blattsalat",
+    "prepTimeMinutes": 35,
+    "cookTimeMinutes": 50,
+    "totalTimeMinutes": 85,
+    "instructions": [
+      "Hackfleisch mit Spinat und Zwiebel anbraten.",
+      "Cannelloni füllen und in eine Form legen.",
+      "Mit Tomatensoße und Käse bedecken.",
+      "40 Minuten bei 180 °C backen."
+    ],
+    "ingredients": [
+      { "item": "Rinderhack", "amountPer10Pax": 1200, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Blattspinat (TK)", "amountPer10Pax": 800, "unit": "g", "storeCategory": "tk" },
+      { "item": "Cannelloni", "amountPer10Pax": 500, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Passierte Tomaten", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Gouda (gerieben)", "amountPer10Pax": 250, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Zwiebeln", "amountPer10Pax": 150, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-rind-21",
+    "name": "Rindfleisch mit Bohnen und Kartoffeln",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Kartoffeln",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 70,
+    "totalTimeMinutes": 95,
+    "instructions": [
+      "Rindfleisch würfeln und anbraten.",
+      "Mit Brühe 45 Minuten schmoren.",
+      "Grüne Bohnen und Kartoffeln zugeben und 20 Minuten garen.",
+      "Mit Bohnenkraut abschmecken."
+    ],
+    "ingredients": [
+      { "item": "Rindfleisch (Gulasch)", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Grüne Bohnen", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Kartoffeln", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 200, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Rinderbrühe", "amountPer10Pax": 800, "unit": "ml", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-rind-22",
+    "name": "Rinder-Kohlrouladen",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Kartoffeln",
+    "prepTimeMinutes": 45,
+    "cookTimeMinutes": 90,
+    "totalTimeMinutes": 135,
+    "instructions": [
+      "Weißkohlblätter blanchieren.",
+      "Hackmasse mit Zwiebel und Gewürzen darin einrollen.",
+      "Rouladen anbraten und in Brühe 60 Minuten schmoren.",
+      "Soße binden, mit Kartoffeln servieren."
+    ],
+    "ingredients": [
+      { "item": "Rinderhack", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Weißkohl", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zwiebeln", "amountPer10Pax": 200, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Eier", "amountPer10Pax": 2, "unit": "Stk", "storeCategory": "kuehlung" },
+      { "item": "Rinderbrühe", "amountPer10Pax": 600, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Kartoffeln", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-rind-23",
+    "name": "Gefüllte Paprika mit Rinderhack und Reis",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Reis",
+    "prepTimeMinutes": 30,
+    "cookTimeMinutes": 60,
+    "totalTimeMinutes": 90,
+    "instructions": [
+      "Paprika halbieren und entkernen.",
+      "Hack mit Zwiebel, Ei, Reis und Gewürzen mischen und einfüllen.",
+      "Mit Tomatensoße 45 Minuten im Ofen garen.",
+      "Mit Soße servieren."
+    ],
+    "ingredients": [
+      { "item": "Paprika", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Rinderhack", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Reis", "amountPer10Pax": 600, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Zwiebeln", "amountPer10Pax": 200, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Eier", "amountPer10Pax": 2, "unit": "Stk", "storeCategory": "kuehlung" },
+      { "item": "Passierte Tomaten", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-rind-24",
+    "name": "Rindfleisch-Curry mit Reis",
+    "course": "hauptspeise",
+    "proteinCategory": "rind",
+    "beilage": "Reis",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 75,
+    "totalTimeMinutes": 100,
+    "instructions": [
+      "Rindfleisch würfeln und anbraten.",
+      "Zwiebeln, Currypaste zugeben.",
+      "Mit Kokosmilch und Brühe 60 Minuten schmoren.",
+      "Mit Reis servieren."
+    ],
+    "ingredients": [
+      { "item": "Rindfleisch (Gulasch)", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Kokosmilch", "amountPer10Pax": 800, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Currypulver", "amountPer10Pax": 30, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Zwiebeln", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Paprika", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Reis", "amountPer10Pax": 900, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-fisch-05",
+    "name": "Lachs in Dillsoße mit Kartoffeln",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Kartoffeln",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 35,
+    "totalTimeMinutes": 50,
+    "instructions": [
+      "Lachs würzen und im Ofen 15 Minuten garen.",
+      "Dillsoße aus Sahne, Brühe und Dill kochen.",
+      "Kartoffeln kochen.",
+      "Alles anrichten."
+    ],
+    "ingredients": [
+      { "item": "Lachsfilet", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "tk" },
+      { "item": "Sahne", "amountPer10Pax": 400, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Dill", "amountPer10Pax": 30, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Gemüsebrühe", "amountPer10Pax": 200, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Kartoffeln", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-fisch-06",
+    "name": "Fischfilet im Backteig mit Remoulade",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Kartoffelsalat",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 30,
+    "totalTimeMinutes": 55,
+    "instructions": [
+      "Fischfilet in Backteig tauchen.",
+      "Im heißen Öl ausbacken.",
+      "Remoulade anrühren.",
+      "Mit Kartoffelsalat servieren."
+    ],
+    "ingredients": [
+      { "item": "Fischfilet", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "tk" },
+      { "item": "Mehl", "amountPer10Pax": 300, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Eier", "amountPer10Pax": 2, "unit": "Stk", "storeCategory": "kuehlung" },
+      { "item": "Remoulade", "amountPer10Pax": 200, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Kartoffeln", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-fisch-07",
+    "name": "Seelachs mit Senfsoße und Reis",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Reis",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 35,
+    "totalTimeMinutes": 50,
+    "instructions": [
+      "Seelachs würzen und anbraten.",
+      "Senfsoße aus Sahne und Senf rühren.",
+      "Reis kochen.",
+      "Mit Gurkensalat servieren."
+    ],
+    "ingredients": [
+      { "item": "Seelachsfilet", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "tk" },
+      { "item": "Senf", "amountPer10Pax": 80, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Sahne", "amountPer10Pax": 400, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Reis", "amountPer10Pax": 900, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Gurke", "amountPer10Pax": 500, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-fisch-08",
+    "name": "Fischpfanne mit Gemüse und Kartoffeln",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Bratkartoffeln",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 35,
+    "totalTimeMinutes": 55,
+    "instructions": [
+      "Fisch würfeln und in Pfanne braten.",
+      "Gemüse anbraten.",
+      "Mit Sahne ablöschen.",
+      "Mit Bratkartoffeln servieren."
+    ],
+    "ingredients": [
+      { "item": "Fischfilet", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "tk" },
+      { "item": "Paprika", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zucchini", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Sahne", "amountPer10Pax": 300, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Kartoffeln", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-fisch-09",
+    "name": "Fisch-Burger mit Kartoffelspalten",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Kartoffelspalten",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 40,
+    "totalTimeMinutes": 65,
+    "instructions": [
+      "Fischfilets panieren und backen.",
+      "Spalten im Ofen backen.",
+      "Brötchen mit Salat, Fisch und Remoulade belegen.",
+      "Servieren."
+    ],
+    "ingredients": [
+      { "item": "Fischfilet", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "tk" },
+      { "item": "Burgerbrötchen", "amountPer10Pax": 12, "unit": "Stk", "storeCategory": "trocken" },
+      { "item": "Eisbergsalat", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Remoulade", "amountPer10Pax": 200, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Kartoffeln", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-fisch-10",
+    "name": "Lachs-Nudel-Auflauf",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Salat",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 50,
+    "totalTimeMinutes": 70,
+    "instructions": [
+      "Nudeln kochen.",
+      "Lachs würfeln, mit Sahne und Käse mischen.",
+      "In Form geben und 35 Minuten backen.",
+      "Mit Salat servieren."
+    ],
+    "ingredients": [
+      { "item": "Lachsfilet", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "tk" },
+      { "item": "Nudeln", "amountPer10Pax": 900, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Sahne", "amountPer10Pax": 500, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Gouda (gerieben)", "amountPer10Pax": 250, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Spinat (TK)", "amountPer10Pax": 500, "unit": "g", "storeCategory": "tk" }
+    ]
+  },
+  {
+    "id": "hs-fisch-11",
+    "name": "Fischstäbchen mit Kartoffelpüree und Erbsen",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Kartoffelpüree",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 35,
+    "totalTimeMinutes": 50,
+    "instructions": [
+      "Fischstäbchen nach Packung backen.",
+      "Kartoffelpüree zubereiten.",
+      "Erbsen erwärmen.",
+      "Zusammen servieren."
+    ],
+    "ingredients": [
+      { "item": "Fischstäbchen (TK)", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "tk" },
+      { "item": "Kartoffeln", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Milch", "amountPer10Pax": 300, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Erbsen (TK)", "amountPer10Pax": 800, "unit": "g", "storeCategory": "tk" }
+    ]
+  },
+  {
+    "id": "hs-fisch-12",
+    "name": "Gebackener Fisch mit Tomaten-Reis",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Reis",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 40,
+    "totalTimeMinutes": 55,
+    "instructions": [
+      "Fisch würzen und im Ofen backen.",
+      "Reis mit Tomaten kochen.",
+      "Mit Kräutern abschmecken.",
+      "Servieren."
+    ],
+    "ingredients": [
+      { "item": "Fischfilet", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "tk" },
+      { "item": "Reis", "amountPer10Pax": 900, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Passierte Tomaten", "amountPer10Pax": 400, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Kräuter (gemischt)", "amountPer10Pax": 30, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-fisch-13",
+    "name": "Fisch-Curry mit Kokosmilch und Reis",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Reis",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 35,
+    "totalTimeMinutes": 55,
+    "instructions": [
+      "Fisch würfeln.",
+      "Currysoße mit Kokosmilch kochen.",
+      "Fisch 10 Minuten ziehen lassen.",
+      "Mit Reis servieren."
+    ],
+    "ingredients": [
+      { "item": "Fischfilet", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "tk" },
+      { "item": "Kokosmilch", "amountPer10Pax": 800, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Currypulver", "amountPer10Pax": 30, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Paprika", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Reis", "amountPer10Pax": 900, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-fisch-14",
+    "name": "Lachs-Spinat-Lasagne",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Salat",
+    "prepTimeMinutes": 35,
+    "cookTimeMinutes": 60,
+    "totalTimeMinutes": 95,
+    "instructions": [
+      "Lachs und Spinat mit Sahne mischen.",
+      "Mit Lasagneplatten schichten.",
+      "Mit Käse bestreuen.",
+      "45 Minuten backen."
+    ],
+    "ingredients": [
+      { "item": "Lachsfilet", "amountPer10Pax": 1200, "unit": "g", "storeCategory": "tk" },
+      { "item": "Spinat (TK)", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "tk" },
+      { "item": "Lasagneplatten", "amountPer10Pax": 600, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Sahne", "amountPer10Pax": 600, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Gouda (gerieben)", "amountPer10Pax": 300, "unit": "g", "storeCategory": "mopro" }
+    ]
+  },
+  {
+    "id": "hs-fisch-15",
+    "name": "Forelle Müllerin mit Petersilienkartoffeln",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Kartoffeln",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 40,
+    "totalTimeMinutes": 55,
+    "instructions": [
+      "Forellen würzen und in Mehl wenden.",
+      "In Butter braten.",
+      "Kartoffeln kochen und mit Petersilie schwenken.",
+      "Mit Zitrone servieren."
+    ],
+    "ingredients": [
+      { "item": "Forellen", "amountPer10Pax": 3000, "unit": "g", "storeCategory": "tk" },
+      { "item": "Mehl", "amountPer10Pax": 100, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Butter", "amountPer10Pax": 100, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Kartoffeln", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Petersilie", "amountPer10Pax": 30, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zitrone", "amountPer10Pax": 2, "unit": "Stk", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-fisch-16",
+    "name": "Fischklopse mit Kartoffeln",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Kartoffeln",
+    "prepTimeMinutes": 30,
+    "cookTimeMinutes": 40,
+    "totalTimeMinutes": 70,
+    "instructions": [
+      "Fischmasse mit Ei und Brötchen mischen.",
+      "Klopse formen und braten.",
+      "Kartoffeln kochen.",
+      "Mit Senfsoße servieren."
+    ],
+    "ingredients": [
+      { "item": "Fischfilet", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "tk" },
+      { "item": "Brötchen", "amountPer10Pax": 150, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Eier", "amountPer10Pax": 2, "unit": "Stk", "storeCategory": "kuehlung" },
+      { "item": "Zwiebeln", "amountPer10Pax": 150, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Kartoffeln", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Senf", "amountPer10Pax": 50, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-fisch-17",
+    "name": "Lachs-Pasta mit Brokkoli",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Nudeln",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 30,
+    "totalTimeMinutes": 45,
+    "instructions": [
+      "Nudeln kochen.",
+      "Lachs anbraten, Brokkoli zugeben.",
+      "Mit Sahne ablöschen.",
+      "Alles vermengen."
+    ],
+    "ingredients": [
+      { "item": "Lachsfilet", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "tk" },
+      { "item": "Penne", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Brokkoli", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Sahne", "amountPer10Pax": 400, "unit": "ml", "storeCategory": "mopro" }
+    ]
+  },
+  {
+    "id": "hs-fisch-18",
+    "name": "Fisch in Tomaten-Paprika-Soße",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Reis",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 35,
+    "totalTimeMinutes": 50,
+    "instructions": [
+      "Zwiebel, Paprika andünsten.",
+      "Tomaten zugeben und köcheln.",
+      "Fischstücke zugeben und 10 Minuten ziehen.",
+      "Mit Reis servieren."
+    ],
+    "ingredients": [
+      { "item": "Fischfilet", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "tk" },
+      { "item": "Paprika", "amountPer10Pax": 700, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Passierte Tomaten", "amountPer10Pax": 800, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Zwiebeln", "amountPer10Pax": 200, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Reis", "amountPer10Pax": 900, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-fisch-19",
+    "name": "Backfisch mit Kartoffelsalat",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Kartoffelsalat",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 35,
+    "totalTimeMinutes": 55,
+    "instructions": [
+      "Fisch panieren und ausbacken.",
+      "Kartoffelsalat bereiten.",
+      "Zitrone dazu reichen.",
+      "Servieren."
+    ],
+    "ingredients": [
+      { "item": "Fischfilet", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "tk" },
+      { "item": "Mehl", "amountPer10Pax": 100, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Eier", "amountPer10Pax": 2, "unit": "Stk", "storeCategory": "kuehlung" },
+      { "item": "Semmelbrösel", "amountPer10Pax": 250, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Kartoffeln", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-fisch-20",
+    "name": "Fisch-Gemüse-Auflauf",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Brot",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 50,
+    "totalTimeMinutes": 70,
+    "instructions": [
+      "Gemüse in Scheiben schneiden.",
+      "Mit Fisch in eine Form schichten.",
+      "Mit Sahne-Guss übergießen.",
+      "40 Minuten backen."
+    ],
+    "ingredients": [
+      { "item": "Fischfilet", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "tk" },
+      { "item": "Kartoffeln", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Karotten", "amountPer10Pax": 500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Sahne", "amountPer10Pax": 400, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Gouda (gerieben)", "amountPer10Pax": 200, "unit": "g", "storeCategory": "mopro" }
+    ]
+  },
+  {
+    "id": "hs-fisch-21",
+    "name": "Lachsfrikadellen mit Kartoffelpüree",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Kartoffelpüree",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 35,
+    "totalTimeMinutes": 60,
+    "instructions": [
+      "Lachs fein hacken und mit Ei und Semmelbrösel mischen.",
+      "Frikadellen braten.",
+      "Kartoffelpüree zubereiten.",
+      "Mit Gurkensalat servieren."
+    ],
+    "ingredients": [
+      { "item": "Lachsfilet", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "tk" },
+      { "item": "Eier", "amountPer10Pax": 2, "unit": "Stk", "storeCategory": "kuehlung" },
+      { "item": "Semmelbrösel", "amountPer10Pax": 150, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Kartoffeln", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Gurke", "amountPer10Pax": 500, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-fisch-22",
+    "name": "Fisch-Eintopf mit Kartoffeln",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Brot",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 40,
+    "totalTimeMinutes": 60,
+    "instructions": [
+      "Gemüse und Kartoffeln würfeln.",
+      "In Brühe garen.",
+      "Fisch zugeben und 10 Minuten ziehen.",
+      "Mit Dill abschmecken."
+    ],
+    "ingredients": [
+      { "item": "Fischfilet", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "tk" },
+      { "item": "Kartoffeln", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Karotten", "amountPer10Pax": 400, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Gemüsebrühe", "amountPer10Pax": 2000, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Dill", "amountPer10Pax": 20, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Brot", "amountPer10Pax": 500, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "hs-fisch-23",
+    "name": "Kabeljau mit Gemüsereis",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Reis",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 35,
+    "totalTimeMinutes": 50,
+    "instructions": [
+      "Kabeljau würzen und braten.",
+      "Reis mit Gemüsewürfeln garen.",
+      "Mit Zitronenbutter beträufeln.",
+      "Servieren."
+    ],
+    "ingredients": [
+      { "item": "Kabeljaufilet", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "tk" },
+      { "item": "Reis", "amountPer10Pax": 900, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Karotten", "amountPer10Pax": 300, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Erbsen (TK)", "amountPer10Pax": 300, "unit": "g", "storeCategory": "tk" },
+      { "item": "Butter", "amountPer10Pax": 60, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Zitrone", "amountPer10Pax": 2, "unit": "Stk", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "hs-fisch-24",
+    "name": "Pangasius in Kräuterkruste mit Reis",
+    "course": "hauptspeise",
+    "proteinCategory": "fisch",
+    "beilage": "Reis",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 40,
+    "totalTimeMinutes": 60,
+    "instructions": [
+      "Fisch würzen.",
+      "Semmelbrösel mit Butter und Kräutern mischen und aufdrücken.",
+      "20 Minuten bei 200 °C backen.",
+      "Mit Reis und Möhrengemüse servieren."
+    ],
+    "ingredients": [
+      { "item": "Pangasiusfilet", "amountPer10Pax": 1800, "unit": "g", "storeCategory": "tk" },
+      { "item": "Semmelbrösel", "amountPer10Pax": 200, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Butter", "amountPer10Pax": 100, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Kräuter (gemischt)", "amountPer10Pax": 40, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Reis", "amountPer10Pax": 900, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Karotten", "amountPer10Pax": 600, "unit": "g", "storeCategory": "gemuese" }
+    ]
+  },
+  {
+    "id": "ns-07",
+    "name": "Vanillepudding mit Himbeersoße",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 15,
+    "totalTimeMinutes": 25,
+    "instructions": [
+      "Pudding nach Packung mit Milch kochen.",
+      "Himbeeren mit Zucker pürieren.",
+      "Pudding erkalten lassen.",
+      "Mit Soße servieren."
+    ],
+    "ingredients": [
+      { "item": "Puddingpulver Vanille", "amountPer10Pax": 200, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Milch", "amountPer10Pax": 1500, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Zucker", "amountPer10Pax": 100, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Himbeeren (TK)", "amountPer10Pax": 500, "unit": "g", "storeCategory": "tk" }
+    ]
+  },
+  {
+    "id": "ns-08",
+    "name": "Erdbeerquark",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 10,
+    "instructions": [
+      "Erdbeeren klein schneiden.",
+      "Mit Quark und Zucker verrühren.",
+      "Kalt stellen.",
+      "Servieren."
+    ],
+    "ingredients": [
+      { "item": "Quark", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Erdbeeren", "amountPer10Pax": 600, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zucker", "amountPer10Pax": 80, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Vanillezucker", "amountPer10Pax": 10, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "ns-09",
+    "name": "Rote Grütze mit Vanillesoße",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 20,
+    "totalTimeMinutes": 30,
+    "instructions": [
+      "Beeren mit Saft und Zucker aufkochen.",
+      "Mit Speisestärke binden.",
+      "Erkalten lassen.",
+      "Mit Vanillesoße servieren."
+    ],
+    "ingredients": [
+      { "item": "Beeren (TK)", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "tk" },
+      { "item": "Fruchtsaft", "amountPer10Pax": 500, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Speisestärke", "amountPer10Pax": 50, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Zucker", "amountPer10Pax": 100, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Milch", "amountPer10Pax": 500, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Vanillepuddingpulver", "amountPer10Pax": 50, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "ns-10",
+    "name": "Schokoladenmousse",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 20,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 20,
+    "instructions": [
+      "Schokolade schmelzen.",
+      "Sahne steif schlagen.",
+      "Schokolade unterheben.",
+      "Mindestens 2 Stunden kühlen."
+    ],
+    "ingredients": [
+      { "item": "Zartbitterschokolade", "amountPer10Pax": 400, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Sahne", "amountPer10Pax": 600, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Eier", "amountPer10Pax": 4, "unit": "Stk", "storeCategory": "kuehlung" },
+      { "item": "Zucker", "amountPer10Pax": 50, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "ns-11",
+    "name": "Panna Cotta mit Fruchtsoße",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 10,
+    "totalTimeMinutes": 25,
+    "instructions": [
+      "Gelatine einweichen.",
+      "Sahne mit Zucker erhitzen.",
+      "Gelatine einrühren, in Förmchen füllen.",
+      "Gekühlt mit Fruchtsoße servieren."
+    ],
+    "ingredients": [
+      { "item": "Sahne", "amountPer10Pax": 1000, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Milch", "amountPer10Pax": 200, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Gelatine", "amountPer10Pax": 12, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Zucker", "amountPer10Pax": 100, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Fruchtsoße", "amountPer10Pax": 300, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "ns-12",
+    "name": "Griesspudding mit Fruchtsoße",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 15,
+    "totalTimeMinutes": 25,
+    "instructions": [
+      "Milch mit Zucker aufkochen.",
+      "Grieß einrühren und quellen lassen.",
+      "In Schalen füllen und kühlen.",
+      "Mit Soße servieren."
+    ],
+    "ingredients": [
+      { "item": "Milch", "amountPer10Pax": 1500, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Grieß", "amountPer10Pax": 150, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Zucker", "amountPer10Pax": 80, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Fruchtsoße", "amountPer10Pax": 300, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "ns-13",
+    "name": "Bratapfel mit Vanillesoße",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 35,
+    "totalTimeMinutes": 50,
+    "instructions": [
+      "Äpfel entkernen und füllen.",
+      "Mit Zimt und Zucker bestreuen.",
+      "25 Minuten backen.",
+      "Mit Soße servieren."
+    ],
+    "ingredients": [
+      { "item": "Äpfel", "amountPer10Pax": 2000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Rosinen", "amountPer10Pax": 100, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Zucker", "amountPer10Pax": 80, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Zimt", "amountPer10Pax": 5, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Milch", "amountPer10Pax": 500, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Vanillepuddingpulver", "amountPer10Pax": 50, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "ns-14",
+    "name": "Eis mit heißen Himbeeren",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 10,
+    "totalTimeMinutes": 20,
+    "instructions": [
+      "Himbeeren erhitzen.",
+      "Eis in Schalen füllen.",
+      "Himbeeren darübergeben.",
+      "Sofort servieren."
+    ],
+    "ingredients": [
+      { "item": "Vanilleeis", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "tk" },
+      { "item": "Himbeeren (TK)", "amountPer10Pax": 600, "unit": "g", "storeCategory": "tk" },
+      { "item": "Zucker", "amountPer10Pax": 50, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "ns-15",
+    "name": "Quarkspeise mit Obst",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 10,
+    "instructions": [
+      "Obst waschen und schneiden.",
+      "Quark mit Zucker verrühren.",
+      "Obst unterheben.",
+      "Kalt servieren."
+    ],
+    "ingredients": [
+      { "item": "Quark", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Gemischtes Obst", "amountPer10Pax": 800, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zucker", "amountPer10Pax": 60, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Vanillezucker", "amountPer10Pax": 10, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "ns-16",
+    "name": "Apfelstrudel mit Vanillesoße",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 40,
+    "totalTimeMinutes": 65,
+    "instructions": [
+      "Äpfel schälen und in Scheiben schneiden.",
+      "Mit Zucker, Zimt, Rosinen mischen.",
+      "In Strudelteig einrollen.",
+      "35 Minuten backen."
+    ],
+    "ingredients": [
+      { "item": "Strudelteig", "amountPer10Pax": 600, "unit": "g", "storeCategory": "kuehlung" },
+      { "item": "Äpfel", "amountPer10Pax": 1500, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Zucker", "amountPer10Pax": 100, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Rosinen", "amountPer10Pax": 100, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Milch", "amountPer10Pax": 500, "unit": "ml", "storeCategory": "mopro" }
+    ]
+  },
+  {
+    "id": "ns-17",
+    "name": "Bananen-Joghurt-Creme",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 10,
+    "instructions": [
+      "Bananen zerdrücken.",
+      "Mit Joghurt und Honig verrühren.",
+      "Kalt stellen.",
+      "Mit Keksbröseln servieren."
+    ],
+    "ingredients": [
+      { "item": "Bananen", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "gemuese" },
+      { "item": "Naturjoghurt", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Honig", "amountPer10Pax": 60, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Butterkekse", "amountPer10Pax": 100, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "ns-18",
+    "name": "Tiramisu (ohne Alkohol)",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 25,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 25,
+    "instructions": [
+      "Mascarpone mit Quark und Zucker cremig rühren.",
+      "Löffelbiskuits in Kaffee tauchen.",
+      "Schichtweise in Form legen.",
+      "4 Stunden kühlen, mit Kakao bestäuben."
+    ],
+    "ingredients": [
+      { "item": "Löffelbiskuits", "amountPer10Pax": 400, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Mascarpone", "amountPer10Pax": 500, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Quark", "amountPer10Pax": 500, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Zucker", "amountPer10Pax": 100, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Kaffee", "amountPer10Pax": 400, "unit": "ml", "storeCategory": "trocken" },
+      { "item": "Kakao", "amountPer10Pax": 20, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "ns-19",
+    "name": "Milchreis-Dessert mit Zimt",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 40,
+    "totalTimeMinutes": 50,
+    "instructions": [
+      "Milch mit Reis aufkochen.",
+      "30 Minuten quellen lassen.",
+      "Mit Zucker und Zimt abschmecken.",
+      "Warm servieren."
+    ],
+    "ingredients": [
+      { "item": "Milch", "amountPer10Pax": 2000, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Milchreis", "amountPer10Pax": 300, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Zucker", "amountPer10Pax": 100, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Zimt", "amountPer10Pax": 5, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "ns-20",
+    "name": "Waffeln mit Puderzucker und Kirschen",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 25,
+    "totalTimeMinutes": 40,
+    "instructions": [
+      "Teig aus Mehl, Eiern, Milch und Zucker rühren.",
+      "Waffeln backen.",
+      "Kirschen erwärmen.",
+      "Mit Puderzucker servieren."
+    ],
+    "ingredients": [
+      { "item": "Mehl", "amountPer10Pax": 500, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Eier", "amountPer10Pax": 5, "unit": "Stk", "storeCategory": "kuehlung" },
+      { "item": "Milch", "amountPer10Pax": 600, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Butter", "amountPer10Pax": 150, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Kirschen (Glas)", "amountPer10Pax": 700, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Puderzucker", "amountPer10Pax": 50, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "ns-21",
+    "name": "Götterspeise mit Vanillesoße",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 15,
+    "totalTimeMinutes": 25,
+    "instructions": [
+      "Götterspeise nach Packung zubereiten.",
+      "Kalt stellen.",
+      "Vanillesoße kochen.",
+      "Zusammen servieren."
+    ],
+    "ingredients": [
+      { "item": "Götterspeise", "amountPer10Pax": 300, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Milch", "amountPer10Pax": 500, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Vanillepuddingpulver", "amountPer10Pax": 50, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Zucker", "amountPer10Pax": 50, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "ns-22",
+    "name": "Pfirsich-Melba",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 10,
+    "instructions": [
+      "Pfirsiche abtropfen.",
+      "Mit Eis in Schalen füllen.",
+      "Himbeersoße darübergeben.",
+      "Servieren."
+    ],
+    "ingredients": [
+      { "item": "Pfirsiche (Dose)", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Vanilleeis", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "tk" },
+      { "item": "Himbeeren (TK)", "amountPer10Pax": 400, "unit": "g", "storeCategory": "tk" }
+    ]
+  },
+  {
+    "id": "ns-23",
+    "name": "Schokoreis-Pudding",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 15,
+    "totalTimeMinutes": 25,
+    "instructions": [
+      "Milch erhitzen.",
+      "Pudding mit Schokolade anrühren.",
+      "Unter Rühren aufkochen.",
+      "Erkalten lassen."
+    ],
+    "ingredients": [
+      { "item": "Puddingpulver Schokolade", "amountPer10Pax": 200, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Milch", "amountPer10Pax": 1500, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Zucker", "amountPer10Pax": 80, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Schokostreusel", "amountPer10Pax": 50, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "ns-24",
+    "name": "Joghurt-Mousse mit Beeren",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 15,
+    "instructions": [
+      "Joghurt mit Zucker verrühren.",
+      "Sahne steif schlagen und unterheben.",
+      "Mit Beeren schichten.",
+      "1 Stunde kühlen."
+    ],
+    "ingredients": [
+      { "item": "Naturjoghurt", "amountPer10Pax": 800, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Sahne", "amountPer10Pax": 400, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Zucker", "amountPer10Pax": 80, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Beeren (TK)", "amountPer10Pax": 500, "unit": "g", "storeCategory": "tk" }
+    ]
+  },
+  {
+    "id": "ns-25",
+    "name": "Zimtschnecken-Auflauf",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 15,
+    "cookTimeMinutes": 35,
+    "totalTimeMinutes": 50,
+    "instructions": [
+      "Brötchen in Scheiben schneiden.",
+      "Mit Milch-Ei-Zimt-Mischung übergießen.",
+      "30 Minuten backen.",
+      "Mit Puderzucker bestäuben."
+    ],
+    "ingredients": [
+      { "item": "Milchbrötchen", "amountPer10Pax": 600, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Milch", "amountPer10Pax": 800, "unit": "ml", "storeCategory": "mopro" },
+      { "item": "Eier", "amountPer10Pax": 4, "unit": "Stk", "storeCategory": "kuehlung" },
+      { "item": "Zucker", "amountPer10Pax": 100, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Zimt", "amountPer10Pax": 10, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Puderzucker", "amountPer10Pax": 30, "unit": "g", "storeCategory": "trocken" }
+    ]
+  },
+  {
+    "id": "ns-26",
+    "name": "Mandarinen-Quark",
+    "course": "nachspeise",
+    "subCategory": "dessert",
+    "prepTimeMinutes": 10,
+    "cookTimeMinutes": 0,
+    "totalTimeMinutes": 10,
+    "instructions": [
+      "Mandarinen abtropfen lassen.",
+      "Quark mit Zucker und Vanillezucker verrühren.",
+      "Mandarinen unterheben.",
+      "Kalt servieren."
+    ],
+    "ingredients": [
+      { "item": "Quark", "amountPer10Pax": 1000, "unit": "g", "storeCategory": "mopro" },
+      { "item": "Mandarinen (Dose)", "amountPer10Pax": 600, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Zucker", "amountPer10Pax": 60, "unit": "g", "storeCategory": "trocken" },
+      { "item": "Vanillezucker", "amountPer10Pax": 10, "unit": "g", "storeCategory": "trocken" }
+    ]
   }
 ]

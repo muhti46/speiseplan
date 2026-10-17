@@ -91,6 +91,23 @@ class SpeiseplanDB extends Dexie {
       recipeChats: 'recipeId',
       recipeTranslations: 'key, recipeId',
     });
+    // Erweiterter Standard-Rezeptpool: fehlende Built-in-Rezepte nachladen, vorhandene (ggf. bearbeitete) bleiben unberührt.
+    this.version(9)
+      .stores({
+        plans: 'id, year, calendarWeek, isFinalized, createdAt',
+        recipes: 'id, course, proteinCategory, subCategory',
+        chatConversations: 'id, updatedAt',
+        currentPlan: 'key',
+        recipeDetails: 'key, recipeId',
+        recipeImages: 'recipeId',
+        recipeChats: 'recipeId',
+        recipeTranslations: 'key, recipeId',
+      })
+      .upgrade(async (tx) => {
+        const table = tx.table('recipes');
+        const existing = new Set(await table.toCollection().primaryKeys());
+        await table.bulkPut(seedRecipes().filter((r) => !existing.has(r.id)));
+      });
 
     // Läuft nur einmal, wenn die Datenbank komplett neu (ohne Vorgängerversion) angelegt wird.
     this.on('populate', async (tx) => {
