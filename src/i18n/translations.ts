@@ -25,6 +25,18 @@ interface Translation {
   needPlanForShopping: string;
   archivedPlans: string;
   noArchivedPlans: string;
+  backupTitle: string;
+  backupHint: string;
+  backupLast: (date: string) => string;
+  backupNever: string;
+  backupSave: string;
+  backupRestore: string;
+  backupRestoreConfirm: string;
+  backupRestored: (count: number) => string;
+  backupInvalid: string;
+  backupError: string;
+  backupReminder: string;
+  backupReminderAction: string;
   archiveBadgeFinal: string;
   archiveBadgeDraft: string;
   noShoppingListFor: (title: string) => string;
@@ -162,6 +174,19 @@ export const translations: Record<Lang, Translation> = {
     needPlanForShopping: 'Erzeuge zuerst einen Wochenplan im Tab „Speiseplan“.',
     archivedPlans: 'Archivierte Wochenpläne',
     noArchivedPlans: 'Noch keine Wochenpläne. Jeder erzeugte Plan wird hier automatisch abgelegt.',
+    backupTitle: 'Datensicherung',
+    backupHint:
+      'Updates löschen keine Daten. Wird die App aber deinstalliert oder werden die Browserdaten gelöscht, sind Pläne, Archiv und eigene Rezepte weg. Sichere sie deshalb regelmäßig als Datei (z.B. in Google Drive) - mit „Wiederherstellen" holst du sie zurück.',
+    backupLast: (date) => `Letzte Sicherung: ${date}`,
+    backupNever: 'Noch keine Sicherung erstellt.',
+    backupSave: 'Sichern',
+    backupRestore: 'Wiederherstellen',
+    backupRestoreConfirm: 'Daten aus dieser Sicherung übernehmen? Gleiche Einträge werden überschrieben, alles andere bleibt erhalten.',
+    backupRestored: (count) => `${count} Einträge wiederhergestellt.`,
+    backupInvalid: 'Diese Datei ist keine gültige Speiseplan-Sicherung.',
+    backupError: 'Die Sicherung ist fehlgeschlagen. Bitte erneut versuchen.',
+    backupReminder: 'Seit über einer Woche keine Datensicherung.',
+    backupReminderAction: 'Jetzt sichern',
     archiveBadgeFinal: 'Freigegeben',
     archiveBadgeDraft: 'Entwurf',
     noShoppingListFor: (title) => `Noch keine Einkaufsliste für ${title}. Erzeuge zuerst einen Wochenplan.`,
@@ -325,6 +350,19 @@ export const translations: Record<Lang, Translation> = {
     needPlanForShopping: 'Önce "Yemek Planı" sekmesinde bir haftalık plan oluştur.',
     archivedPlans: 'Arşivlenmiş Haftalık Planlar',
     noArchivedPlans: 'Henüz haftalık plan yok. Oluşturulan her plan buraya otomatik kaydedilir.',
+    backupTitle: 'Veri Yedekleme',
+    backupHint:
+      'Güncellemeler verileri silmez. Ancak uygulama silinirse veya tarayıcı verileri temizlenirse planlar, arşiv ve kendi tariflerin kaybolur. Bu yüzden düzenli olarak dosya olarak yedekle (örn. Google Drive\'a) - „Geri yükle" ile geri getirebilirsin.',
+    backupLast: (date) => `Son yedekleme: ${date}`,
+    backupNever: 'Henüz yedek oluşturulmadı.',
+    backupSave: 'Yedekle',
+    backupRestore: 'Geri yükle',
+    backupRestoreConfirm: 'Bu yedekteki veriler alınsın mı? Aynı kayıtların üzerine yazılır, diğer her şey korunur.',
+    backupRestored: (count) => `${count} kayıt geri yüklendi.`,
+    backupInvalid: 'Bu dosya geçerli bir Speiseplan yedeği değil.',
+    backupError: 'Yedekleme başarısız oldu. Lütfen tekrar dene.',
+    backupReminder: 'Bir haftadan uzun süredir yedek alınmadı.',
+    backupReminderAction: 'Şimdi yedekle',
     archiveBadgeFinal: 'Onaylandı',
     archiveBadgeDraft: 'Taslak',
     noShoppingListFor: (title) => `${title} için henüz alışveriş listesi yok. Önce bir haftalık plan oluştur.`,
