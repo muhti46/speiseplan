@@ -148,6 +148,11 @@ interface Translation {
   photoRemove: string;
   photoFailed: string;
   photoHide: string;
+  dbBlockedTitle: string;
+  dbBlockedText: string;
+  dbErrorTitle: string;
+  dbErrorText: string;
+  dbReload: string;
   photoHideConfirm: string;
   photoCredit: (artist: string | undefined, license: string | undefined) => string;
   deleteRecipe: string;
@@ -357,6 +362,11 @@ export const translations: Record<Lang, Translation> = {
     photoRemove: 'Foto entfernen',
     photoFailed: 'Das Foto konnte nicht geladen werden.',
     photoHide: 'Foto passt nicht – ausblenden',
+    dbBlockedTitle: 'Update wird abgeschlossen – deine Daten sind nicht weg',
+    dbBlockedText: 'Eine andere geöffnete Kopie der App hält noch die alten Daten fest. Bitte die App komplett schließen (auch aus der Liste der zuletzt geöffneten Apps) und alle Chrome-Tabs mit dem Speiseplan schließen, dann die App neu öffnen. Hilft das nicht: Handy neu starten.',
+    dbErrorTitle: 'Die gespeicherten Daten können nicht geöffnet werden',
+    dbErrorText: 'Bitte die App komplett schließen und neu öffnen. Falls der Fehler bleibt, diese Meldung als Screenshot weitergeben.',
+    dbReload: 'Neu laden',
     photoHideConfirm: 'Dieses automatisch gefundene Foto ausblenden? Du kannst stattdessen ein eigenes Foto hinzufügen.',
     photoCredit: (artist, license) => ['Foto: Wikipedia', artist, license].filter(Boolean).join(' · '),
     deleteRecipe: 'Aus Pool löschen',
@@ -565,6 +575,11 @@ export const translations: Record<Lang, Translation> = {
     photoRemove: 'Fotoğrafı sil',
     photoFailed: 'Fotoğraf yüklenemedi.',
     photoHide: 'Fotoğraf uymuyor – gizle',
+    dbBlockedTitle: 'Güncelleme tamamlanıyor – verilerin silinmedi',
+    dbBlockedText: 'Uygulamanın açık kalan başka bir kopyası eski verileri hâlâ tutuyor. Lütfen uygulamayı tamamen kapat (son açılan uygulamalar listesinden de) ve Speiseplan açık olan tüm Chrome sekmelerini kapat, sonra uygulamayı yeniden aç. İşe yaramazsa telefonu yeniden başlat.',
+    dbErrorTitle: 'Kayıtlı veriler açılamıyor',
+    dbErrorText: 'Lütfen uygulamayı tamamen kapatıp yeniden aç. Hata devam ederse bu mesajın ekran görüntüsünü gönder.',
+    dbReload: 'Yeniden yükle',
     photoHideConfirm: 'Otomatik bulunan bu fotoğraf gizlensin mi? Onun yerine kendi fotoğrafını ekleyebilirsin.',
     photoCredit: (artist, license) => ['Fotoğraf: Wikipedia', artist, license].filter(Boolean).join(' · '),
     deleteRecipe: 'Havuzdan sil',

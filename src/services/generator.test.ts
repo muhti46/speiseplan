@@ -108,9 +108,11 @@ describe('replaceRecipeInPlan', () => {
     expect(replaceRecipeInPlan(plan, { ...target, course: 'vorspeise' })).toEqual(plan);
   });
   it('keeps a manually chosen beilage', () => {
-    const plan = applyBeilageChange(makePlan(), makePlan().days[0].dayOfWeek, 'Kartoffeln');
+    // Bewusst keine echte Standard-Beilage (z.B. "Kartoffeln"), sonst ist die "manuelle" Wahl
+    // im Zufallsplan manchmal identisch mit der Standard-Beilage und der Test flackert.
+    const plan = applyBeilageChange(makePlan(), makePlan().days[0].dayOfWeek, 'Manuelle Beilage');
     const updated = replaceRecipeInPlan(plan, { ...plan.days[0].hauptspeise, beilage: 'Reis2' });
-    expect(updated.days[0].beilage).toBe('Kartoffeln');
+    expect(updated.days[0].beilage).toBe('Manuelle Beilage');
   });
 });
 

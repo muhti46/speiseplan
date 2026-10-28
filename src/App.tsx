@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import {
   CalendarDays,
   ShoppingCart,
@@ -40,6 +40,8 @@ import {
   deleteRecipeImage,
   getAllRecipeImages,
   getAllDishWebImages,
+  getDbStatus,
+  subscribeDbStatus,
   saveDishWebImage,
   savePlan,
 } from './services/storage';
@@ -54,6 +56,7 @@ import { allBeilageNames, findBeilageRecipe } from './data/beilagen';
 import AddRecipeModal from './components/AddRecipeModal';
 import ChatPanel from './components/ChatPanel';
 import BackupPanel from './components/BackupPanel';
+import DbStatusBanner from './components/DbStatusBanner';
 import AppVersion from './components/AppVersion';
 import { getLastBackupDate, isBackupDue, requestPersistentStorage } from './services/backup';
 import { handleDriveOAuthReturn } from './services/driveBackup';
@@ -95,6 +98,9 @@ export default function App() {
   // Erst nach dem Laden des gespeicherten Plans darf gespeichert werden, sonst würde der
   // anfängliche leere State den gespeicherten Plan überschreiben.
   const [planLoaded, setPlanLoaded] = useState(false);
+  // Solange die Datenbank (z.B. während eines blockierten Updates) nicht offen ist, nichts erzeugen:
+  // der neue Plan würde sonst nach dem Öffnen den gespeicherten Plan dieser Woche überschreiben.
+  const dbReady = useSyncExternalStore(subscribeDbStatus, getDbStatus) === 'ready';
   const [backupDue, setBackupDue] = useState(() => isBackupDue(getLastBackupDate()));
 
   const TABS: TabItem[] = [
@@ -291,6 +297,7 @@ export default function App() {
   }
 
   async function handleGenerate() {
+    if (!dbReady || !planLoaded) return;
     setIsGenerating(true);
     try {
       const recentRecipeIds = await getRecentRecipeIds(4);
@@ -352,6 +359,7 @@ export default function App() {
       </header>
 
       <main className="flex-1 space-y-4 p-4">
+        <DbStatusBanner />
         {backupDue && archive.length > 0 && activeTab !== 'archiv' && activeTab !== 'chat' && (
           <div className="flex items-center gap-3 rounded-xl border border-amber-300 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">
             <DatabaseBackup size={16} className="shrink-0" />
@@ -388,7 +396,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={handleGenerate}
-                  disabled={isGenerating}
+                  disabled={isGenerating || !dbReady || !planLoaded}
                   className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-brand-700 px-3 py-2.5 text-sm font-semibold leading-tight text-white shadow-sm transition-colors hover:bg-brand-800 active:scale-95 disabled:opacity-60"
                 >
                   <Sparkles size={16} className="shrink-0" />
