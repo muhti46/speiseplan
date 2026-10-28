@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { X, Clock, ChefHat, Flame, Users, Sparkles, ArrowLeftRight, Lightbulb, Loader2, RefreshCw, Pencil, Trash2, Camera } from 'lucide-react';
+import { X, Clock, ChefHat, Flame, Users, Sparkles, ArrowLeftRight, Lightbulb, Loader2, RefreshCw, Pencil, Trash2, Camera, Search } from 'lucide-react';
 import { Recipe, RecipeDetail, RecipeTranslation } from '../types/recipe';
 import { translateInstructions } from '../services/ai/recipeTranslation';
 import { generateRecipeDetail } from '../services/ai/recipeDetail';
@@ -35,6 +35,8 @@ interface RecipeDetailModalProps {
   webPhoto?: DishPhoto;
   /** Übernehmen/Anderes/Kein Foto, solange webPhoto ein unbestätigter Vorschlag ist. */
   photoSuggestion?: PhotoSuggestionHandlers;
+  /** Fotoauswahl öffnen (automatisch gefundene Fotos durchsehen bzw. suchen). */
+  onFindPhoto?: () => void;
   /** Neues Foto (Data-URL) oder `null` zum Entfernen; der Aufrufer speichert es. */
   onImageChange?: (dataUrl: string | null) => void;
   /** Wird mit einer neu erzeugten ausführlichen Anleitung aufgerufen; der Aufrufer speichert sie. */
@@ -51,6 +53,7 @@ export default function RecipeDetailModal({
   image,
   webPhoto,
   photoSuggestion,
+  onFindPhoto,
   translation,
   onTranslationCreated,
   onImageChange,
@@ -277,14 +280,26 @@ export default function RecipeDetailModal({
                   </div>
                 </>
               ) : (
-                <button
-                  type="button"
-                  onClick={() => fileInput.current?.click()}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 px-4 py-4 text-sm font-medium text-slate-500 active:scale-95"
-                >
-                  <Camera size={18} />
-                  {t.photoAdd}
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => fileInput.current?.click()}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 px-4 py-4 text-sm font-medium text-slate-500 active:scale-95"
+                  >
+                    <Camera size={18} />
+                    {t.photoAdd}
+                  </button>
+                  {onFindPhoto && (
+                    <button
+                      type="button"
+                      onClick={onFindPhoto}
+                      className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 px-4 py-4 text-sm font-medium text-slate-500 active:scale-95"
+                    >
+                      <Search size={18} />
+                      {t.photoFind}
+                    </button>
+                  )}
+                </div>
               )}
               {enlarged && (
                 <ImageLightbox

@@ -152,6 +152,12 @@ interface Translation {
   photoNext: string;
   photoReject: string;
   photoApproveFailed: string;
+  photoPickerTitle: (name: string) => string;
+  photoMatched: string;
+  photoLoadMore: string;
+  photoNoMore: string;
+  photoSearchFailed: string;
+  photoFind: string;
   dbBlockedTitle: string;
   dbBlockedText: string;
   dbErrorTitle: string;
@@ -366,9 +372,15 @@ export const translations: Record<Lang, Translation> = {
     photoFailed: 'Das Foto konnte nicht geladen werden.',
     photoSuggestedHint: 'Automatisch ausgewählter Vorschlag – passt das Foto? Übernommene Fotos werden beim Rezept gespeichert.',
     photoApprove: 'Foto übernehmen',
-    photoNext: 'Anderes Foto',
+    photoNext: 'Andere Fotos',
     photoReject: 'Kein Foto',
     photoApproveFailed: 'Das Foto konnte nicht gespeichert werden (keine Verbindung?). Bitte später erneut versuchen.',
+    photoPickerTitle: (name) => `Foto für „${name}“ wählen`,
+    photoMatched: 'passt laut KI',
+    photoLoadMore: 'Mehr Fotos suchen',
+    photoNoMore: 'Keine weiteren Fotos gefunden. Du kannst auch ein eigenes Foto hinzufügen.',
+    photoSearchFailed: 'Die Suche hat nicht geklappt (keine Verbindung?). Bitte erneut versuchen.',
+    photoFind: 'Foto suchen',
     dbBlockedTitle: 'Update wird abgeschlossen – deine Daten sind nicht weg',
     dbBlockedText: 'Eine andere geöffnete Kopie der App hält noch die alten Daten fest. Bitte die App komplett schließen (auch aus der Liste der zuletzt geöffneten Apps) und alle Chrome-Tabs mit dem Speiseplan schließen, dann die App neu öffnen. Hilft das nicht: Handy neu starten.',
     dbErrorTitle: 'Die gespeicherten Daten können nicht geöffnet werden',
@@ -582,9 +594,15 @@ export const translations: Record<Lang, Translation> = {
     photoFailed: 'Fotoğraf yüklenemedi.',
     photoSuggestedHint: 'Otomatik seçilen öneri – fotoğraf uyuyor mu? Onaylanan fotoğraflar tarifle birlikte kaydedilir.',
     photoApprove: 'Fotoğrafı onayla',
-    photoNext: 'Başka fotoğraf',
+    photoNext: 'Başka fotoğraflar',
     photoReject: 'Fotoğraf olmasın',
     photoApproveFailed: 'Fotoğraf kaydedilemedi (bağlantı yok mu?). Lütfen daha sonra tekrar dene.',
+    photoPickerTitle: (name) => `„${name}“ için fotoğraf seç`,
+    photoMatched: 'yapay zekâya göre uygun',
+    photoLoadMore: 'Daha fazla fotoğraf ara',
+    photoNoMore: 'Başka fotoğraf bulunamadı. Kendi fotoğrafını da ekleyebilirsin.',
+    photoSearchFailed: 'Arama başarısız oldu (bağlantı yok mu?). Lütfen tekrar dene.',
+    photoFind: 'Fotoğraf ara',
     dbBlockedTitle: 'Güncelleme tamamlanıyor – verilerin silinmedi',
     dbBlockedText: 'Uygulamanın açık kalan başka bir kopyası eski verileri hâlâ tutuyor. Lütfen uygulamayı tamamen kapat (son açılan uygulamalar listesinden de) ve Speiseplan açık olan tüm Chrome sekmelerini kapat, sonra uygulamayı yeniden aç. İşe yaramazsa telefonu yeniden başlat.',
     dbErrorTitle: 'Kayıtlı veriler açılamıyor',

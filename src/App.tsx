@@ -53,12 +53,13 @@ import {
   downloadPhoto,
   lookupDishImage,
   needsLookup,
-  nextSuggestion,
+  searchMoreCandidates,
   PhotoCandidate,
 } from './services/dishImages';
 import { createPhotoRanker } from './services/ai/photoPick';
 import { getApiKey } from './services/ai/apiKey';
 import { PhotoSuggestionHandlers } from './components/PhotoSuggestionActions';
+import PhotoPicker from './components/PhotoPicker';
 import CheckboxList from './components/CheckboxList';
 import RecipeDetailModal from './components/RecipeDetailModal';
 import RecipePickerModal from './components/RecipePickerModal';
@@ -108,6 +109,8 @@ export default function App() {
   const [webImages, setWebImages] = useState<Record<string, DishWebImage>>({});
   const [webImagesLoaded, setWebImagesLoaded] = useState(false);
   const lookupsInFlight = useRef(new Set<string>());
+  // Rezept, für das gerade die Foto-Auswahl offen ist.
+  const [photoPickerRecipe, setPhotoPickerRecipe] = useState<Recipe | null>(null);
   const [editing, setEditing] = useState<Recipe | null>(null);
   // Erst nach dem Laden des gespeicherten Plans darf gespeichert werden, sonst würde der
   // anfängliche leere State den gespeicherten Plan überschreiben.
@@ -270,22 +273,43 @@ export default function App() {
     saveDishWebImage(entry);
   }
 
-  /** Übernehmen / Anderes Foto / Kein Foto für den Vorschlag eines Rezepts. */
+  /** Foto übernehmen: herunterladen, verkleinert als eigenes Foto des Rezepts speichern (wirft bei Netzwerkfehlern). */
+  async function approveCandidate(recipe: Recipe, candidate: PhotoCandidate) {
+    const dataUrl = await downloadPhoto(candidate.fullUrl);
+    handleImageChange(recipe.id, dataUrl);
+    const entry = webImages[recipe.id] ?? { recipeId: recipe.id, checkedAt: new Date().toISOString(), status: 'none' as const };
+    updateWebImage({ ...entry, status: 'approved', approved: candidate, candidates: undefined, current: undefined });
+  }
+
+  /**
+   * Weitere Fotos für die Auswahl: beim ersten Mal die normale Suche, danach die nächste Trefferseite.
+   * Neue Fotos werden (mit API-Key) von Gemini geprüft; liefert die Anzahl neu gefundener.
+   */
+  async function loadMorePhotos(recipe: Recipe): Promise<number> {
+    const apiKey = getApiKey();
+    const rank = apiKey ? createPhotoRanker(apiKey) : undefined;
+    const entry = webImages[recipe.id];
+    const known = entry?.candidates ?? [];
+    if (known.length === 0) {
+      const result = await lookupDishImage(recipe, rank);
+      // Ein schon abgelehntes Gericht bleibt ohne Vorschlag, bekommt aber die Fotos zur Auswahl.
+      updateWebImage(entry?.status === 'hidden' ? { ...result, status: 'hidden', current: undefined } : result);
+      return result.candidates?.length ?? 0;
+    }
+    const page = (entry?.morePages ?? 0) + 1;
+    const more = await searchMoreCandidates(recipe.name, known, page, rank);
+    updateWebImage({ ...entry!, candidates: [...known, ...more], morePages: page });
+    return more.length;
+  }
+
+  /** Übernehmen / Andere Fotos / Kein Foto für den Vorschlag eines Rezepts. */
   function suggestionHandlers(recipe: Recipe): PhotoSuggestionHandlers {
     return {
       approve: async () => {
-        const entry = webImages[recipe.id];
-        const suggestion = currentSuggestion(entry);
-        if (!entry || !suggestion) return;
-        // Wirft bei Netzwerkfehlern - dann bleibt alles beim Vorschlag.
-        const dataUrl = await downloadPhoto(suggestion.fullUrl);
-        handleImageChange(recipe.id, dataUrl);
-        updateWebImage({ ...entry, status: 'approved', approved: suggestion, candidates: undefined, current: undefined });
+        const suggestion = currentSuggestion(webImages[recipe.id]);
+        if (suggestion) await approveCandidate(recipe, suggestion);
       },
-      next: () => {
-        const entry = webImages[recipe.id];
-        if (entry) updateWebImage(nextSuggestion(entry));
-      },
+      showAll: () => setPhotoPickerRecipe(recipe),
       reject: () => {
         const entry = webImages[recipe.id];
         if (entry) updateWebImage({ ...entry, status: 'hidden', current: undefined });
@@ -655,6 +679,17 @@ export default function App() {
         <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
       </div>
 
+      {photoPickerRecipe && (
+        <PhotoPicker
+          recipeName={photoPickerRecipe.name}
+          candidates={webImages[photoPickerRecipe.id]?.candidates ?? []}
+          onChoose={(candidate) => approveCandidate(photoPickerRecipe, candidate)}
+          onLoadMore={() => loadMorePhotos(photoPickerRecipe)}
+          onReject={() => suggestionHandlers(photoPickerRecipe).reject()}
+          onClose={() => setPhotoPickerRecipe(null)}
+        />
+      )}
+
       {selected && (
         <RecipeDetailModal
           recipe={selected.recipe}
@@ -662,6 +697,7 @@ export default function App() {
           image={images[selected.recipe.id]}
           webPhoto={images[selected.recipe.id] ? undefined : photoFor(selected.recipe)}
           photoSuggestion={suggestionHandlers(selected.recipe)}
+          onFindPhoto={() => setPhotoPickerRecipe(selected.recipe)}
           translation={translations[recipeDetailKey(selected.recipe.id, lang)]}
           onTranslationCreated={handleTranslationCreated}
           onImageChange={(dataUrl) => handleImageChange(selected.recipe.id, dataUrl)}

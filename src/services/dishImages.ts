@@ -15,6 +15,8 @@ export interface PhotoCandidate {
   pageUrl?: string;
   artist?: string;
   license?: string;
+  /** Laut Gemini (bzw. ohne Key: laut Titel) zeigt das Foto das Gericht. */
+  matched?: boolean;
 }
 
 export interface DishWebImage {
@@ -26,8 +28,10 @@ export interface DishWebImage {
    */
   status: 'suggested' | 'approved' | 'none' | 'hidden' | 'found';
   checkedAt: string;
-  /** Passende Kandidaten, bestes zuerst (von Gemini sortiert, sonst nach Titel-Heuristik). */
+  /** Alle gefundenen Fotos: passende (matched) zuerst, bestes vorn; dahinter die übrigen zur freien Auswahl. */
   candidates?: PhotoCandidate[];
+  /** Wie oft schon "Mehr Fotos suchen" geladen wurde (für die nächste Trefferseite). */
+  morePages?: number;
   /** Index des aktuell vorgeschlagenen Kandidaten. */
   current?: number;
   /** Bestätigtes Foto (für die Quellenangabe). */
@@ -203,37 +207,70 @@ export function needsLookup(entry: DishWebImage | undefined, now = new Date()): 
 /** Wählt aus Kandidaten die passenden aus und sortiert sie; liefert Indizes, bestes zuerst. */
 export type RankPhotos = (dishName: string, candidates: { candidate: PhotoCandidate; title: string }[]) => Promise<number[]>;
 
+/** Sortiert gefundene Fotos: passende (laut Gemini bzw. Titel) zuerst und markiert, die übrigen dahinter. */
+async function orderCandidates(
+  dishName: string,
+  found: { candidate: PhotoCandidate; title: string }[],
+  rank?: RankPhotos,
+): Promise<PhotoCandidate[]> {
+  const matchedIdx = rank
+    ? (await rank(dishName, found)).filter((i) => i >= 0 && i < found.length)
+    : found.map((f, i) => (isRelevantTitle(dishName, f.title) ? i : -1)).filter((i) => i >= 0);
+  const matched = new Set(matchedIdx);
+  return [
+    ...matchedIdx.map((i) => ({ ...found[i].candidate, matched: true })),
+    ...found.filter((_, i) => !matched.has(i)).map((f) => ({ ...f.candidate, matched: false })),
+  ];
+}
+
 /**
- * Sucht Fotos für ein Rezept. Mit `rank` (Gemini) bleiben nur Fotos, die das Gericht wirklich
- * zeigen; ohne nur die mit passendem Titel. Ergebnis ist höchstens ein Vorschlag.
+ * Sucht Fotos für ein Rezept. Vorgeschlagen wird nur ein Foto, das das Gericht zeigt (mit `rank`
+ * von Gemini geprüft, sonst nach Titel); alle übrigen bleiben zur freien Auswahl gespeichert.
  */
 export async function lookupDishImage(recipe: Recipe, rank?: RankPhotos, now = new Date()): Promise<DishWebImage> {
   const found = await collectCandidates(recipe.name);
-  let candidates: PhotoCandidate[];
-  if (rank && found.length > 0) {
-    const order = await rank(recipe.name, found);
-    candidates = order.filter((i) => i >= 0 && i < found.length).map((i) => found[i].candidate);
-  } else {
-    candidates = found.filter((f) => isRelevantTitle(recipe.name, f.title)).map((f) => f.candidate);
+  const candidates = found.length > 0 ? await orderCandidates(recipe.name, found, rank) : [];
+  const base = { recipeId: recipe.id, checkedAt: now.toISOString(), verified: Boolean(rank), candidates, morePages: 0 };
+  return candidates[0]?.matched ? { ...base, status: 'suggested', current: 0 } : { ...base, status: 'none' };
+}
+
+const MORE_PER_PAGE = 10;
+
+/**
+ * "Mehr Fotos suchen": nächste Trefferseite der Commons-Dateisuche (Hauptgericht und voller Name),
+ * ohne bereits bekannte Fotos. Passende werden wieder nach vorn sortiert und markiert.
+ */
+export async function searchMoreCandidates(
+  dishName: string,
+  known: PhotoCandidate[],
+  page: number,
+  rank?: RankPhotos,
+): Promise<PhotoCandidate[]> {
+  const seen = new Set(known.map((c) => c.fullUrl));
+  const found: { candidate: PhotoCandidate; title: string }[] = [];
+  for (const term of [...searchTerms(dishName)].reverse()) {
+    const result = await wikiQuery(COMMONS_API, {
+      generator: 'search',
+      gsrsearch: `${term} filetype:bitmap`,
+      gsrlimit: String(MORE_PER_PAGE),
+      gsroffset: String(page * MORE_PER_PAGE),
+      gsrnamespace: '6',
+      ...IMAGE_INFO_PARAMS,
+    });
+    for (const p of pagesOf(result)) {
+      const candidate = toCandidate(p.imageinfo?.[0]);
+      if (!candidate || seen.has(candidate.fullUrl)) continue;
+      seen.add(candidate.fullUrl);
+      found.push({ candidate, title: p.title });
+    }
   }
-  const base = { recipeId: recipe.id, checkedAt: now.toISOString(), verified: Boolean(rank) };
-  return candidates.length > 0
-    ? { ...base, status: 'suggested', candidates, current: 0 }
-    : { ...base, status: 'none' };
+  return found.length > 0 ? orderCandidates(dishName, found, rank) : [];
 }
 
 /** Aktuell vorgeschlagenes Foto (nur bei Status "suggested"). */
 export function currentSuggestion(entry: DishWebImage | undefined): PhotoCandidate | undefined {
   if (entry?.status !== 'suggested' || !entry.candidates) return undefined;
   return entry.candidates[entry.current ?? 0];
-}
-
-/** Nächsten Kandidaten vorschlagen; gibt es keinen mehr, gilt das Rezept als "kein Foto". */
-export function nextSuggestion(entry: DishWebImage): DishWebImage {
-  const next = (entry.current ?? 0) + 1;
-  return entry.candidates && next < entry.candidates.length
-    ? { ...entry, current: next }
-    : { ...entry, status: 'hidden', current: undefined };
 }
 
 /** Lädt das Foto herunter und verkleinert es, damit es dauerhaft offline im Rezept liegt. */
