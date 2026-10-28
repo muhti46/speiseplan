@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Loader2, MessageCircle, Trash2 } from 'lucide-react';
-import { ChatMessage } from '../types/ai';
+import { ChatAttachment, ChatMessage } from '../types/ai';
 import { Recipe, RecipeDetail } from '../types/recipe';
 import { askAboutRecipe } from '../services/ai/recipeChat';
 import { describeChatError } from '../services/ai/chat';
@@ -10,6 +10,7 @@ import { deleteRecipeChat, getRecipeChat, saveRecipeChat } from '../services/sto
 import { useLanguage } from '../i18n/LanguageContext';
 import ChatInput from './ChatInput';
 import TypewriterText from './TypewriterText';
+import MessageAttachments from './MessageAttachments';
 
 interface RecipeChatProps {
   recipe: Recipe;
@@ -48,17 +49,21 @@ export default function RecipeChat({ recipe, detail }: RecipeChatProps) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, [messages.length, isSending, error]);
 
-  async function handleSend(text: string) {
+  async function handleSend(text: string, attachments: ChatAttachment[]) {
     setError(null);
     const apiKey = getApiKey();
     if (!apiKey) return setError(t.aiFillNoKey);
     if (!navigator.onLine) return setError(t.chatOffline);
 
-    const withQuestion: ChatMessage[] = [...messages, { role: 'user', text }];
+    // Gemini braucht immer einen Text-Teil - bei reinem Anhang einen neutralen Hinweis schicken.
+    const question = text || t.chatAttachmentOnlyPrompt;
+    const userMessage: ChatMessage =
+      attachments.length > 0 ? { role: 'user', text: question, attachments } : { role: 'user', text: question };
+    const withQuestion: ChatMessage[] = [...messages, userMessage];
     setMessages(withQuestion);
     setIsSending(true);
     try {
-      const answer = await askAboutRecipe(apiKey, recipe, detail, messages, text, lang);
+      const answer = await askAboutRecipe(apiKey, recipe, detail, messages, question, lang, attachments);
       const next: ChatMessage[] = [...withQuestion, { role: 'assistant', text: answer }];
       setMessages(next);
       setAnimatingIndex(next.length - 1);
@@ -122,6 +127,9 @@ export default function RecipeChat({ recipe, detail }: RecipeChatProps) {
                   isUser ? 'bg-brand-700 text-white' : 'bg-slate-100 text-slate-800'
                 }`}
               >
+                {message.attachments && message.attachments.length > 0 && (
+                  <MessageAttachments attachments={message.attachments} hasText={Boolean(text)} />
+                )}
                 {!isUser && index === animatingIndex ? (
                   <TypewriterText text={text} onDone={() => setAnimatingIndex(null)} />
                 ) : (
@@ -147,7 +155,7 @@ export default function RecipeChat({ recipe, detail }: RecipeChatProps) {
         <div ref={bottomRef} />
       </div>
 
-      <ChatInput disabled={isSending} onSend={handleSend} placeholder={t.recipeChatPlaceholder} />
+      <ChatInput disabled={isSending} onSend={handleSend} placeholder={t.recipeChatPlaceholder} allowAttachments />
     </section>
   );
 }

@@ -1,10 +1,11 @@
 import { Content } from '@google/genai';
-import { ChatMessage } from '../../types/ai';
+import { ChatAttachment, ChatMessage } from '../../types/ai';
 import { Recipe, RecipeDetail } from '../../types/recipe';
 import { Lang } from '../../i18n/translations';
 import { formatIngredientAmount } from '../format';
 import { DEFAULT_PORTIONS } from '../shopping';
 import { createGeminiClient, GEMINI_MODEL } from './client';
+import { toContents } from './attachments';
 
 const LANGUAGE_NAME: Record<Lang, string> = { de: 'Deutsch', tr: 'Türkçe' };
 
@@ -29,6 +30,7 @@ ${detailBlock}
 Regeln:
 - Antworte IMMER in der Sprache, in der der Nutzer zuletzt geschrieben hat (z.B. Türkisch, wenn seine Nachricht auf Türkisch ist). Nur wenn du die Sprache nicht erkennen kannst, nutze ${LANGUAGE_NAME[lang]}. Antworte kurz.
 - Antworte in reinem Fließtext ohne Markdown: keine Sternchen, keine Rauten-Überschriften, keine Backticks. Aufzählungen als Zeilen mit Bindestrich.
+- Der Nutzer kann Fotos oder PDFs mitschicken (z.B. ein Foto vom Gericht im Topf, einer Zutatenpackung oder eines anderen Rezepts). Beziehe dich dann konkret auf den Anhang und dieses Rezept (z.B. ob das Ergebnis richtig aussieht, ob eine Zutat passt, Unterschiede zur Vorlage). Ist der Anhang unleserlich, sag das.
 - Wenn du etwas nicht sicher weißt, sag das ehrlich, statt Werte zu erfinden.`;
 }
 
@@ -40,14 +42,10 @@ export async function askAboutRecipe(
   history: ChatMessage[],
   question: string,
   lang: Lang,
+  attachments: ChatAttachment[] = [],
 ): Promise<string> {
   const client = createGeminiClient(apiKey);
-  const contents: Content[] = [
-    ...history
-      .filter((m) => m.role !== 'system')
-      .map((m) => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.text }] })),
-    { role: 'user', parts: [{ text: question }] },
-  ];
+  const contents: Content[] = toContents([...history, { role: 'user', text: question, attachments }]);
   const response = await client.models.generateContent({
     model: GEMINI_MODEL,
     contents,
