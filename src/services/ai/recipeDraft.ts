@@ -88,18 +88,100 @@ export async function generateRecipeDraft(
     throw new Error('Antwort der KI war kein gültiges JSON.');
   }
 
-  // Gang bestimmt die erlaubten Felder, egal was das Modell zusätzlich liefert.
-  const normalized = isBeilage
-    ? { ...raw, name: name.trim(), course: 'hauptspeise', subCategory: 'beilage', proteinCategory: undefined, beilage: undefined }
-    : {
-        ...raw,
-        name: name.trim(),
-        course,
-        subCategory: course === 'vorspeise' ? raw.subCategory : course === 'nachspeise' ? 'dessert' : undefined,
-        proteinCategory: course === 'hauptspeise' ? raw.proteinCategory : undefined,
-        beilage: course === 'hauptspeise' ? raw.beilage : undefined,
-      };
-  const result = coerceRecipe(normalized, 'manual');
+  const result = coerceRecipe(isBeilage ? normalizeBeilage(raw, name) : normalizeDraft(raw, name, course), 'manual');
   if (isCoercionError(result)) throw new Error(result.error);
   return result;
+}
+
+function normalizeBeilage(raw: Record<string, unknown>, name: string): Record<string, unknown> {
+  return { ...raw, name: name.trim(), course: 'hauptspeise', subCategory: 'beilage', proteinCategory: undefined, beilage: undefined };
+}
+
+// Gang bestimmt die erlaubten Felder, egal was das Modell zusätzlich liefert.
+function normalizeDraft(raw: Record<string, unknown>, name: string, course: Course): Record<string, unknown> {
+  return {
+    ...raw,
+    name: name.trim(),
+    course,
+    subCategory: course === 'vorspeise' ? raw.subCategory : course === 'nachspeise' ? 'dessert' : undefined,
+    proteinCategory: course === 'hauptspeise' ? raw.proteinCategory : undefined,
+    beilage: course === 'hauptspeise' ? raw.beilage : undefined,
+  };
+}
+
+export interface DraftRequest {
+  name: string;
+  course: Course;
+}
+
+// Mehrere Gerichte pro Anfrage, damit ein ganzer Wochenplan nicht 15 Einzelaufrufe
+// (und damit schnell das Minuten-Limit des kostenlosen Gemini-Kontingents) braucht.
+const BATCH_SIZE = 5;
+
+const batchSchema: Schema = {
+  type: Type.OBJECT,
+  properties: {
+    recipes: {
+      type: Type.ARRAY,
+      items: {
+        ...responseSchema,
+        properties: { index: { type: Type.NUMBER }, ...responseSchema.properties },
+        required: ['index', ...(responseSchema.required ?? [])],
+      },
+    },
+  },
+  required: ['recipes'],
+};
+
+function buildBatchPrompt(items: DraftRequest[]): string {
+  const list = items.map((item, i) => `${i}. "${item.name.trim()}" (Gang: ${COURSE_LABEL[item.course]})`).join('\n');
+  // Die Regeln des Einzel-Prompts gelten unverändert; nur die Gerichtliste ist neu.
+  const rules = buildPrompt('X', 'hauptspeise').split('Regeln:')[1];
+  return `Erstelle für jedes der folgenden Gerichte ein Rezept für die Großküche eines Kinderheims: 10 Portionen, Kinder und Jugendliche von 5 bis 17 Jahren, jeweils in höchstens ca. 60 Minuten machbar. Gib für jedes Gericht ein Objekt in "recipes" zurück, mit "index" = Nummer aus der Liste.
+
+Gerichte:
+${list}
+
+Regeln:${rules}`;
+}
+
+/**
+ * Wie generateRecipeDraft, aber für viele Gerichte auf einmal (gebündelt zu je 5 pro Anfrage).
+ * Liefert je Eintrag das Rezept oder einen Fehlertext - ein misslungenes Gericht bricht nicht alles ab.
+ */
+export async function generateRecipeDrafts(
+  apiKey: string,
+  items: DraftRequest[],
+): Promise<(Recipe | { error: string })[]> {
+  const client = createGeminiClient(apiKey);
+  const results: (Recipe | { error: string })[] = [];
+
+  for (let start = 0; start < items.length; start += BATCH_SIZE) {
+    const batch = items.slice(start, start + BATCH_SIZE);
+    let byIndex = new Map<number, Record<string, unknown>>();
+    try {
+      const response = await client.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: [{ role: 'user', parts: [{ text: buildBatchPrompt(batch) }] }],
+        config: { responseMimeType: 'application/json', responseSchema: batchSchema },
+      });
+      const parsed = JSON.parse(response.text ?? '') as { recipes?: Record<string, unknown>[] };
+      byIndex = new Map((parsed.recipes ?? []).map((r) => [Number(r.index), r]));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      batch.forEach(() => results.push({ error: message }));
+      continue;
+    }
+
+    batch.forEach((item, i) => {
+      const raw = byIndex.get(i);
+      if (!raw) {
+        results.push({ error: 'Kein Rezept von der KI erhalten.' });
+        return;
+      }
+      const result = coerceRecipe(normalizeDraft(raw, item.name, item.course), 'ai');
+      results.push(isCoercionError(result) ? { error: result.error } : result);
+    });
+  }
+  return results;
 }

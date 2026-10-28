@@ -155,6 +155,7 @@ export default function ChatPanel({
     setIsSending(true);
     try {
       const reply = await sendChatMessage(apiKey, history, apiText, {
+        apiKey,
         plan,
         recipes,
         lang,

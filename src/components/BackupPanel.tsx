@@ -1,6 +1,7 @@
 import { ChangeEvent, useRef, useState } from 'react';
 import { DatabaseBackup, Loader2, Upload } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
+import DriveBackupSection from './DriveBackupSection';
 import {
   createBackup,
   getLastBackupDate,
@@ -13,10 +14,11 @@ import {
 
 interface BackupPanelProps {
   onBackupDone: () => void;
+  isLocalEmpty: boolean;
 }
 
 /** Sichern/Wiederherstellen aller App-Daten als JSON-Datei (Schutz gegen Deinstallation). */
-export default function BackupPanel({ onBackupDone }: BackupPanelProps) {
+export default function BackupPanel({ onBackupDone, isLocalEmpty }: BackupPanelProps) {
   const { lang, t } = useLanguage();
   const [lastBackup, setLastBackup] = useState(() => getLastBackupDate());
   const [busy, setBusy] = useState(false);
@@ -83,6 +85,8 @@ export default function BackupPanel({ onBackupDone }: BackupPanelProps) {
         <h2 className="text-base font-semibold text-slate-700">{t.backupTitle}</h2>
       </div>
       <p className="text-sm leading-relaxed text-slate-600">{t.backupHint}</p>
+      <DriveBackupSection isLocalEmpty={isLocalEmpty} />
+      <h3 className="border-t border-slate-200 pt-3 text-sm font-semibold text-slate-700">{t.driveFileSection}</h3>
       <p className={`text-xs ${due ? 'font-medium text-amber-700' : 'text-slate-500'}`}>
         {lastBackup
           ? t.backupLast(lastBackup.toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'de-DE'))

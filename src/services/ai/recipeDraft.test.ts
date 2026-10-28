@@ -7,7 +7,7 @@ vi.mock('./client', () => ({
   createGeminiClient: () => ({ models: { generateContent } }),
 }));
 
-import { generateRecipeDraft } from './recipeDraft';
+import { generateRecipeDraft, generateRecipeDrafts } from './recipeDraft';
 
 const base = {
   prepTimeMinutes: 15,
@@ -69,5 +69,28 @@ describe('generateRecipeDraft', () => {
     const call = generateContent.mock.calls[0][0];
     expect(call.contents[0].parts[0].text).toContain('Beilage "Couscous"');
     expect(Object.keys(call.config.responseSchema.properties)).not.toContain('proteinCategory');
+  });
+});
+
+describe('generateRecipeDrafts', () => {
+  beforeEach(() => {
+    generateContent.mockReset();
+  });
+
+  it('bundles dishes (max 5 per request) and reports missing/invalid ones per dish', async () => {
+    generateContent.mockImplementation(async (request: { contents: { parts: { text: string }[] }[] }) => {
+      const { contents } = request;
+      const count = (contents[0].parts[0].text.match(/\(Gang:/g) ?? []).length;
+      // Index 1 fehlt absichtlich (nur im ersten Paket).
+      const indices = Array.from({ length: count }, (_, i) => i).filter((i) => count < 5 || i !== 1);
+      return { text: JSON.stringify({ recipes: indices.map((index) => ({ index, ...base, proteinCategory: 'rind', beilage: 'Reis' })) }) };
+    });
+    const items = Array.from({ length: 7 }, (_, i) => ({ name: `Gericht ${i}`, course: 'hauptspeise' as const }));
+    const results = await generateRecipeDrafts('key', items);
+
+    expect(generateContent).toHaveBeenCalledTimes(2);
+    expect(results).toHaveLength(7);
+    expect(results[1]).toEqual({ error: 'Kein Rezept von der KI erhalten.' });
+    expect(results[6]).toMatchObject({ name: 'Gericht 6', course: 'hauptspeise', proteinCategory: 'rind', source: 'ai' });
   });
 });

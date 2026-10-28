@@ -51,7 +51,9 @@ import { allBeilageNames, findBeilageRecipe } from './data/beilagen';
 import AddRecipeModal from './components/AddRecipeModal';
 import ChatPanel from './components/ChatPanel';
 import BackupPanel from './components/BackupPanel';
+import AppVersion from './components/AppVersion';
 import { getLastBackupDate, isBackupDue, requestPersistentStorage } from './services/backup';
+import { handleDriveOAuthReturn } from './services/driveBackup';
 import { useLanguage } from './i18n/LanguageContext';
 import { LANGUAGES, Lang } from './i18n/translations';
 
@@ -103,6 +105,8 @@ export default function App() {
   }
 
   useEffect(() => {
+    // Rücksprung von der Google-Drive-Anmeldung: direkt die Sicherungs-Ansicht zeigen.
+    if (handleDriveOAuthReturn()) setActiveTab('archiv');
     // Schützt die Daten davor, bei Speicherknappheit vom Browser automatisch gelöscht zu werden.
     requestPersistentStorage();
     // Bereits im State befindliche (frischere) Pläne dürfen vom DB-Stand nicht überschrieben werden.
@@ -349,6 +353,24 @@ export default function App() {
               </div>
             )}
 
+            {/* Leere App (z.B. nach Neuinstallation): direkt auf die Wiederherstellung hinweisen. */}
+            {planLoaded && !plan && archive.length === 0 && (
+              <div className="space-y-3 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800">
+                <p>{t.restoreHint}</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setViewingArchiveId(null);
+                    setActiveTab('archiv');
+                  }}
+                  className="flex items-center gap-2 rounded-full border border-amber-400 bg-white px-4 py-2 font-medium active:scale-95"
+                >
+                  <DatabaseBackup size={16} />
+                  {t.restoreHintAction}
+                </button>
+              </div>
+            )}
+
             {plan &&
               plan.days.map((day) => (
                 <DayMenuCard
@@ -481,7 +503,8 @@ export default function App() {
           }
           return (
             <section className="space-y-3">
-              <BackupPanel onBackupDone={() => setBackupDue(false)} />
+              <BackupPanel onBackupDone={() => setBackupDue(false)} isLocalEmpty={planLoaded && !plan && archive.length === 0} />
+              <AppVersion />
               <h2 className="pt-2 text-base font-semibold text-slate-700">{t.archivedPlans}</h2>
               {archive.length === 0 && <p className="text-sm text-slate-400">{t.noArchivedPlans}</p>}
               <ul className="space-y-2">

@@ -2,6 +2,7 @@ import { ChangeEvent, KeyboardEvent, useRef, useState } from 'react';
 import { Camera, FileText, Loader2, Paperclip, Send, X } from 'lucide-react';
 import { ChatAttachment } from '../types/ai';
 import { useLanguage } from '../i18n/LanguageContext';
+import ImageLightbox from './ImageLightbox';
 import {
   AttachmentError,
   attachmentDataUrl,
@@ -23,6 +24,7 @@ export default function ChatInput({ disabled, onSend, placeholder, allowAttachme
   const [attachments, setAttachments] = useState<ChatAttachment[]>([]);
   const [isReading, setIsReading] = useState(false);
   const [attachError, setAttachError] = useState<string | null>(null);
+  const [enlarged, setEnlarged] = useState<ChatAttachment | null>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -76,16 +78,21 @@ export default function ChatInput({ disabled, onSend, placeholder, allowAttachme
 
   return (
     <div className="border-t border-slate-100 pt-3">
+      {enlarged && (
+        <ImageLightbox src={attachmentDataUrl(enlarged)} alt={enlarged.name} onClose={() => setEnlarged(null)} />
+      )}
       {(attachments.length > 0 || isReading) && (
         <div className="mb-2 flex flex-wrap gap-2">
           {attachments.map((attachment, index) => (
             <div key={index} className="relative">
               {attachment.kind === 'image' ? (
-                <img
-                  src={attachmentDataUrl(attachment)}
-                  alt={attachment.name}
-                  className="h-16 w-16 rounded-xl border border-slate-200 object-cover"
-                />
+                <button type="button" onClick={() => setEnlarged(attachment)} className="block cursor-zoom-in">
+                  <img
+                    src={attachmentDataUrl(attachment)}
+                    alt={attachment.name}
+                    className="h-16 w-16 rounded-xl border border-slate-200 object-cover"
+                  />
+                </button>
               ) : (
                 <div className="flex h-16 max-w-[10rem] items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-2 text-xs text-slate-600">
                   <FileText size={18} className="shrink-0 text-red-500" />

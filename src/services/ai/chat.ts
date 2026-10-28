@@ -16,7 +16,8 @@ export function describeChatError(err: unknown): { status?: number; message: str
   return { message: String(err) };
 }
 
-const MAX_TOOL_ROUNDS = 4;
+// Ganze Wochen laufen über set_week_plan in einem Schritt; der Puffer deckt Folgefragen und Korrekturen ab.
+const MAX_TOOL_ROUNDS = 8;
 
 /**
  * Sendet eine Chat-Nachricht an Gemini, führt vom Modell angeforderte Tool-Calls

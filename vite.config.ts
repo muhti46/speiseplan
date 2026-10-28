@@ -3,10 +3,15 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  define: {
+    __APP_BUILD__: JSON.stringify(new Date().toISOString()),
+  },
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      // Registrierung erfolgt selbst in src/services/pwaUpdate.ts (mit aktiver Update-Suche).
+      injectRegister: false,
       includeAssets: ['favicon.svg'],
       // Sorgt dafür, dass ein neuer Service Worker sofort die Kontrolle übernimmt und
       // veraltete Precaches löscht - ohne das kann eine bereits installierte Standalone-
@@ -16,6 +21,8 @@ export default defineConfig({
         skipWaiting: true,
         clientsClaim: true,
         cleanupOutdatedCaches: true,
+        // Server-Funktionen (Google-Drive-Anmeldung) nie durch die gecachte index.html ersetzen.
+        navigateFallbackDenylist: [/^\/api\//],
       },
       manifest: {
         id: '/',
