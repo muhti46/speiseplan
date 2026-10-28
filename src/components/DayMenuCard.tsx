@@ -4,12 +4,15 @@ import { DayMenu, DayOfWeek } from '../types/menu';
 import { Course, Recipe } from '../types/recipe';
 import { useLanguage } from '../i18n/LanguageContext';
 import ImageLightbox, { PhotoCredit } from './ImageLightbox';
+import PhotoSuggestionActions, { PhotoSuggestionHandlers } from './PhotoSuggestionActions';
 
 /** Foto eines Gerichts: eigenes Foto des Nutzers oder automatisch gefundenes (mit Quellenangabe). */
 export interface DishPhoto {
   thumbUrl: string;
   fullUrl: string;
   credit?: PhotoCredit;
+  /** Automatischer Vorschlag, noch nicht vom Nutzer bestätigt. */
+  pending?: boolean;
 }
 
 // Jeder Wochentag hat einen eigenen, bewusst blassen Farbton (Tailwind-Stufen 50/100/200),
@@ -64,11 +67,24 @@ interface DayMenuCardProps {
   beilageRecipe?: Recipe;
   /** Foto je Gericht für das kleine Vorschaubild (antippen = Vollbild). */
   photoFor?: (recipe: Recipe) => DishPhoto | undefined;
+  /** Übernehmen/Anderes/Kein Foto für einen noch unbestätigten Vorschlag. */
+  suggestionHandlers?: (recipe: Recipe) => PhotoSuggestionHandlers;
 }
 
-export default function DayMenuCard({ day, onReroll, onOpenRecipe, onChangeBeilage, beilageRecipe, photoFor }: DayMenuCardProps) {
+export default function DayMenuCard({
+  day,
+  onReroll,
+  onOpenRecipe,
+  onChangeBeilage,
+  beilageRecipe,
+  photoFor,
+  suggestionHandlers,
+}: DayMenuCardProps) {
   const { t } = useLanguage();
-  const [enlarged, setEnlarged] = useState<{ photo: DishPhoto; name: string } | null>(null);
+  const [enlarged, setEnlarged] = useState<Recipe | null>(null);
+  // Vorschlag kann sich im Vollbild ändern ("Anderes Foto") - daher immer frisch nachschlagen;
+  // ist keiner mehr übrig, verschwindet das Vollbild von selbst.
+  const enlargedPhoto = enlarged ? photoFor?.(enlarged) : undefined;
   const theme = DAY_THEME[day.dayOfWeek];
   const proteinLabel = day.hauptspeise.proteinCategory
     ? t.proteinLabels[day.hauptspeise.proteinCategory]
@@ -90,11 +106,24 @@ export default function DayMenuCard({ day, onReroll, onOpenRecipe, onChangeBeila
         {photo && (
           <button
             type="button"
-            onClick={() => setEnlarged({ photo, name: recipe.name })}
+            onClick={() => setEnlarged(recipe)}
             aria-label={recipe.name}
-            className="shrink-0 cursor-zoom-in overflow-hidden rounded-lg border border-white/80 bg-white shadow-sm"
+            className="relative shrink-0 cursor-zoom-in rounded-lg border border-white/80 bg-white shadow-sm"
           >
-            <img src={photo.thumbUrl} alt="" loading="lazy" className="h-11 w-11 object-cover" />
+            <img
+              src={photo.thumbUrl}
+              alt=""
+              loading="lazy"
+              className={`h-11 w-11 rounded-lg object-cover ${photo.pending ? 'opacity-80' : ''}`}
+            />
+            {photo.pending && (
+              <span
+                title={t.photoSuggestedHint}
+                className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-white"
+              >
+                ?
+              </span>
+            )}
           </button>
         )}
       </li>
@@ -103,12 +132,22 @@ export default function DayMenuCard({ day, onReroll, onOpenRecipe, onChangeBeila
 
   return (
     <div className={`rounded-2xl border p-4 shadow-sm ${theme.card}`}>
-      {enlarged && (
+      {enlarged && enlargedPhoto && (
         <ImageLightbox
-          src={enlarged.photo.fullUrl}
+          key={enlargedPhoto.fullUrl}
+          src={enlargedPhoto.fullUrl}
           alt={enlarged.name}
-          credit={enlarged.photo.credit}
+          credit={enlargedPhoto.credit}
           onClose={() => setEnlarged(null)}
+          actions={
+            enlargedPhoto.pending && suggestionHandlers ? (
+              <PhotoSuggestionActions
+                {...suggestionHandlers(enlarged)}
+                variant="dark"
+                onDone={() => setEnlarged(null)}
+              />
+            ) : undefined
+          }
         />
       )}
       <div className="mb-3 flex items-center justify-between">

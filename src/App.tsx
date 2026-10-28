@@ -47,7 +47,18 @@ import {
 } from './services/storage';
 import Tabs, { TabItem } from './components/Tabs';
 import DayMenuCard, { DishPhoto } from './components/DayMenuCard';
-import { DishWebImage, lookupDishImage, needsLookup } from './services/dishImages';
+import {
+  currentSuggestion,
+  DishWebImage,
+  downloadPhoto,
+  lookupDishImage,
+  needsLookup,
+  nextSuggestion,
+  PhotoCandidate,
+} from './services/dishImages';
+import { createPhotoRanker } from './services/ai/photoPick';
+import { getApiKey } from './services/ai/apiKey';
+import { PhotoSuggestionHandlers } from './components/PhotoSuggestionActions';
 import CheckboxList from './components/CheckboxList';
 import RecipeDetailModal from './components/RecipeDetailModal';
 import RecipePickerModal from './components/RecipePickerModal';
@@ -62,6 +73,9 @@ import { getLastBackupDate, isBackupDue, requestPersistentStorage } from './serv
 import { handleDriveOAuthReturn } from './services/driveBackup';
 import { useLanguage } from './i18n/LanguageContext';
 import { LANGUAGES, Lang } from './i18n/translations';
+
+// Pause zwischen zwei Foto-Prüfungen durch Gemini (kostenloses Kontingent: wenige Anfragen pro Minute).
+const PHOTO_LOOKUP_GAP_MS = 4000;
 
 /** Führt Pläne per Id zusammen (`incoming` gewinnt) und sortiert neueste zuerst. */
 function upsertPlans(existing: WeeklyPlan[], incoming: WeeklyPlan[]): WeeklyPlan[] {
@@ -202,45 +216,81 @@ export default function App() {
     setSelected((prev) => (prev && prev.recipe.id === recipe.id ? { ...prev, recipe } : prev));
   }
 
-  // Für die Gerichte des angezeigten Plans fehlende Fotos nacheinander in Wikipedia suchen
-  // (einmal je Rezept, Ergebnis wird gespeichert; offline wird es beim nächsten Mal nachgeholt).
+  // Für die Gerichte des angezeigten Plans Fotos vorschlagen: Kandidaten aus Wikipedia/Commons,
+  // Gemini wählt das passende (mit API-Key). Je Rezept nur einmal; bestätigte Fotos liegen danach
+  // als eigenes Foto im Rezept und werden nie wieder gesucht.
   useEffect(() => {
     if (!webImagesLoaded || !plan || !navigator.onLine) return;
+    const apiKey = getApiKey();
     const todo = plan.days
       .flatMap((d) => [d.vorspeise, d.hauptspeise, d.nachspeise])
-      .filter((r) => !images[r.id] && needsLookup(webImages[r.id]) && !lookupsInFlight.current.has(r.id));
+      .filter((r, i, all) => all.findIndex((x) => x.id === r.id) === i)
+      .filter((r) => {
+        const entry = webImages[r.id];
+        // Ohne Gemini geratene Vorschläge nachträglich prüfen lassen, sobald ein API-Key da ist.
+        const recheck = Boolean(apiKey) && entry?.status === 'suggested' && !entry.verified;
+        return !images[r.id] && (needsLookup(entry) || recheck) && !lookupsInFlight.current.has(r.id);
+      });
     if (todo.length === 0) return;
     todo.forEach((r) => lookupsInFlight.current.add(r.id));
+    const rank = apiKey ? createPhotoRanker(apiKey) : undefined;
     (async () => {
-      for (const recipe of todo) {
+      for (const [index, recipe] of todo.entries()) {
         try {
-          const result = await lookupDishImage(recipe);
+          // Abstand zwischen Gemini-Aufrufen, damit das kostenlose Minuten-Kontingent reicht.
+          if (rank && index > 0) await new Promise((resolve) => window.setTimeout(resolve, PHOTO_LOOKUP_GAP_MS));
+          const result = await lookupDishImage(recipe, rank);
           setWebImages((prev) => ({ ...prev, [recipe.id]: result }));
           saveDishWebImage(result);
         } catch {
-          // Netzwerkfehler: nichts speichern, beim nächsten Anlass erneut versuchen.
-        } finally {
-          lookupsInFlight.current.delete(recipe.id);
+          // Netzwerk-/Kontingentfehler: nichts speichern und für jetzt aufhören; beim nächsten
+          // Öffnen bzw. Planwechsel wird es erneut versucht.
+          todo.slice(index).forEach((r) => lookupsInFlight.current.delete(r.id));
+          return;
         }
+        lookupsInFlight.current.delete(recipe.id);
       }
     })();
   }, [plan, webImagesLoaded, webImages, images]);
 
-  /** Eigenes Foto hat Vorrang vor dem automatisch gefundenen. */
+  /** Eigenes (auch übernommenes) Foto hat Vorrang; sonst der noch unbestätigte Vorschlag. */
   function photoFor(recipe: Recipe): DishPhoto | undefined {
-    const own = images[recipe.id];
-    if (own) return { thumbUrl: own, fullUrl: own };
     const web = webImages[recipe.id];
-    if (web?.status !== 'found' || !web.thumbUrl || !web.fullUrl) return undefined;
-    return { thumbUrl: web.thumbUrl, fullUrl: web.fullUrl, credit: { text: t.photoCredit(web.artist, web.license), url: web.pageUrl } };
+    const credit = (c: PhotoCandidate) => ({ text: t.photoCredit(c.artist, c.license), url: c.pageUrl });
+    const own = images[recipe.id];
+    if (own) {
+      return { thumbUrl: own, fullUrl: own, credit: web?.status === 'approved' && web.approved ? credit(web.approved) : undefined };
+    }
+    const suggestion = currentSuggestion(web);
+    return suggestion ? { thumbUrl: suggestion.thumbUrl, fullUrl: suggestion.fullUrl, credit: credit(suggestion), pending: true } : undefined;
   }
 
-  function handleHideWebImage(recipeId: string) {
-    const current = webImages[recipeId];
-    if (!current) return;
-    const hidden: DishWebImage = { ...current, status: 'hidden' };
-    setWebImages((prev) => ({ ...prev, [recipeId]: hidden }));
-    saveDishWebImage(hidden);
+  function updateWebImage(entry: DishWebImage) {
+    setWebImages((prev) => ({ ...prev, [entry.recipeId]: entry }));
+    saveDishWebImage(entry);
+  }
+
+  /** Übernehmen / Anderes Foto / Kein Foto für den Vorschlag eines Rezepts. */
+  function suggestionHandlers(recipe: Recipe): PhotoSuggestionHandlers {
+    return {
+      approve: async () => {
+        const entry = webImages[recipe.id];
+        const suggestion = currentSuggestion(entry);
+        if (!entry || !suggestion) return;
+        // Wirft bei Netzwerkfehlern - dann bleibt alles beim Vorschlag.
+        const dataUrl = await downloadPhoto(suggestion.fullUrl);
+        handleImageChange(recipe.id, dataUrl);
+        updateWebImage({ ...entry, status: 'approved', approved: suggestion, candidates: undefined, current: undefined });
+      },
+      next: () => {
+        const entry = webImages[recipe.id];
+        if (entry) updateWebImage(nextSuggestion(entry));
+      },
+      reject: () => {
+        const entry = webImages[recipe.id];
+        if (entry) updateWebImage({ ...entry, status: 'hidden', current: undefined });
+      },
+    };
   }
 
   function handleImageChange(recipeId: string, dataUrl: string | null) {
@@ -433,6 +483,7 @@ export default function App() {
               plan.days.map((day) => (
                 <DayMenuCard
                   photoFor={photoFor}
+                  suggestionHandlers={suggestionHandlers}
                   key={day.dayOfWeek}
                   day={day}
                   onReroll={planEditable ? () => handleReroll(day.dayOfWeek) : undefined}
@@ -528,6 +579,7 @@ export default function App() {
                 {viewed.days.map((day) => (
                   <DayMenuCard
                   photoFor={photoFor}
+                  suggestionHandlers={suggestionHandlers}
                     key={day.dayOfWeek}
                     day={day}
                     beilageRecipe={findBeilageRecipe(day.beilage, recipes)}
@@ -609,7 +661,7 @@ export default function App() {
           detail={details[recipeDetailKey(selected.recipe.id, lang)]}
           image={images[selected.recipe.id]}
           webPhoto={images[selected.recipe.id] ? undefined : photoFor(selected.recipe)}
-          onHideWebPhoto={() => handleHideWebImage(selected.recipe.id)}
+          photoSuggestion={suggestionHandlers(selected.recipe)}
           translation={translations[recipeDetailKey(selected.recipe.id, lang)]}
           onTranslationCreated={handleTranslationCreated}
           onImageChange={(dataUrl) => handleImageChange(selected.recipe.id, dataUrl)}

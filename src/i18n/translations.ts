@@ -147,13 +147,16 @@ interface Translation {
   photoChange: string;
   photoRemove: string;
   photoFailed: string;
-  photoHide: string;
+  photoSuggestedHint: string;
+  photoApprove: string;
+  photoNext: string;
+  photoReject: string;
+  photoApproveFailed: string;
   dbBlockedTitle: string;
   dbBlockedText: string;
   dbErrorTitle: string;
   dbErrorText: string;
   dbReload: string;
-  photoHideConfirm: string;
   photoCredit: (artist: string | undefined, license: string | undefined) => string;
   deleteRecipe: string;
   deleteRecipeConfirm: (name: string) => string;
@@ -361,13 +364,16 @@ export const translations: Record<Lang, Translation> = {
     photoChange: 'Foto ändern',
     photoRemove: 'Foto entfernen',
     photoFailed: 'Das Foto konnte nicht geladen werden.',
-    photoHide: 'Foto passt nicht – ausblenden',
+    photoSuggestedHint: 'Automatisch ausgewählter Vorschlag – passt das Foto? Übernommene Fotos werden beim Rezept gespeichert.',
+    photoApprove: 'Foto übernehmen',
+    photoNext: 'Anderes Foto',
+    photoReject: 'Kein Foto',
+    photoApproveFailed: 'Das Foto konnte nicht gespeichert werden (keine Verbindung?). Bitte später erneut versuchen.',
     dbBlockedTitle: 'Update wird abgeschlossen – deine Daten sind nicht weg',
     dbBlockedText: 'Eine andere geöffnete Kopie der App hält noch die alten Daten fest. Bitte die App komplett schließen (auch aus der Liste der zuletzt geöffneten Apps) und alle Chrome-Tabs mit dem Speiseplan schließen, dann die App neu öffnen. Hilft das nicht: Handy neu starten.',
     dbErrorTitle: 'Die gespeicherten Daten können nicht geöffnet werden',
     dbErrorText: 'Bitte die App komplett schließen und neu öffnen. Falls der Fehler bleibt, diese Meldung als Screenshot weitergeben.',
     dbReload: 'Neu laden',
-    photoHideConfirm: 'Dieses automatisch gefundene Foto ausblenden? Du kannst stattdessen ein eigenes Foto hinzufügen.',
     photoCredit: (artist, license) => ['Foto: Wikipedia', artist, license].filter(Boolean).join(' · '),
     deleteRecipe: 'Aus Pool löschen',
     deleteRecipeConfirm: (name) =>
@@ -574,13 +580,16 @@ export const translations: Record<Lang, Translation> = {
     photoChange: 'Fotoğrafı değiştir',
     photoRemove: 'Fotoğrafı sil',
     photoFailed: 'Fotoğraf yüklenemedi.',
-    photoHide: 'Fotoğraf uymuyor – gizle',
+    photoSuggestedHint: 'Otomatik seçilen öneri – fotoğraf uyuyor mu? Onaylanan fotoğraflar tarifle birlikte kaydedilir.',
+    photoApprove: 'Fotoğrafı onayla',
+    photoNext: 'Başka fotoğraf',
+    photoReject: 'Fotoğraf olmasın',
+    photoApproveFailed: 'Fotoğraf kaydedilemedi (bağlantı yok mu?). Lütfen daha sonra tekrar dene.',
     dbBlockedTitle: 'Güncelleme tamamlanıyor – verilerin silinmedi',
     dbBlockedText: 'Uygulamanın açık kalan başka bir kopyası eski verileri hâlâ tutuyor. Lütfen uygulamayı tamamen kapat (son açılan uygulamalar listesinden de) ve Speiseplan açık olan tüm Chrome sekmelerini kapat, sonra uygulamayı yeniden aç. İşe yaramazsa telefonu yeniden başlat.',
     dbErrorTitle: 'Kayıtlı veriler açılamıyor',
     dbErrorText: 'Lütfen uygulamayı tamamen kapatıp yeniden aç. Hata devam ederse bu mesajın ekran görüntüsünü gönder.',
     dbReload: 'Yeniden yükle',
-    photoHideConfirm: 'Otomatik bulunan bu fotoğraf gizlensin mi? Onun yerine kendi fotoğrafını ekleyebilirsin.',
     photoCredit: (artist, license) => ['Fotoğraf: Wikipedia', artist, license].filter(Boolean).join(' · '),
     deleteRecipe: 'Havuzdan sil',
     deleteRecipeConfirm: (name) =>
