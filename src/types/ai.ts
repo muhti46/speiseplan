@@ -4,9 +4,18 @@ import { WeeklyPlan } from './menu';
 
 export type ChatRole = 'user' | 'assistant' | 'system';
 
+/** Foto oder PDF, das der Nutzer im Chat mitschickt (Base64, ohne Data-URL-Präfix). */
+export interface ChatAttachment {
+  kind: 'image' | 'pdf';
+  name: string;
+  mimeType: string;
+  data: string;
+}
+
 export interface ChatMessage {
   role: ChatRole;
   text: string;
+  attachments?: ChatAttachment[];
   /** Eindeutige Id nur für frisch eingetroffene Assistant-Nachrichten (steuert den Tipp-Effekt). */
   id?: string;
 }

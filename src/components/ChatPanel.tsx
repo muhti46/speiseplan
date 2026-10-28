@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { KeyRound, MessagesSquare, Plus } from 'lucide-react';
 import { Recipe } from '../types/recipe';
 import { WeeklyPlan } from '../types/menu';
-import { ChatConversation } from '../types/ai';
+import { ChatAttachment, ChatConversation, ChatMessage } from '../types/ai';
 import { useLanguage } from '../i18n/LanguageContext';
 import { getApiKey, clearApiKey } from '../services/ai/apiKey';
 import { describeChatError, sendChatMessage } from '../services/ai/chat';
+import { toDisplayAttachment } from '../services/ai/attachments';
 import { createConversation, migrateLegacyChatHistory, titleFromFirstMessage } from '../services/ai/chatHistory';
 import { deleteConversation, getAllConversations, saveConversation } from '../services/storage';
 import ApiKeySettings from './ApiKeySettings';
@@ -120,17 +121,24 @@ export default function ChatPanel({
     setAnimatingMessageId(null);
   }
 
-  async function handleSend(text: string) {
+  async function handleSend(text: string, attachments: ChatAttachment[]) {
     const apiKey = getApiKey();
     if (!apiKey || !active) {
       if (!apiKey) setHasKey(false);
       return;
     }
 
+    const hasAttachments = attachments.length > 0;
+    const displayMessage: ChatMessage = hasAttachments
+      ? { role: 'user', text, attachments: attachments.map(toDisplayAttachment) }
+      : { role: 'user', text };
+    // Gemini braucht immer einen Text-Teil - bei reinem Anhang einen neutralen Hinweis schicken.
+    const apiText = text || t.chatAttachmentOnlyPrompt;
+
     if (!navigator.onLine) {
       updateConversation(active.id, (c) => ({
         ...c,
-        messages: [...c.messages, { role: 'user', text }, { role: 'system', text: t.chatOffline }],
+        messages: [...c.messages, displayMessage, { role: 'system', text: t.chatOffline }],
         updatedAt: new Date().toISOString(),
       }));
       return;
@@ -140,13 +148,13 @@ export default function ChatPanel({
     const isFirstMessage = active.messages.length === 0;
     updateConversation(active.id, (c) => ({
       ...c,
-      title: isFirstMessage ? titleFromFirstMessage(text, c.title) : c.title,
-      messages: [...c.messages, { role: 'user', text }],
+      title: isFirstMessage ? titleFromFirstMessage(text || attachments[0]?.name || '', c.title) : c.title,
+      messages: [...c.messages, displayMessage],
       updatedAt: new Date().toISOString(),
     }));
     setIsSending(true);
     try {
-      const reply = await sendChatMessage(apiKey, history, text, {
+      const reply = await sendChatMessage(apiKey, history, apiText, {
         plan,
         recipes,
         lang,
@@ -155,13 +163,17 @@ export default function ChatPanel({
         year,
         onPlanUpdate,
         onRecipeAdd,
-      });
+      }, attachments);
       const assistantText = reply || t.chatError;
       const assistantId = newMessageId();
       updateConversation(active.id, (c) => ({
         ...c,
         messages: [...c.messages, { role: 'assistant', text: assistantText, id: assistantId }],
-        apiHistory: [...c.apiHistory, { role: 'user', text }, { role: 'assistant', text: assistantText }],
+        apiHistory: [
+          ...c.apiHistory,
+          hasAttachments ? { role: 'user', text: apiText, attachments } : { role: 'user', text: apiText },
+          { role: 'assistant', text: assistantText },
+        ],
         updatedAt: new Date().toISOString(),
       }));
       setAnimatingMessageId(assistantId);
@@ -253,7 +265,7 @@ export default function ChatPanel({
             animatingMessageId={animatingMessageId}
             onAnimationDone={() => setAnimatingMessageId(null)}
           />
-          <ChatInput disabled={isSending} onSend={handleSend} />
+          <ChatInput disabled={isSending} onSend={handleSend} allowAttachments />
         </>
       )}
     </section>
