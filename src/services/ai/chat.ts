@@ -1,5 +1,6 @@
 import { ApiError, Content, Part } from '@google/genai';
-import { ChatContext, ChatMessage } from '../../types/ai';
+import { ChatAttachment, ChatContext, ChatMessage } from '../../types/ai';
+import { toContents } from './attachments';
 import { createGeminiClient, GEMINI_MODEL } from './client';
 import { buildSystemPrompt } from './systemPrompt';
 import { chatToolDeclarations, createToolDispatcher } from './tools';
@@ -17,12 +18,6 @@ export function describeChatError(err: unknown): { status?: number; message: str
 
 const MAX_TOOL_ROUNDS = 4;
 
-function toContents(history: ChatMessage[]): Content[] {
-  return history
-    .filter((m) => m.role !== 'system')
-    .map((m) => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.text }] }));
-}
-
 /**
  * Sendet eine Chat-Nachricht an Gemini, führt vom Modell angeforderte Tool-Calls
  * lokal aus (bis zu MAX_TOOL_ROUNDS Runden) und gibt die finale Text-Antwort zurück.
@@ -32,11 +27,12 @@ export async function sendChatMessage(
   history: ChatMessage[],
   userText: string,
   ctx: ChatContext,
+  attachments: ChatAttachment[] = [],
 ): Promise<string> {
   const client = createGeminiClient(apiKey);
   const dispatch = createToolDispatcher(ctx);
 
-  const contents: Content[] = [...toContents(history), { role: 'user', parts: [{ text: userText }] }];
+  const contents: Content[] = toContents([...history, { role: 'user', text: userText, attachments }]);
 
   for (let round = 0; round <= MAX_TOOL_ROUNDS; round++) {
     const response = await client.models.generateContent({

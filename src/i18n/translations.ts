@@ -68,6 +68,13 @@ interface Translation {
   chatErrorAuth: string;
   chatErrorQuota: string;
   chatThinking: string;
+  chatAttachPhoto: string;
+  chatAttachFile: string;
+  chatAttachmentRemove: string;
+  chatAttachmentOnlyPrompt: string;
+  chatAttachmentUnsupported: string;
+  chatAttachmentTooLarge: string;
+  chatAttachmentLimit: string;
   aiRecipeBadge: string;
   chatApiKeyInvalid: string;
   chatApiKeyValidating: string;
@@ -208,7 +215,7 @@ export const translations: Record<Lang, Translation> = {
     chatTitle: 'KI-Assistent',
     chatPlaceholder: 'Was soll ich tun?',
     chatSend: 'Senden',
-    chatEmptyState: 'Frag mich z.B. „Füge ein neues Hauptgericht Linsen-Curry hinzu" oder „Tausche Dienstag Hähnchen gegen Fisch".',
+    chatEmptyState: 'Frag mich z.B. „Füge ein neues Hauptgericht Linsen-Curry hinzu" oder „Tausche Dienstag Hähnchen gegen Fisch". Du kannst auch ein Rezept fotografieren oder als PDF hochladen und „Füge das zur Liste hinzu" schreiben.',
     chatApiKeyLabel: 'Gemini API-Key',
     chatApiKeyHint: 'Der Key wird nur auf diesem Gerät gespeichert und direkt an Google Gemini gesendet (kein Server dazwischen).',
     chatApiKeyPlaceholder: 'API-Key einfügen',
@@ -225,6 +232,13 @@ export const translations: Record<Lang, Translation> = {
     chatErrorAuth: 'Der Gemini API-Key scheint ungültig zu sein. Bitte im Chat-Header prüfen/erneuern.',
     chatErrorQuota: 'Gemini-Kontingent erschöpft. Bitte später erneut versuchen.',
     chatThinking: 'Denkt nach…',
+    chatAttachPhoto: 'Foto aufnehmen',
+    chatAttachFile: 'Foto oder PDF hochladen',
+    chatAttachmentRemove: 'Anhang entfernen',
+    chatAttachmentOnlyPrompt: 'Hier ist ein Anhang.',
+    chatAttachmentUnsupported: 'Nur Fotos und PDF-Dateien werden unterstützt.',
+    chatAttachmentTooLarge: 'Die Datei ist zu groß (max. 15 MB).',
+    chatAttachmentLimit: 'Höchstens 3 Anhänge pro Nachricht.',
     aiRecipeBadge: 'KI-generiert',
     chatApiKeyInvalid: 'Dieser API-Key wurde von Gemini abgelehnt. Bitte prüfen und erneut versuchen.',
     chatApiKeyValidating: 'Wird geprüft…',
@@ -364,7 +378,7 @@ export const translations: Record<Lang, Translation> = {
     chatTitle: 'Yapay Zeka Asistanı',
     chatPlaceholder: 'Ne yapmamı istersin?',
     chatSend: 'Gönder',
-    chatEmptyState: 'Örneğin şunu sor: "Mercimek Köftesi diye yeni bir ana yemek ekle" veya "Salı günü tavuk yerine balık koy".',
+    chatEmptyState: 'Örneğin şunu sor: "Mercimek Köftesi diye yeni bir ana yemek ekle" veya "Salı günü tavuk yerine balık koy". Bir tarifin fotoğrafını çekip ya da PDF olarak yükleyip "Bunu listeye ekle" de yazabilirsin.',
     chatApiKeyLabel: 'Gemini API Anahtarı',
     chatApiKeyHint: 'Anahtar sadece bu cihazda saklanır ve doğrudan Google Gemini\'ye gönderilir (aradaki sunucu yok).',
     chatApiKeyPlaceholder: 'API anahtarını yapıştır',
@@ -381,6 +395,13 @@ export const translations: Record<Lang, Translation> = {
     chatErrorAuth: 'Gemini API anahtarı geçersiz görünüyor. Lütfen sohbet başlığından kontrol et/yenile.',
     chatErrorQuota: 'Gemini kotası doldu. Lütfen daha sonra tekrar dene.',
     chatThinking: 'Düşünüyor…',
+    chatAttachPhoto: 'Fotoğraf çek',
+    chatAttachFile: 'Fotoğraf veya PDF yükle',
+    chatAttachmentRemove: 'Eki kaldır',
+    chatAttachmentOnlyPrompt: 'İşte bir ek.',
+    chatAttachmentUnsupported: 'Sadece fotoğraf ve PDF dosyaları destekleniyor.',
+    chatAttachmentTooLarge: 'Dosya çok büyük (en fazla 15 MB).',
+    chatAttachmentLimit: 'Mesaj başına en fazla 3 ek.',
     aiRecipeBadge: 'Yapay Zeka ile Oluşturuldu',
     chatApiKeyInvalid: 'Bu API anahtarı Gemini tarafından reddedildi. Lütfen kontrol edip tekrar dene.',
     chatApiKeyValidating: 'Kontrol ediliyor…',
