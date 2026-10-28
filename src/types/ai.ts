@@ -33,6 +33,8 @@ export interface ChatConversation {
 
 /** Kontext, den der Chat-Orchestrator an die Tool-Ausführung durchreicht. */
 export interface ChatContext {
+  /** Für Tools, die selbst Gemini aufrufen (z.B. fehlende Rezepte für set_week_plan erzeugen). */
+  apiKey: string;
   plan: WeeklyPlan | null;
   recipes: Recipe[];
   lang: Lang;

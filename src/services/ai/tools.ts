@@ -1,10 +1,11 @@
 import { FunctionDeclaration, Schema, Type } from '@google/genai';
-import { Course, Recipe } from '../../types/recipe';
-import { DayOfWeek, DAYS_OF_WEEK } from '../../types/menu';
+import { Course, ProteinCategory, Recipe } from '../../types/recipe';
+import { DayOfWeek, DAYS_OF_WEEK, WeeklyPlan } from '../../types/menu';
 import { ChatContext } from '../../types/ai';
-import { applyMealSwap, generateWeeklyPlan, rerollDay } from '../generator';
+import { applyBeilageChange, applyMealSwap, generateWeeklyPlan, getIsoWeek, rerollDay } from '../generator';
 import { buildShoppingLists } from '../shopping';
 import { coerceRecipe, isCoercionError } from './recipeCoercion';
+import { DraftRequest, generateRecipeDrafts } from './recipeDraft';
 
 // Klassisches Schema/Type-Format statt parametersJsonSchema: die Gemini API
 // validiert Function-Declaration-Schemas strikt und lehnt unbekannte
@@ -57,6 +58,36 @@ export const chatToolDeclarations: FunctionDeclaration[] = [
         recipeId: { type: Type.STRING, description: 'Die recipeId aus der generate_recipe-Antwort.' },
       },
       required: ['recipeId'],
+    },
+  },
+  {
+    name: 'set_week_plan',
+    description:
+      'Setzt einen kompletten Wochenplan (z.B. von einem Foto/PDF oder einer Liste des Nutzers) in EINEM Aufruf. Gerichte werden per Namen in der Rezeptbibliothek gesucht; fehlende Rezepte erzeugt und speichert das Tool selbst. Für ganze Wochen oder mehrere Tage IMMER dieses Tool statt vieler swap_meal-Aufrufe verwenden.',
+    parameters: {
+      type: Type.OBJECT,
+      properties: {
+        week: {
+          type: Type.STRING,
+          enum: ['current', 'next'],
+          description: '"current" = laufende Kalenderwoche ("diese Woche"), "next" = kommende Woche. Standard: "next".',
+        },
+        days: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              dayOfWeek: { type: Type.STRING, enum: DAYS_OF_WEEK },
+              vorspeise: { type: Type.STRING, description: 'Name der Vorspeise (Suppe/Salat), falls angegeben.' },
+              hauptspeise: { type: Type.STRING, description: 'Name des Hauptgerichts (ohne Beilage).' },
+              beilage: { type: Type.STRING, description: 'Beilage, falls im Plan angegeben.' },
+              nachspeise: { type: Type.STRING, description: 'Name der Nachspeise, falls angegeben.' },
+            },
+            required: ['dayOfWeek', 'hauptspeise'],
+          },
+        },
+      },
+      required: ['days'],
     },
   },
   {
@@ -113,6 +144,45 @@ function findRecipe(recipes: Recipe[], course: Course, recipeId?: string, recipe
   return undefined;
 }
 
+function normalizeName(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+/** Sucht ein Rezept per Namen: erst exakt, dann "enthält" in beide Richtungen (z.B. "Hähnchen-Curry mit Reis"). */
+export function findRecipeByName(recipes: Recipe[], course: Course, name: string): Recipe | undefined {
+  const needle = normalizeName(name);
+  if (!needle) return undefined;
+  const pool = recipes.filter((r) => r.course === course && r.subCategory !== 'beilage');
+  return (
+    pool.find((r) => normalizeName(r.name) === needle) ??
+    pool.find((r) => {
+      const candidate = normalizeName(r.name);
+      return candidate.length >= 4 && needle.length >= 4 && (needle.includes(candidate) || candidate.includes(needle));
+    })
+  );
+}
+
+/** Protein-Kategorien, die im Plan mehrfach vorkommen (Verstoß gegen die 5-Tage-Protein-Regel). */
+export function duplicateProteins(plan: WeeklyPlan): ProteinCategory[] {
+  const seen = new Set<ProteinCategory>();
+  const duplicates = new Set<ProteinCategory>();
+  for (const day of plan.days) {
+    const protein = day.hauptspeise.proteinCategory;
+    if (!protein) continue;
+    if (seen.has(protein)) duplicates.add(protein);
+    seen.add(protein);
+  }
+  return [...duplicates];
+}
+
+type WeekDayInput = { dayOfWeek: DayOfWeek; vorspeise?: string; hauptspeise: string; beilage?: string; nachspeise?: string };
+const PLAN_COURSES: Course[] = ['vorspeise', 'hauptspeise', 'nachspeise'];
+
 /**
  * Erstellt einen Tool-Dispatcher für eine einzelne Chat-Anfrage. `pendingRecipes`
  * hält von generate_recipe erzeugte, aber noch nicht gespeicherte Rezepte
@@ -139,6 +209,80 @@ export function createToolDispatcher(ctx: ChatContext) {
         ctx.onRecipeAdd(recipe);
         pendingRecipes.delete(recipeId!);
         return { status: 'saved', recipeId };
+      }
+
+      case 'set_week_plan': {
+        const days = (Array.isArray(args.days) ? args.days : []) as WeekDayInput[];
+        const validDays = days.filter((d) => DAYS_OF_WEEK.includes(d.dayOfWeek) && typeof d.hauptspeise === 'string');
+        if (validDays.length === 0) return { error: 'Keine gültigen Tage übergeben.' };
+
+        const target = args.week === 'current' ? getIsoWeek(new Date()) : { calendarWeek: ctx.calendarWeek, year: ctx.year };
+        let pool = [...ctx.recipes];
+
+        // 1. Alle Namen auflösen, fehlende Rezepte gesammelt (gebündelt) erzeugen und speichern.
+        const missing: DraftRequest[] = [];
+        for (const day of validDays) {
+          for (const course of PLAN_COURSES) {
+            const name = day[course]?.trim();
+            if (name && !findRecipeByName(pool, course, name) && !missing.some((m) => m.course === course && m.name === name)) {
+              missing.push({ name, course });
+            }
+          }
+        }
+        const created: string[] = [];
+        const failed: { name: string; error: string }[] = [];
+        if (missing.length > 0) {
+          const drafts = await generateRecipeDrafts(ctx.apiKey, missing);
+          drafts.forEach((draft, i) => {
+            if ('error' in draft) {
+              failed.push({ name: missing[i].name, error: draft.error });
+            } else {
+              ctx.onRecipeAdd(draft);
+              pool = [...pool, draft];
+              created.push(draft.name);
+            }
+          });
+        }
+
+        // 2. Plan der Zielwoche als Basis (bestehender Plan derselben Woche, sonst neu erzeugt) und Gänge setzen.
+        let plan: WeeklyPlan =
+          ctx.plan && ctx.plan.calendarWeek === target.calendarWeek && ctx.plan.year === target.year
+            ? ctx.plan
+            : generateWeeklyPlan(pool, { ...target, recentRecipeIds: ctx.recentRecipeIds });
+        for (const day of validDays) {
+          for (const course of PLAN_COURSES) {
+            const name = day[course]?.trim();
+            const recipe = name ? findRecipeByName(pool, course, name) : undefined;
+            if (recipe) plan = applyMealSwap(plan, day.dayOfWeek, course, recipe);
+          }
+          if (day.beilage?.trim()) plan = applyBeilageChange(plan, day.dayOfWeek, day.beilage);
+        }
+        const { shoppingListMon, shoppingListFri } = buildShoppingLists(plan);
+        const finalPlan = { ...plan, shoppingListMon, shoppingListFri };
+        ctx.onPlanUpdate(finalPlan);
+
+        const duplicates = duplicateProteins(finalPlan);
+        return {
+          status: 'updated',
+          calendarWeek: finalPlan.calendarWeek,
+          year: finalPlan.year,
+          days: finalPlan.days.map((d) => ({
+            dayOfWeek: d.dayOfWeek,
+            vorspeise: d.vorspeise.name,
+            hauptspeise: d.hauptspeise.name,
+            proteinCategory: d.hauptspeise.proteinCategory,
+            beilage: d.beilage,
+            nachspeise: d.nachspeise.name,
+          })),
+          newRecipesAdded: created,
+          ...(failed.length > 0 && {
+            notCreated: failed,
+            hint: 'Diese Gerichte konnten nicht erzeugt werden; an ihrer Stelle steht weiter das bisherige/automatisch gewählte Gericht.',
+          }),
+          ...(duplicates.length > 0 && {
+            proteinRuleWarning: `Protein-Kategorie mehrfach in der Woche: ${duplicates.join(', ')}. Dem Nutzer kurz mitteilen.`,
+          }),
+        };
       }
 
       case 'swap_meal': {
