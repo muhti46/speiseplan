@@ -11,6 +11,7 @@ import {
   ChevronRight,
   ArrowLeft,
   Lock,
+  DatabaseBackup,
 } from 'lucide-react';
 import recipesData from './data/recipes.json';
 import { Course, Recipe, RecipeDetail, RecipeTranslation } from './types/recipe';
@@ -49,6 +50,8 @@ import BeilagePickerModal from './components/BeilagePickerModal';
 import { allBeilageNames, findBeilageRecipe } from './data/beilagen';
 import AddRecipeModal from './components/AddRecipeModal';
 import ChatPanel from './components/ChatPanel';
+import BackupPanel from './components/BackupPanel';
+import { getLastBackupDate, isBackupDue, requestPersistentStorage } from './services/backup';
 import { useLanguage } from './i18n/LanguageContext';
 import { LANGUAGES, Lang } from './i18n/translations';
 
@@ -84,6 +87,7 @@ export default function App() {
   // Erst nach dem Laden des gespeicherten Plans darf gespeichert werden, sonst würde der
   // anfängliche leere State den gespeicherten Plan überschreiben.
   const [planLoaded, setPlanLoaded] = useState(false);
+  const [backupDue, setBackupDue] = useState(() => isBackupDue(getLastBackupDate()));
 
   const TABS: TabItem[] = [
     { id: 'plan', label: t.tabs.plan, icon: CalendarDays },
@@ -99,6 +103,8 @@ export default function App() {
   }
 
   useEffect(() => {
+    // Schützt die Daten davor, bei Speicherknappheit vom Browser automatisch gelöscht zu werden.
+    requestPersistentStorage();
     // Bereits im State befindliche (frischere) Pläne dürfen vom DB-Stand nicht überschrieben werden.
     getAllPlans().then((stored) => setArchive((prev) => upsertPlans(stored, prev)));
     getAllRecipes().then((stored) => {
@@ -292,6 +298,22 @@ export default function App() {
       </header>
 
       <main className="flex-1 space-y-4 p-4">
+        {backupDue && archive.length > 0 && activeTab !== 'archiv' && activeTab !== 'chat' && (
+          <div className="flex items-center gap-3 rounded-xl border border-amber-300 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">
+            <DatabaseBackup size={16} className="shrink-0" />
+            <span className="flex-1">{t.backupReminder}</span>
+            <button
+              type="button"
+              onClick={() => {
+                setViewingArchiveId(null);
+                setActiveTab('archiv');
+              }}
+              className="shrink-0 font-medium underline"
+            >
+              {t.backupReminderAction}
+            </button>
+          </div>
+        )}
         {activeTab === 'plan' && (
           <section className="space-y-4">
             <div className="space-y-3">
@@ -459,7 +481,8 @@ export default function App() {
           }
           return (
             <section className="space-y-3">
-              <h2 className="text-base font-semibold text-slate-700">{t.archivedPlans}</h2>
+              <BackupPanel onBackupDone={() => setBackupDue(false)} />
+              <h2 className="pt-2 text-base font-semibold text-slate-700">{t.archivedPlans}</h2>
               {archive.length === 0 && <p className="text-sm text-slate-400">{t.noArchivedPlans}</p>}
               <ul className="space-y-2">
                 {archive.map((p) => (
