@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { Check, ImageOff, Loader2, RefreshCw } from 'lucide-react';
+import { Check, ImageOff, Images, Loader2 } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 
 /** Was mit einem automatisch vorgeschlagenen Foto passieren kann. */
 export interface PhotoSuggestionHandlers {
   /** Foto übernehmen: wird heruntergeladen und dauerhaft beim Rezept gespeichert. */
   approve: () => Promise<void>;
-  /** Nächsten passenden Kandidaten vorschlagen. */
-  next: () => void;
+  /** Alle gefundenen Fotos zur Auswahl zeigen (und weitere suchen). */
+  showAll: () => void;
   /** Kein Foto für dieses Gericht vorschlagen. */
   reject: () => void;
 }
@@ -19,7 +19,7 @@ interface PhotoSuggestionActionsProps extends PhotoSuggestionHandlers {
   onDone?: () => void;
 }
 
-export default function PhotoSuggestionActions({ approve, next, reject, variant, onDone }: PhotoSuggestionActionsProps) {
+export default function PhotoSuggestionActions({ approve, showAll, reject, variant, onDone }: PhotoSuggestionActionsProps) {
   const { t } = useLanguage();
   const [saving, setSaving] = useState(false);
   const base = 'inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium active:scale-95 disabled:opacity-60';
@@ -44,8 +44,16 @@ export default function PhotoSuggestionActions({ approve, next, reject, variant,
         {saving ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
         {t.photoApprove}
       </button>
-      <button type="button" onClick={next} disabled={saving} className={secondary}>
-        <RefreshCw size={14} />
+      <button
+        type="button"
+        onClick={() => {
+          onDone?.();
+          showAll();
+        }}
+        disabled={saving}
+        className={secondary}
+      >
+        <Images size={14} />
         {t.photoNext}
       </button>
       <button

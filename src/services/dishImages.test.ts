@@ -6,7 +6,7 @@ import {
   isRelevantTitle,
   lookupDishImage,
   needsLookup,
-  nextSuggestion,
+  searchMoreCandidates,
   searchTerms,
 } from './dishImages';
 import { Recipe } from '../types/recipe';
@@ -50,17 +50,14 @@ describe('needsLookup', () => {
   });
 });
 
-describe('suggestions', () => {
-  const candidates = [1, 2].map((n) => ({ thumbUrl: `t${n}`, fullUrl: `f${n}` }));
-  const entry: DishWebImage = { recipeId: 'a', status: 'suggested', checkedAt: '', candidates, current: 0 };
+describe('currentSuggestion', () => {
+  const candidates = [1, 2].map((n) => ({ thumbUrl: `t${n}`, fullUrl: `f${n}`, matched: true }));
 
-  it('walks through the candidates and ends with "no photo"', () => {
-    expect(currentSuggestion(entry)?.fullUrl).toBe('f1');
-    const second = nextSuggestion(entry);
-    expect(currentSuggestion(second)?.fullUrl).toBe('f2');
-    const done = nextSuggestion(second);
-    expect(done.status).toBe('hidden');
-    expect(currentSuggestion(done)).toBeUndefined();
+  it('only exists while the status is "suggested"', () => {
+    const entry: DishWebImage = { recipeId: 'a', status: 'suggested', checkedAt: '', candidates, current: 1 };
+    expect(currentSuggestion(entry)?.fullUrl).toBe('f2');
+    expect(currentSuggestion({ ...entry, status: 'hidden' })).toBeUndefined();
+    expect(currentSuggestion({ ...entry, status: 'none' })).toBeUndefined();
   });
 });
 
@@ -117,23 +114,42 @@ describe('collectCandidates / lookupDishImage', () => {
 
   const recipe = { id: 'r1', name: 'Kaiserschmarrn' } as Recipe;
 
-  it('uses the Gemini ranking (and its order) when available', async () => {
+  it('suggests the best Gemini match and keeps all other photos for the picker', async () => {
     mockWikimedia();
     const rank = vi.fn(async () => [1]);
     const result = await lookupDishImage(recipe, rank);
     expect(result).toMatchObject({ status: 'suggested', verified: true, current: 0 });
-    expect(result.candidates?.map((c) => c.fullUrl)).toEqual(['https://upload.wikimedia.org/x/Kaiserschmarrn Teller.jpg/1280px-Kaiserschmarrn Teller.jpg']);
+    expect(result.candidates?.map((c) => [c.fullUrl.split('/')[4], c.matched])).toEqual([
+      ['Kaiserschmarrn Teller.jpg', true],
+      ['Kaiserschmarrn.jpg', false],
+      ['Wien.jpg', false],
+    ]);
   });
 
-  it('suggests nothing when Gemini finds no matching photo', async () => {
+  it('suggests nothing when Gemini finds no matching photo, but keeps the photos to choose from', async () => {
     mockWikimedia();
-    expect((await lookupDishImage(recipe, async () => [])).status).toBe('none');
+    const result = await lookupDishImage(recipe, async () => []);
+    expect(result.status).toBe('none');
+    expect(result.candidates).toHaveLength(3);
+    expect(result.candidates?.every((c) => !c.matched)).toBe(true);
   });
 
-  it('without Gemini only keeps photos with a matching title (unverified)', async () => {
+  it('without Gemini puts photos with a matching title first (unverified)', async () => {
     mockWikimedia();
     const result = await lookupDishImage(recipe);
     expect(result.verified).toBe(false);
-    expect(result.candidates).toHaveLength(2);
+    expect(result.candidates?.map((c) => c.matched)).toEqual([true, true, false]);
+  });
+
+  it('"more photos" loads the next result page and skips photos it already has', async () => {
+    const fetchMock = vi.fn(async (url: string) => {
+      const params = new URL(url).searchParams;
+      expect(params.get('gsroffset')).toBe('10');
+      return Response.json({ query: { pages: [{ ...info('Kaiserschmarrn.jpg'), index: 1 }, { ...info('Neu.jpg'), index: 2 }] } });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const known = [{ thumbUrl: 't', fullUrl: 'https://upload.wikimedia.org/x/Kaiserschmarrn.jpg/1280px-Kaiserschmarrn.jpg' }];
+    const more = await searchMoreCandidates('Kaiserschmarrn', known, 1, async () => [0]);
+    expect(more.map((c) => [c.fullUrl.split('/')[4], c.matched])).toEqual([['Neu.jpg', true]]);
   });
 });
