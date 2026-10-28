@@ -46,6 +46,26 @@ interface Translation {
   updateHint: string;
   restoreHint: string;
   restoreHintAction: string;
+  driveTitle: string;
+  driveNotConfigured: string;
+  driveConnect: string;
+  driveConnectHint: string;
+  driveActive: string;
+  driveNever: string;
+  driveBackupNow: string;
+  driveRestore: string;
+  driveDisconnect: string;
+  driveDisconnectConfirm: string;
+  driveExpired: string;
+  driveReconnect: string;
+  driveErrorNetwork: string;
+  driveErrorOauth: string;
+  driveNeedsDecision: string;
+  driveChooseBackup: string;
+  driveNoBackups: string;
+  driveCancel: string;
+  driveFileSection: string;
+  driveLast: (date: string) => string;
   archiveBadgeFinal: string;
   archiveBadgeDraft: string;
   noShoppingListFor: (title: string) => string;
@@ -205,6 +225,26 @@ export const translations: Record<Lang, Translation> = {
     updateHint: 'Updates kommen automatisch beim Öffnen der App. Bitte die App dafür NICHT deinstallieren – das löscht alle Daten.',
     restoreHint: 'App neu installiert? Hol deine Pläne und dein Archiv aus einer Sicherungsdatei zurück.',
     restoreHintAction: 'Sicherung wiederherstellen',
+    driveTitle: 'Automatische Sicherung in Google Drive',
+    driveNotConfigured: 'Google Drive ist für diese App noch nicht eingerichtet (Zugangsdaten fehlen auf dem Server).',
+    driveConnect: 'Mit Google Drive verbinden',
+    driveConnectHint: 'Danach wird jede Änderung automatisch im Ordner „Speiseplan Sicherungen“ in deinem Google Drive gesichert (eine Datei pro Tag, die letzten 30 Tage bleiben).',
+    driveActive: 'Automatische Sicherung aktiv',
+    driveNever: 'Noch keine Sicherung in Drive.',
+    driveBackupNow: 'Jetzt sichern',
+    driveRestore: 'Wiederherstellen',
+    driveDisconnect: 'Trennen',
+    driveDisconnectConfirm: 'Verbindung zu Google Drive trennen? Die vorhandenen Sicherungen in Drive bleiben erhalten, es wird aber nicht mehr automatisch gesichert.',
+    driveExpired: 'Die Verbindung zu Google Drive ist abgelaufen – es wird gerade NICHT gesichert. Bitte neu verbinden.',
+    driveReconnect: 'Neu verbinden',
+    driveErrorNetwork: 'Drive-Sicherung fehlgeschlagen (keine Verbindung?) – wird automatisch erneut versucht.',
+    driveErrorOauth: 'Die Anmeldung bei Google hat nicht geklappt. Bitte erneut versuchen.',
+    driveNeedsDecision: 'In deinem Google Drive gibt es schon Sicherungen. Willst du sie auf dieses Gerät holen („Wiederherstellen“) oder sie mit den Daten von diesem Gerät ergänzen („Jetzt sichern“)?',
+    driveChooseBackup: 'Welche Sicherung wiederherstellen?',
+    driveNoBackups: 'Noch keine Sicherungen in Google Drive.',
+    driveCancel: 'Abbrechen',
+    driveFileSection: 'Sicherung als Datei',
+    driveLast: (date) => `Letzte Drive-Sicherung: ${date}`,
     archiveBadgeFinal: 'Freigegeben',
     archiveBadgeDraft: 'Entwurf',
     noShoppingListFor: (title) => `Noch keine Einkaufsliste für ${title}. Erzeuge zuerst einen Wochenplan.`,
@@ -390,6 +430,26 @@ export const translations: Record<Lang, Translation> = {
     updateHint: 'Güncellemeler uygulama açılınca otomatik gelir. Bunun için uygulamayı SİLME – silmek tüm verileri siler.',
     restoreHint: 'Uygulamayı yeniden mi kurdun? Planlarını ve arşivini bir yedek dosyasından geri getir.',
     restoreHintAction: 'Yedeği geri yükle',
+    driveTitle: 'Google Drive\'a otomatik yedekleme',
+    driveNotConfigured: 'Google Drive bu uygulama için henüz ayarlanmadı (sunucuda erişim bilgileri eksik).',
+    driveConnect: 'Google Drive\'a bağlan',
+    driveConnectHint: 'Bağlandıktan sonra her değişiklik Google Drive\'ındaki „Speiseplan Sicherungen“ klasörüne otomatik yedeklenir (günde bir dosya, son 30 gün saklanır).',
+    driveActive: 'Otomatik yedekleme açık',
+    driveNever: 'Drive\'da henüz yedek yok.',
+    driveBackupNow: 'Şimdi yedekle',
+    driveRestore: 'Geri yükle',
+    driveDisconnect: 'Bağlantıyı kes',
+    driveDisconnectConfirm: 'Google Drive bağlantısı kesilsin mi? Drive\'daki yedekler kalır ama artık otomatik yedekleme yapılmaz.',
+    driveExpired: 'Google Drive bağlantısının süresi doldu – şu anda yedekleme YAPILMIYOR. Lütfen yeniden bağlan.',
+    driveReconnect: 'Yeniden bağlan',
+    driveErrorNetwork: 'Drive yedeklemesi başarısız oldu (bağlantı yok mu?) – otomatik olarak tekrar denenecek.',
+    driveErrorOauth: 'Google girişi başarısız oldu. Lütfen tekrar dene.',
+    driveNeedsDecision: 'Google Drive\'ında zaten yedekler var. Onları bu cihaza mı getirmek istersin („Geri yükle“), yoksa bu cihazdaki verilerle mi tamamlamak istersin („Şimdi yedekle“)?',
+    driveChooseBackup: 'Hangi yedek geri yüklensin?',
+    driveNoBackups: 'Google Drive\'da henüz yedek yok.',
+    driveCancel: 'Vazgeç',
+    driveFileSection: 'Dosya olarak yedekleme',
+    driveLast: (date) => `Son Drive yedeği: ${date}`,
     archiveBadgeFinal: 'Onaylandı',
     archiveBadgeDraft: 'Taslak',
     noShoppingListFor: (title) => `${title} için henüz alışveriş listesi yok. Önce bir haftalık plan oluştur.`,

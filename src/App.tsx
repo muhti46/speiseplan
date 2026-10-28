@@ -53,6 +53,7 @@ import ChatPanel from './components/ChatPanel';
 import BackupPanel from './components/BackupPanel';
 import AppVersion from './components/AppVersion';
 import { getLastBackupDate, isBackupDue, requestPersistentStorage } from './services/backup';
+import { handleDriveOAuthReturn } from './services/driveBackup';
 import { useLanguage } from './i18n/LanguageContext';
 import { LANGUAGES, Lang } from './i18n/translations';
 
@@ -104,6 +105,8 @@ export default function App() {
   }
 
   useEffect(() => {
+    // Rücksprung von der Google-Drive-Anmeldung: direkt die Sicherungs-Ansicht zeigen.
+    if (handleDriveOAuthReturn()) setActiveTab('archiv');
     // Schützt die Daten davor, bei Speicherknappheit vom Browser automatisch gelöscht zu werden.
     requestPersistentStorage();
     // Bereits im State befindliche (frischere) Pläne dürfen vom DB-Stand nicht überschrieben werden.
@@ -500,7 +503,7 @@ export default function App() {
           }
           return (
             <section className="space-y-3">
-              <BackupPanel onBackupDone={() => setBackupDue(false)} />
+              <BackupPanel onBackupDone={() => setBackupDue(false)} isLocalEmpty={planLoaded && !plan && archive.length === 0} />
               <AppVersion />
               <h2 className="pt-2 text-base font-semibold text-slate-700">{t.archivedPlans}</h2>
               {archive.length === 0 && <p className="text-sm text-slate-400">{t.noArchivedPlans}</p>}

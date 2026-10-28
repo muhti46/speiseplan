@@ -8,7 +8,7 @@ export const BACKUP_REMINDER_DAYS = 7;
 
 // Alle Dexie-Tabellen mit Nutzerdaten. Der Gemini API-Key (localStorage) wird bewusst
 // NICHT gesichert, damit er nicht versehentlich in einer geteilten Datei landet.
-const BACKUP_TABLES = [
+export const BACKUP_TABLES = [
   'plans',
   'currentPlan',
   'recipes',

@@ -21,6 +21,8 @@ export default defineConfig({
         skipWaiting: true,
         clientsClaim: true,
         cleanupOutdatedCaches: true,
+        // Server-Funktionen (Google-Drive-Anmeldung) nie durch die gecachte index.html ersetzen.
+        navigateFallbackDenylist: [/^\/api\//],
       },
       manifest: {
         id: '/',
