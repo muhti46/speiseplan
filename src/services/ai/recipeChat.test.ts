@@ -51,6 +51,18 @@ describe('recipe chat', () => {
     expect(call.contents[2].parts[0].text).toBe('Frage 2');
   });
 
+  it('sends a photo as inlineData together with the question', async () => {
+    generateContent.mockResolvedValue({ text: 'Sieht gut aus.' });
+    await askAboutRecipe('key', recipe, undefined, [], 'Ist das so richtig?', 'de', [
+      { kind: 'image', name: 'topf.jpg', mimeType: 'image/jpeg', data: 'AAAA' },
+    ]);
+    const call = generateContent.mock.calls[0][0];
+    expect(call.contents[0].parts).toEqual([
+      { inlineData: { mimeType: 'image/jpeg', data: 'AAAA' } },
+      { text: 'Ist das so richtig?' },
+    ]);
+  });
+
   it('throws on an empty answer', async () => {
     generateContent.mockResolvedValue({ text: '' });
     await expect(askAboutRecipe('key', recipe, undefined, [], 'Hallo', 'de')).rejects.toThrow();

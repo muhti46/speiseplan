@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { FileText, Loader2, Sparkles } from 'lucide-react';
+import { Loader2, Sparkles } from 'lucide-react';
 import { ChatMessage } from '../types/ai';
 import { useLanguage } from '../i18n/LanguageContext';
 import { sanitizeAssistantText } from '../services/ai/textFormat';
-import { attachmentDataUrl } from '../services/ai/attachments';
+import MessageAttachments from './MessageAttachments';
 import TypewriterText from './TypewriterText';
 
 interface ChatMessageListProps {
@@ -62,26 +62,7 @@ export default function ChatMessageList({
               }`}
             >
               {message.attachments && message.attachments.length > 0 && (
-                <div className={`flex flex-wrap gap-2 ${displayText ? 'mb-2' : ''}`}>
-                  {message.attachments.map((attachment, i) =>
-                    attachment.kind === 'image' && attachment.data ? (
-                      <img
-                        key={i}
-                        src={attachmentDataUrl(attachment)}
-                        alt={attachment.name}
-                        className="max-h-48 rounded-xl object-contain"
-                      />
-                    ) : (
-                      <span
-                        key={i}
-                        className="flex items-center gap-1.5 rounded-lg bg-white/15 px-2 py-1 text-sm"
-                      >
-                        <FileText size={16} className="shrink-0" />
-                        <span className="break-all">{attachment.name}</span>
-                      </span>
-                    ),
-                  )}
-                </div>
+                <MessageAttachments attachments={message.attachments} hasText={Boolean(displayText)} />
               )}
               {isAnimating ? (
                 <TypewriterText text={displayText} onDone={onAnimationDone} />
