@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { X, Clock, ChefHat, Flame, Users, Sparkles, ArrowLeftRight, Lightbulb, Loader2, RefreshCw, Pencil, Trash2, Camera } from 'lucide-react';
+import { X, Clock, ChefHat, Flame, Users, Sparkles, ArrowLeftRight, Lightbulb, Loader2, RefreshCw, Pencil, Trash2, Camera, EyeOff } from 'lucide-react';
 import { Recipe, RecipeDetail, RecipeTranslation } from '../types/recipe';
 import { translateInstructions } from '../services/ai/recipeTranslation';
 import { generateRecipeDetail } from '../services/ai/recipeDetail';
@@ -9,6 +9,8 @@ import { getCategoryLabel } from '../services/labels';
 import { DEFAULT_PORTIONS } from '../services/shopping';
 import { formatIngredientAmount } from '../services/format';
 import { resizeImageFile } from '../services/image';
+import ImageLightbox from './ImageLightbox';
+import { DishPhoto } from './DayMenuCard';
 import RecipeChat from './RecipeChat';
 import { useLanguage } from '../i18n/LanguageContext';
 
@@ -28,6 +30,9 @@ interface RecipeDetailModalProps {
   /** Bereits gespeicherte Übersetzung der Kurz-Schritte in die aktuelle Sprache (nur wenn nicht Deutsch). */
   translation?: RecipeTranslation;
   onTranslationCreated?: (translation: RecipeTranslation) => void;
+  /** Automatisch gefundenes Foto (nur wenn kein eigenes existiert). */
+  webPhoto?: DishPhoto;
+  onHideWebPhoto?: () => void;
   /** Neues Foto (Data-URL) oder `null` zum Entfernen; der Aufrufer speichert es. */
   onImageChange?: (dataUrl: string | null) => void;
   /** Wird mit einer neu erzeugten ausführlichen Anleitung aufgerufen; der Aufrufer speichert sie. */
@@ -42,6 +47,8 @@ export default function RecipeDetailModal({
   onDelete,
   detail,
   image,
+  webPhoto,
+  onHideWebPhoto,
   translation,
   onTranslationCreated,
   onImageChange,
@@ -52,6 +59,7 @@ export default function RecipeDetailModal({
   const [isCreating, setIsCreating] = useState(false);
   const [detailError, setDetailError] = useState<string | null>(null);
   const [photoError, setPhotoError] = useState<string | null>(null);
+  const [enlarged, setEnlarged] = useState<DishPhoto | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const [isTranslating, setIsTranslating] = useState(false);
   const [translateError, setTranslateError] = useState<string | null>(null);
@@ -215,7 +223,9 @@ export default function RecipeDetailModal({
               />
               {image ? (
                 <>
-                  <img src={image} alt={recipe.name} className="max-h-64 w-full rounded-xl object-cover" />
+                  <button type="button" onClick={() => setEnlarged({ thumbUrl: image, fullUrl: image })} className="block w-full cursor-zoom-in">
+                    <img src={image} alt={recipe.name} className="max-h-64 w-full rounded-xl object-cover" />
+                  </button>
                   <div className="mt-2 flex gap-2">
                     <button
                       type="button"
@@ -235,6 +245,45 @@ export default function RecipeDetailModal({
                     </button>
                   </div>
                 </>
+              ) : webPhoto ? (
+                <>
+                  <button type="button" onClick={() => setEnlarged(webPhoto)} className="block w-full cursor-zoom-in">
+                    <img src={webPhoto.fullUrl} alt={recipe.name} className="max-h-64 w-full rounded-xl object-cover" />
+                  </button>
+                  {webPhoto.credit && (
+                    <p className="mt-1 text-[11px] text-slate-400">
+                      {webPhoto.credit.url ? (
+                        <a href={webPhoto.credit.url} target="_blank" rel="noopener noreferrer" className="underline">
+                          {webPhoto.credit.text}
+                        </a>
+                      ) : (
+                        webPhoto.credit.text
+                      )}
+                    </p>
+                  )}
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => fileInput.current?.click()}
+                      className="inline-flex items-center gap-1 rounded-full border border-slate-300 px-2.5 py-1 text-xs font-medium text-slate-600 active:scale-95"
+                    >
+                      <Camera size={12} />
+                      {t.photoAdd}
+                    </button>
+                    {onHideWebPhoto && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (window.confirm(t.photoHideConfirm)) onHideWebPhoto();
+                        }}
+                        className="inline-flex items-center gap-1 rounded-full border border-red-200 px-2.5 py-1 text-xs font-medium text-red-600 active:scale-95"
+                      >
+                        <EyeOff size={12} />
+                        {t.photoHide}
+                      </button>
+                    )}
+                  </div>
+                </>
               ) : (
                 <button
                   type="button"
@@ -244,6 +293,14 @@ export default function RecipeDetailModal({
                   <Camera size={18} />
                   {t.photoAdd}
                 </button>
+              )}
+              {enlarged && (
+                <ImageLightbox
+                  src={enlarged.fullUrl}
+                  alt={recipe.name}
+                  credit={enlarged.credit}
+                  onClose={() => setEnlarged(null)}
+                />
               )}
               {photoError && <p className="mt-1 text-sm text-red-600">{photoError}</p>}
             </div>

@@ -147,6 +147,9 @@ interface Translation {
   photoChange: string;
   photoRemove: string;
   photoFailed: string;
+  photoHide: string;
+  photoHideConfirm: string;
+  photoCredit: (artist: string | undefined, license: string | undefined) => string;
   deleteRecipe: string;
   deleteRecipeConfirm: (name: string) => string;
   changeMeal: string;
@@ -353,6 +356,9 @@ export const translations: Record<Lang, Translation> = {
     photoChange: 'Foto ändern',
     photoRemove: 'Foto entfernen',
     photoFailed: 'Das Foto konnte nicht geladen werden.',
+    photoHide: 'Foto passt nicht – ausblenden',
+    photoHideConfirm: 'Dieses automatisch gefundene Foto ausblenden? Du kannst stattdessen ein eigenes Foto hinzufügen.',
+    photoCredit: (artist, license) => ['Foto: Wikipedia', artist, license].filter(Boolean).join(' · '),
     deleteRecipe: 'Aus Pool löschen',
     deleteRecipeConfirm: (name) =>
       `„${name}" aus dem Rezept-Pool löschen? Bereits geplante Wochen bleiben unverändert.`,
@@ -558,6 +564,9 @@ export const translations: Record<Lang, Translation> = {
     photoChange: 'Fotoğrafı değiştir',
     photoRemove: 'Fotoğrafı sil',
     photoFailed: 'Fotoğraf yüklenemedi.',
+    photoHide: 'Fotoğraf uymuyor – gizle',
+    photoHideConfirm: 'Otomatik bulunan bu fotoğraf gizlensin mi? Onun yerine kendi fotoğrafını ekleyebilirsin.',
+    photoCredit: (artist, license) => ['Fotoğraf: Wikipedia', artist, license].filter(Boolean).join(' · '),
     deleteRecipe: 'Havuzdan sil',
     deleteRecipeConfirm: (name) =>
       `"${name}" yemek havuzundan silinsin mi? Daha önce planlanan haftalar değişmez.`,

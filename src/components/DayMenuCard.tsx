@@ -1,7 +1,16 @@
-import { Shuffle, Soup, UtensilsCrossed, IceCreamCone, Salad, Pencil } from 'lucide-react';
+import { useState } from 'react';
+import { LucideIcon, Shuffle, Soup, UtensilsCrossed, IceCreamCone, Salad, Pencil } from 'lucide-react';
 import { DayMenu, DayOfWeek } from '../types/menu';
 import { Course, Recipe } from '../types/recipe';
 import { useLanguage } from '../i18n/LanguageContext';
+import ImageLightbox, { PhotoCredit } from './ImageLightbox';
+
+/** Foto eines Gerichts: eigenes Foto des Nutzers oder automatisch gefundenes (mit Quellenangabe). */
+export interface DishPhoto {
+  thumbUrl: string;
+  fullUrl: string;
+  credit?: PhotoCredit;
+}
 
 // Jeder Wochentag hat einen eigenen, bewusst blassen Farbton (Tailwind-Stufen 50/100/200),
 // damit die Karten unterscheidbar bleiben, ohne die Augen zu ermüden. Klassen stehen
@@ -53,17 +62,55 @@ interface DayMenuCardProps {
   onChangeBeilage?: () => void;
   /** Rezept zur gewählten Beilage (fest hinterlegt oder selbst angelegt), falls vorhanden. */
   beilageRecipe?: Recipe;
+  /** Foto je Gericht für das kleine Vorschaubild (antippen = Vollbild). */
+  photoFor?: (recipe: Recipe) => DishPhoto | undefined;
 }
 
-export default function DayMenuCard({ day, onReroll, onOpenRecipe, onChangeBeilage, beilageRecipe }: DayMenuCardProps) {
+export default function DayMenuCard({ day, onReroll, onOpenRecipe, onChangeBeilage, beilageRecipe, photoFor }: DayMenuCardProps) {
   const { t } = useLanguage();
+  const [enlarged, setEnlarged] = useState<{ photo: DishPhoto; name: string } | null>(null);
   const theme = DAY_THEME[day.dayOfWeek];
   const proteinLabel = day.hauptspeise.proteinCategory
     ? t.proteinLabels[day.hauptspeise.proteinCategory]
     : undefined;
 
+  function renderCourse(course: Course, Icon: LucideIcon) {
+    const recipe = day[course];
+    const photo = photoFor?.(recipe);
+    return (
+      <li className="flex items-center gap-2">
+        <Icon size={16} className={`shrink-0 ${theme.icon}`} />
+        <button
+          type="button"
+          onClick={() => onOpenRecipe(recipe, course)}
+          className={`min-w-0 flex-1 cursor-pointer text-left underline-offset-2 hover:underline ${theme.hover}`}
+        >
+          {recipe.name}
+        </button>
+        {photo && (
+          <button
+            type="button"
+            onClick={() => setEnlarged({ photo, name: recipe.name })}
+            aria-label={recipe.name}
+            className="shrink-0 cursor-zoom-in overflow-hidden rounded-lg border border-white/80 bg-white shadow-sm"
+          >
+            <img src={photo.thumbUrl} alt="" loading="lazy" className="h-11 w-11 object-cover" />
+          </button>
+        )}
+      </li>
+    );
+  }
+
   return (
     <div className={`rounded-2xl border p-4 shadow-sm ${theme.card}`}>
+      {enlarged && (
+        <ImageLightbox
+          src={enlarged.photo.fullUrl}
+          alt={enlarged.name}
+          credit={enlarged.photo.credit}
+          onClose={() => setEnlarged(null)}
+        />
+      )}
       <div className="mb-3 flex items-center justify-between">
         <div>
           <h3 className={`text-lg font-semibold ${theme.title}`}>{t.dayLabels[day.dayOfWeek]}</h3>
@@ -76,26 +123,8 @@ export default function DayMenuCard({ day, onReroll, onOpenRecipe, onChangeBeila
       </div>
 
       <ul className="space-y-2 text-sm text-slate-700">
-        <li className="flex items-start gap-2">
-          <Soup size={16} className={`mt-0.5 shrink-0 ${theme.icon}`} />
-          <button
-            type="button"
-            onClick={() => onOpenRecipe(day.vorspeise, 'vorspeise')}
-            className={`cursor-pointer text-left underline-offset-2 hover:underline ${theme.hover}`}
-          >
-            {day.vorspeise.name}
-          </button>
-        </li>
-        <li className="flex items-start gap-2">
-          <UtensilsCrossed size={16} className={`mt-0.5 shrink-0 ${theme.icon}`} />
-          <button
-            type="button"
-            onClick={() => onOpenRecipe(day.hauptspeise, 'hauptspeise')}
-            className={`cursor-pointer text-left underline-offset-2 hover:underline ${theme.hover}`}
-          >
-            {day.hauptspeise.name}
-          </button>
-        </li>
+        {renderCourse('vorspeise', Soup)}
+        {renderCourse('hauptspeise', UtensilsCrossed)}
         {(day.beilage !== '—' || onChangeBeilage) && (
         <li className="flex items-start gap-2 pl-6 text-slate-500">
           <Salad size={14} className={`mt-0.5 shrink-0 ${theme.icon}`} />
@@ -124,16 +153,7 @@ export default function DayMenuCard({ day, onReroll, onOpenRecipe, onChangeBeila
           )}
         </li>
         )}
-        <li className="flex items-start gap-2">
-          <IceCreamCone size={16} className={`mt-0.5 shrink-0 ${theme.icon}`} />
-          <button
-            type="button"
-            onClick={() => onOpenRecipe(day.nachspeise, 'nachspeise')}
-            className={`cursor-pointer text-left underline-offset-2 hover:underline ${theme.hover}`}
-          >
-            {day.nachspeise.name}
-          </button>
-        </li>
+        {renderCourse('nachspeise', IceCreamCone)}
       </ul>
 
       {onReroll && (
