@@ -4,10 +4,17 @@ import { X } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { clampZoom, distance, DOUBLE_TAP_SCALE, IDENTITY, midpoint, Point, zoomAround, ZoomState } from '../services/zoom';
 
+/** Quellenangabe (z.B. Urheber/Lizenz eines Wikipedia-Fotos), unten im Vollbild angezeigt. */
+export interface PhotoCredit {
+  text: string;
+  url?: string;
+}
+
 interface ImageLightboxProps {
   src: string;
   alt: string;
   onClose: () => void;
+  credit?: PhotoCredit;
 }
 
 const TAP_MAX_MOVE = 10;
@@ -24,7 +31,7 @@ type Gesture =
  * Doppeltippen zoomt hinein/heraus, einfaches Tippen (ungezoomt), X oder Escape schließt.
  * Eigene Gesten nötig, weil der Viewport der App (maximum-scale=1) das Browser-Zoomen sperrt.
  */
-export default function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
+export default function ImageLightbox({ src, alt, onClose, credit }: ImageLightboxProps) {
   const { t } = useLanguage();
   const [zoom, setZoom] = useState<ZoomState>(IDENTITY);
   const [animate, setAnimate] = useState(true);
@@ -82,7 +89,7 @@ export default function ImageLightbox({ src, alt, onClose }: ImageLightboxProps)
   }
 
   function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
-    if ((event.target as HTMLElement).closest('button')) return;
+    if ((event.target as HTMLElement).closest('button, a')) return;
     event.currentTarget.setPointerCapture(event.pointerId);
     const point = toLocal(event);
     pointers.current.set(event.pointerId, point);
@@ -160,6 +167,8 @@ export default function ImageLightbox({ src, alt, onClose }: ImageLightboxProps)
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
       onWheel={handleWheel}
+      // Portal-Klicks blubbern im React-Baum weiter - nicht z.B. das Rezept-Fenster dahinter schließen.
+      onClick={(event) => event.stopPropagation()}
       className="fixed inset-0 z-[100] flex touch-none select-none items-center justify-center overflow-hidden bg-black/90"
     >
       <img
@@ -173,6 +182,17 @@ export default function ImageLightbox({ src, alt, onClose }: ImageLightboxProps)
         }}
         className="max-h-full max-w-full object-contain will-change-transform"
       />
+      {credit && (
+        <p className="absolute inset-x-0 bottom-0 bg-black/60 px-3 py-2 text-center text-xs text-white/80">
+          {credit.url ? (
+            <a href={credit.url} target="_blank" rel="noopener noreferrer" className="underline">
+              {credit.text}
+            </a>
+          ) : (
+            credit.text
+          )}
+        </p>
+      )}
       <button
         type="button"
         onClick={onClose}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   CalendarDays,
   ShoppingCart,
@@ -39,10 +39,13 @@ import {
   saveRecipeImage,
   deleteRecipeImage,
   getAllRecipeImages,
+  getAllDishWebImages,
+  saveDishWebImage,
   savePlan,
 } from './services/storage';
 import Tabs, { TabItem } from './components/Tabs';
-import DayMenuCard from './components/DayMenuCard';
+import DayMenuCard, { DishPhoto } from './components/DayMenuCard';
+import { DishWebImage, lookupDishImage, needsLookup } from './services/dishImages';
 import CheckboxList from './components/CheckboxList';
 import RecipeDetailModal from './components/RecipeDetailModal';
 import RecipePickerModal from './components/RecipePickerModal';
@@ -85,6 +88,9 @@ export default function App() {
   const [showAddRecipe, setShowAddRecipe] = useState(false);
   const [translations, setTranslations] = useState<Record<string, RecipeTranslation>>({});
   const [images, setImages] = useState<Record<string, string>>({});
+  const [webImages, setWebImages] = useState<Record<string, DishWebImage>>({});
+  const [webImagesLoaded, setWebImagesLoaded] = useState(false);
+  const lookupsInFlight = useRef(new Set<string>());
   const [editing, setEditing] = useState<Recipe | null>(null);
   // Erst nach dem Laden des gespeicherten Plans darf gespeichert werden, sonst würde der
   // anfängliche leere State den gespeicherten Plan überschreiben.
@@ -116,6 +122,9 @@ export default function App() {
     });
     getRecentRecipeIds(4).then(setRecentRecipeIds);
     getAllRecipeImages().then(setImages);
+    getAllDishWebImages()
+      .then(setWebImages)
+      .finally(() => setWebImagesLoaded(true));
     getAllRecipeTranslations().then((list) => setTranslations(Object.fromEntries(list.map((x) => [x.key, x]))));
     getAllRecipeDetails().then((list) => setDetails(Object.fromEntries(list.map((d) => [d.key, d]))));
     getCurrentPlan()
@@ -185,6 +194,47 @@ export default function App() {
       setDetails((prev) => Object.fromEntries(Object.entries(prev).filter(([, d]) => d.recipeId !== recipe.id)));
     }
     setSelected((prev) => (prev && prev.recipe.id === recipe.id ? { ...prev, recipe } : prev));
+  }
+
+  // Für die Gerichte des angezeigten Plans fehlende Fotos nacheinander in Wikipedia suchen
+  // (einmal je Rezept, Ergebnis wird gespeichert; offline wird es beim nächsten Mal nachgeholt).
+  useEffect(() => {
+    if (!webImagesLoaded || !plan || !navigator.onLine) return;
+    const todo = plan.days
+      .flatMap((d) => [d.vorspeise, d.hauptspeise, d.nachspeise])
+      .filter((r) => !images[r.id] && needsLookup(webImages[r.id]) && !lookupsInFlight.current.has(r.id));
+    if (todo.length === 0) return;
+    todo.forEach((r) => lookupsInFlight.current.add(r.id));
+    (async () => {
+      for (const recipe of todo) {
+        try {
+          const result = await lookupDishImage(recipe);
+          setWebImages((prev) => ({ ...prev, [recipe.id]: result }));
+          saveDishWebImage(result);
+        } catch {
+          // Netzwerkfehler: nichts speichern, beim nächsten Anlass erneut versuchen.
+        } finally {
+          lookupsInFlight.current.delete(recipe.id);
+        }
+      }
+    })();
+  }, [plan, webImagesLoaded, webImages, images]);
+
+  /** Eigenes Foto hat Vorrang vor dem automatisch gefundenen. */
+  function photoFor(recipe: Recipe): DishPhoto | undefined {
+    const own = images[recipe.id];
+    if (own) return { thumbUrl: own, fullUrl: own };
+    const web = webImages[recipe.id];
+    if (web?.status !== 'found' || !web.thumbUrl || !web.fullUrl) return undefined;
+    return { thumbUrl: web.thumbUrl, fullUrl: web.fullUrl, credit: { text: t.photoCredit(web.artist, web.license), url: web.pageUrl } };
+  }
+
+  function handleHideWebImage(recipeId: string) {
+    const current = webImages[recipeId];
+    if (!current) return;
+    const hidden: DishWebImage = { ...current, status: 'hidden' };
+    setWebImages((prev) => ({ ...prev, [recipeId]: hidden }));
+    saveDishWebImage(hidden);
   }
 
   function handleImageChange(recipeId: string, dataUrl: string | null) {
@@ -374,6 +424,7 @@ export default function App() {
             {plan &&
               plan.days.map((day) => (
                 <DayMenuCard
+                  photoFor={photoFor}
                   key={day.dayOfWeek}
                   day={day}
                   onReroll={planEditable ? () => handleReroll(day.dayOfWeek) : undefined}
@@ -468,6 +519,7 @@ export default function App() {
                 </h2>
                 {viewed.days.map((day) => (
                   <DayMenuCard
+                  photoFor={photoFor}
                     key={day.dayOfWeek}
                     day={day}
                     beilageRecipe={findBeilageRecipe(day.beilage, recipes)}
@@ -548,6 +600,8 @@ export default function App() {
           recipe={selected.recipe}
           detail={details[recipeDetailKey(selected.recipe.id, lang)]}
           image={images[selected.recipe.id]}
+          webPhoto={images[selected.recipe.id] ? undefined : photoFor(selected.recipe)}
+          onHideWebPhoto={() => handleHideWebImage(selected.recipe.id)}
           translation={translations[recipeDetailKey(selected.recipe.id, lang)]}
           onTranslationCreated={handleTranslationCreated}
           onImageChange={(dataUrl) => handleImageChange(selected.recipe.id, dataUrl)}

@@ -3,6 +3,7 @@ import { WeeklyPlan } from '../types/menu';
 import { Recipe, RecipeDetail, RecipeTranslation } from '../types/recipe';
 import { ChatConversation, ChatMessage } from '../types/ai';
 import recipesData from '../data/recipes.json';
+import type { DishWebImage } from './dishImages';
 
 function seedRecipes(): Recipe[] {
   return (recipesData as Recipe[]).map((recipe) => ({ ...recipe, source: 'builtin' as const }));
@@ -24,6 +25,7 @@ class SpeiseplanDB extends Dexie {
   recipeTranslations!: Table<RecipeTranslation, string>;
   recipeChats!: Table<RecipeChat, string>;
   recipeImages!: Table<{ recipeId: string; dataUrl: string }, string>;
+  recipeWebImages!: Table<DishWebImage, string>;
 
   constructor() {
     super('speiseplan-db');
@@ -109,6 +111,19 @@ class SpeiseplanDB extends Dexie {
         await table.bulkPut(seedRecipes().filter((r) => !existing.has(r.id)));
       });
 
+    // Automatisch gefundene Gerichtfotos (Wikipedia) bzw. Merker "nichts gefunden"/"ausgeblendet".
+    this.version(10).stores({
+      plans: 'id, year, calendarWeek, isFinalized, createdAt',
+      recipes: 'id, course, proteinCategory, subCategory',
+      chatConversations: 'id, updatedAt',
+      currentPlan: 'key',
+      recipeDetails: 'key, recipeId',
+      recipeImages: 'recipeId',
+      recipeChats: 'recipeId',
+      recipeTranslations: 'key, recipeId',
+      recipeWebImages: 'recipeId',
+    });
+
     // Läuft nur einmal, wenn die Datenbank komplett neu (ohne Vorgängerversion) angelegt wird.
     this.on('populate', async (tx) => {
       await tx.table('recipes').bulkPut(seedRecipes());
@@ -140,6 +155,15 @@ export async function getRecipeChat(recipeId: string): Promise<RecipeChat | unde
 
 export async function deleteRecipeChat(recipeId: string): Promise<void> {
   await db.recipeChats.delete(recipeId);
+}
+
+export async function saveDishWebImage(image: DishWebImage): Promise<void> {
+  await db.recipeWebImages.put(image);
+}
+
+export async function getAllDishWebImages(): Promise<Record<string, DishWebImage>> {
+  const list = await db.recipeWebImages.toArray();
+  return Object.fromEntries(list.map((i) => [i.recipeId, i]));
 }
 
 export async function saveRecipeImage(recipeId: string, dataUrl: string): Promise<void> {

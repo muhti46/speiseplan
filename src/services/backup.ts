@@ -13,6 +13,7 @@ export const BACKUP_TABLES = [
   'currentPlan',
   'recipes',
   'recipeImages',
+  'recipeWebImages',
   'recipeDetails',
   'recipeTranslations',
   'recipeChats',

@@ -23,6 +23,18 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
         // Server-Funktionen (Google-Drive-Anmeldung) nie durch die gecachte index.html ersetzen.
         navigateFallbackDenylist: [/^\/api\//],
+        // Gerichtfotos aus Wikipedia/Wikimedia auch offline anzeigen (einmal geladen = im Cache).
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/upload\.wikimedia\.org\//,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'dish-photos',
+              expiration: { maxEntries: 400, maxAgeSeconds: 180 * 24 * 60 * 60 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+        ],
       },
       manifest: {
         id: '/',
