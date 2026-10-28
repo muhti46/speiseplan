@@ -1,4 +1,4 @@
-import { PointerEvent, useEffect, useRef, useState, WheelEvent } from 'react';
+import { PointerEvent, ReactNode, useEffect, useRef, useState, WheelEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -15,6 +15,8 @@ interface ImageLightboxProps {
   alt: string;
   onClose: () => void;
   credit?: PhotoCredit;
+  /** Zusätzliche Knöpfe unten (z.B. Foto-Vorschlag übernehmen/ablehnen). */
+  actions?: ReactNode;
 }
 
 const TAP_MAX_MOVE = 10;
@@ -31,7 +33,7 @@ type Gesture =
  * Doppeltippen zoomt hinein/heraus, einfaches Tippen (ungezoomt), X oder Escape schließt.
  * Eigene Gesten nötig, weil der Viewport der App (maximum-scale=1) das Browser-Zoomen sperrt.
  */
-export default function ImageLightbox({ src, alt, onClose, credit }: ImageLightboxProps) {
+export default function ImageLightbox({ src, alt, onClose, credit, actions }: ImageLightboxProps) {
   const { t } = useLanguage();
   const [zoom, setZoom] = useState<ZoomState>(IDENTITY);
   const [animate, setAnimate] = useState(true);
@@ -182,16 +184,21 @@ export default function ImageLightbox({ src, alt, onClose, credit }: ImageLightb
         }}
         className="max-h-full max-w-full object-contain will-change-transform"
       />
-      {credit && (
-        <p className="absolute inset-x-0 bottom-0 bg-black/60 px-3 py-2 text-center text-xs text-white/80">
-          {credit.url ? (
-            <a href={credit.url} target="_blank" rel="noopener noreferrer" className="underline">
-              {credit.text}
-            </a>
-          ) : (
-            credit.text
+      {(credit || actions) && (
+        <div className="absolute inset-x-0 bottom-0 bg-black/60 pb-[env(safe-area-inset-bottom)]">
+          {actions && <div className="flex flex-wrap justify-center gap-2 px-3 pt-3">{actions}</div>}
+          {credit && (
+            <p className="px-3 py-2 text-center text-xs text-white/80">
+              {credit.url ? (
+                <a href={credit.url} target="_blank" rel="noopener noreferrer" className="underline">
+                  {credit.text}
+                </a>
+              ) : (
+                credit.text
+              )}
+            </p>
           )}
-        </p>
+        </div>
       )}
       <button
         type="button"

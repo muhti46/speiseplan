@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { X, Clock, ChefHat, Flame, Users, Sparkles, ArrowLeftRight, Lightbulb, Loader2, RefreshCw, Pencil, Trash2, Camera, EyeOff } from 'lucide-react';
+import { X, Clock, ChefHat, Flame, Users, Sparkles, ArrowLeftRight, Lightbulb, Loader2, RefreshCw, Pencil, Trash2, Camera } from 'lucide-react';
 import { Recipe, RecipeDetail, RecipeTranslation } from '../types/recipe';
 import { translateInstructions } from '../services/ai/recipeTranslation';
 import { generateRecipeDetail } from '../services/ai/recipeDetail';
@@ -11,6 +11,7 @@ import { formatIngredientAmount } from '../services/format';
 import { resizeImageFile } from '../services/image';
 import ImageLightbox from './ImageLightbox';
 import { DishPhoto } from './DayMenuCard';
+import PhotoSuggestionActions, { PhotoSuggestionHandlers } from './PhotoSuggestionActions';
 import RecipeChat from './RecipeChat';
 import { useLanguage } from '../i18n/LanguageContext';
 
@@ -32,7 +33,8 @@ interface RecipeDetailModalProps {
   onTranslationCreated?: (translation: RecipeTranslation) => void;
   /** Automatisch gefundenes Foto (nur wenn kein eigenes existiert). */
   webPhoto?: DishPhoto;
-  onHideWebPhoto?: () => void;
+  /** Übernehmen/Anderes/Kein Foto, solange webPhoto ein unbestätigter Vorschlag ist. */
+  photoSuggestion?: PhotoSuggestionHandlers;
   /** Neues Foto (Data-URL) oder `null` zum Entfernen; der Aufrufer speichert es. */
   onImageChange?: (dataUrl: string | null) => void;
   /** Wird mit einer neu erzeugten ausführlichen Anleitung aufgerufen; der Aufrufer speichert sie. */
@@ -48,7 +50,7 @@ export default function RecipeDetailModal({
   detail,
   image,
   webPhoto,
-  onHideWebPhoto,
+  photoSuggestion,
   translation,
   onTranslationCreated,
   onImageChange,
@@ -261,7 +263,9 @@ export default function RecipeDetailModal({
                       )}
                     </p>
                   )}
+                  {webPhoto.pending && <p className="mt-2 text-xs text-amber-700">{t.photoSuggestedHint}</p>}
                   <div className="mt-2 flex flex-wrap gap-2">
+                    {webPhoto.pending && photoSuggestion && <PhotoSuggestionActions {...photoSuggestion} variant="light" />}
                     <button
                       type="button"
                       onClick={() => fileInput.current?.click()}
@@ -270,18 +274,6 @@ export default function RecipeDetailModal({
                       <Camera size={12} />
                       {t.photoAdd}
                     </button>
-                    {onHideWebPhoto && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (window.confirm(t.photoHideConfirm)) onHideWebPhoto();
-                        }}
-                        className="inline-flex items-center gap-1 rounded-full border border-red-200 px-2.5 py-1 text-xs font-medium text-red-600 active:scale-95"
-                      >
-                        <EyeOff size={12} />
-                        {t.photoHide}
-                      </button>
-                    )}
                   </div>
                 </>
               ) : (
