@@ -133,6 +133,60 @@ class SpeiseplanDB extends Dexie {
 
 export const db = new SpeiseplanDB();
 
+// ---------------------------------------------------------------- Öffnen der Datenbank überwachen
+//
+// Bei einem Update mit neuer Datenbank-Version (z.B. 9 -> 10) muss JEDE noch offene Kopie der App
+// (zweites App-Fenster, Chrome-Tab mit derselben Adresse, eingefrorene Hintergrund-Instanz) die
+// alte Verbindung freigeben. Bis dahin wartet das Öffnen - alle Lese-/Schreibzugriffe hängen, die
+// App wirkt leer ("Daten weg"), Plan-Erzeugen und Chat tun nichts. Die Daten sind aber noch da.
+
+export type DbStatus = 'opening' | 'ready' | 'blocked' | 'error';
+
+let dbStatus: DbStatus = 'opening';
+let dbError: string | null = null;
+const dbStatusListeners = new Set<() => void>();
+// Ohne Blockade-Ereignis trotzdem warnen, wenn das Öffnen auffällig lange dauert.
+const OPEN_TIMEOUT_MS = 5000;
+
+function setDbStatus(status: DbStatus, error: string | null = null): void {
+  dbStatus = status;
+  dbError = error;
+  dbStatusListeners.forEach((listener) => listener());
+}
+
+export function subscribeDbStatus(listener: () => void): () => void {
+  dbStatusListeners.add(listener);
+  return () => dbStatusListeners.delete(listener);
+}
+
+export function getDbStatus(): DbStatus {
+  return dbStatus;
+}
+
+export function getDbError(): string | null {
+  return dbError;
+}
+
+if (typeof indexedDB !== 'undefined') {
+  // Diese Kopie der App blockiert ein Update in einer anderen Kopie: Verbindung sofort freigeben
+  // und neu laden, damit auch diese Kopie die neue Version (und Datenbank) benutzt.
+  db.on('versionchange', () => {
+    db.close();
+    window.location.reload();
+    return false;
+  });
+  db.on('blocked', () => {
+    if (dbStatus !== 'ready') setDbStatus('blocked');
+  });
+  const timer = window.setTimeout(() => {
+    if (dbStatus === 'opening') setDbStatus('blocked');
+  }, OPEN_TIMEOUT_MS);
+  db.open()
+    .then(() => setDbStatus('ready'))
+    .catch((err: unknown) => setDbStatus('error', err instanceof Error ? `${err.name}: ${err.message}` : String(err)))
+    .finally(() => window.clearTimeout(timer));
+}
+
 export async function saveRecipeTranslation(translation: RecipeTranslation): Promise<void> {
   await db.recipeTranslations.put(translation);
 }
