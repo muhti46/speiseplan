@@ -37,6 +37,15 @@ interface Translation {
   backupError: string;
   backupReminder: string;
   backupReminderAction: string;
+  appVersion: (date: string) => string;
+  updateCheck: string;
+  updateChecking: string;
+  updateUpToDate: string;
+  updateFound: string;
+  updateError: string;
+  updateHint: string;
+  restoreHint: string;
+  restoreHintAction: string;
   archiveBadgeFinal: string;
   archiveBadgeDraft: string;
   noShoppingListFor: (title: string) => string;
@@ -187,6 +196,15 @@ export const translations: Record<Lang, Translation> = {
     backupError: 'Die Sicherung ist fehlgeschlagen. Bitte erneut versuchen.',
     backupReminder: 'Seit über einer Woche keine Datensicherung.',
     backupReminderAction: 'Jetzt sichern',
+    appVersion: (date) => `App-Version vom ${date}`,
+    updateCheck: 'Nach Updates suchen',
+    updateChecking: 'Suche…',
+    updateUpToDate: 'Die App ist aktuell.',
+    updateFound: 'Neue Version gefunden – die App lädt gleich neu.',
+    updateError: 'Keine Verbindung – bitte später erneut versuchen.',
+    updateHint: 'Updates kommen automatisch beim Öffnen der App. Bitte die App dafür NICHT deinstallieren – das löscht alle Daten.',
+    restoreHint: 'App neu installiert? Hol deine Pläne und dein Archiv aus einer Sicherungsdatei zurück.',
+    restoreHintAction: 'Sicherung wiederherstellen',
     archiveBadgeFinal: 'Freigegeben',
     archiveBadgeDraft: 'Entwurf',
     noShoppingListFor: (title) => `Noch keine Einkaufsliste für ${title}. Erzeuge zuerst einen Wochenplan.`,
@@ -363,6 +381,15 @@ export const translations: Record<Lang, Translation> = {
     backupError: 'Yedekleme başarısız oldu. Lütfen tekrar dene.',
     backupReminder: 'Bir haftadan uzun süredir yedek alınmadı.',
     backupReminderAction: 'Şimdi yedekle',
+    appVersion: (date) => `Uygulama sürümü: ${date}`,
+    updateCheck: 'Güncellemeleri kontrol et',
+    updateChecking: 'Kontrol ediliyor…',
+    updateUpToDate: 'Uygulama güncel.',
+    updateFound: 'Yeni sürüm bulundu – uygulama birazdan yeniden yüklenecek.',
+    updateError: 'Bağlantı yok – lütfen daha sonra tekrar dene.',
+    updateHint: 'Güncellemeler uygulama açılınca otomatik gelir. Bunun için uygulamayı SİLME – silmek tüm verileri siler.',
+    restoreHint: 'Uygulamayı yeniden mi kurdun? Planlarını ve arşivini bir yedek dosyasından geri getir.',
+    restoreHintAction: 'Yedeği geri yükle',
     archiveBadgeFinal: 'Onaylandı',
     archiveBadgeDraft: 'Taslak',
     noShoppingListFor: (title) => `${title} için henüz alışveriş listesi yok. Önce bir haftalık plan oluştur.`,

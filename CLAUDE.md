@@ -3,7 +3,7 @@ Speiseplan- und Einkaufslisten-App für die Hauswirtschaft (Kinderheim Weilburg,
 
 ## Tech Stack
 - Frontend/Mobile: React, Vite, TypeScript, Tailwind CSS, Lucide-Icons (PWA-enabled for Android).
-- State/Storage: LocalStorage / IndexedDB (Dexie). App updates keep the data (Dexie schema upgrades only add tables), but uninstalling the PWA wipes it — `services/backup.ts` + `BackupPanel` (Archiv tab) export/restore all tables as one JSON file (merge on restore, Gemini key excluded), request `navigator.storage.persist()`, and remind after 7 days without a backup.
+- State/Storage: LocalStorage / IndexedDB (Dexie). App updates keep the data (Dexie schema upgrades only add tables), but uninstalling the PWA wipes it — `services/backup.ts` + `BackupPanel` (Archiv tab) export/restore all tables as one JSON file (merge on restore, Gemini key excluded), request `navigator.storage.persist()`, and remind after 7 days without a backup. Updates must never require reinstalling: `services/pwaUpdate.ts` registers the SW itself (`injectRegister: false`) and checks for updates on start, every 30 min and on returning to the foreground; `AppVersion` (Archiv tab) shows the build time (`__APP_BUILD__`) and a manual update check.
 - Export: PDF Generation (jspdf / html2canvas) für Aushang-Druck (A4).
 
 ## Project Structure
