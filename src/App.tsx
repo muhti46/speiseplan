@@ -19,7 +19,7 @@ import { recipeDetailKey } from './services/ai/recipeDetail';
 import { DayOfWeek, ShoppingItem, WeeklyPlan } from './types/menu';
 import { applyBeilageChange, applyMealSwap, generateWeeklyPlan, getNextIsoWeek, isPlanEditable, replaceRecipeInPlan, rerollDay } from './services/generator';
 import { formatWeekRange } from './services/format';
-import { buildShoppingLists, preserveChecked } from './services/shopping';
+import { buildShoppingLists, preserveChecked, refreshShoppingLists } from './services/shopping';
 import { exportWeeklyPlanPdf } from './services/pdf';
 import {
   getAllPlans,
@@ -152,7 +152,9 @@ export default function App() {
     getAllRecipeDetails().then((list) => setDetails(Object.fromEntries(list.map((d) => [d.key, d]))));
     getCurrentPlan()
       .then((stored) => {
-        if (stored) setPlan((prev) => prev ?? stored);
+        // Einkaufslisten neu berechnen, damit geänderte Regeln (Vorräte, Zusammenfassen) auch für den
+        // gespeicherten Plan gelten; Abgehaktes bleibt abgehakt.
+        if (stored) setPlan((prev) => prev ?? refreshShoppingLists(stored));
       })
       .finally(() => setPlanLoaded(true));
   }, []);

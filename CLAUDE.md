@@ -34,6 +34,8 @@ Speiseplan- und Einkaufslisten-App für die Hauswirtschaft (Kinderheim Weilburg,
    - 1x Vegetarisch / Gemüsegericht
 4. **Zubereitungszeiten:** Must calculate starting time based on 18:00 serving deadline.
 5. **Einkaufstage:** Split shopping list into Monday (Mo-Mi meals) and Friday (Fr + staples). Group by supermarket aisle.
+   - Pantry staples never appear on the list: salt, sugar (incl. Puder-/Vanillezucker), flour, spices, vinegar (`isPantryStaple` in `shopping.ts`; decided by the word naming the product, so "Zuckerschoten", "Gewürzgurken", "Paniermehl" stay; fresh herbs stay, dried ones count as spice).
+   - No duplicate lines: items merge by `canonicalItemKey` (spelling aliases, singular/plural, preparation notes like "(gerieben)") + normalized unit (Stk=Stück, kg→g, l→ml), regardless of aisle; only incompatible units (Stück vs g) stay separate. Stored plans get their lists rebuilt on load (`refreshShoppingLists`, checks preserved).
 
 ## Commands
 - Dev Server: `npm run dev`

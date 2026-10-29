@@ -10,6 +10,102 @@ function recipesOfDay(day: DayMenu): Recipe[] {
   return [day.vorspeise, day.hauptspeise, day.nachspeise];
 }
 
+// ---------------------------------------------------------------- Vorräte
+
+// Was in der Großküche immer im Vorrat ist und nicht auf den Einkaufszettel gehört:
+// Salz, Zucker, Mehl, Gewürze, Essig. Geprüft wird je Wort des Zutatennamens, damit
+// z.B. "Zuckerschoten", "Salzkartoffeln", "Gewürzgurken" oder "Paniermehl" drauf bleiben.
+const PANTRY_WORD_ENDINGS = /(salz|zucker|essig|gewurz|gewurze)$/;
+const PANTRY_WORDS = new Set([
+  'mehl', 'weizenmehl', 'dinkelmehl', 'roggenmehl', 'vollkornmehl',
+  'pfeffer', 'paprikapulver', 'currypulver', 'curry', 'zimt', 'muskat', 'muskatnuss', 'kummel', 'kreuzkummel',
+  'lorbeer', 'lorbeerblatt', 'lorbeerblatter', 'nelken', 'gewurznelken', 'piment', 'kurkuma', 'chilipulver',
+  'chiliflocken', 'cayennepfeffer', 'knoblauchpulver', 'zwiebelpulver', 'ingwerpulver', 'masala', 'balsamico',
+]);
+// Kräuter zählen nur getrocknet (Trockensortiment) als Gewürz - frische Petersilie usw. wird gekauft.
+const DRIED_ONLY = new Set(['oregano', 'thymian', 'rosmarin', 'majoran', 'basilikum', 'petersilie', 'dill', 'koriander', 'krauter']);
+// Wörter, die nach dem Vorratswort nur die Sorte beschreiben ("Mehl Type 405", "Paprikapulver edelsüß").
+const QUALIFIER = /^(type|\d+|gemahlen|getrocknet|edelsuss|rosenscharf|scharf|suss|mild|schwarz|weiss|grun|bunt|fein|grob|hell|dunkel|der|provence|braun|brauner|weisser)$/;
+// Sieht aus wie Vorrat, ist aber eigene Ware.
+const NOT_PANTRY = new Set(['paniermehl']);
+
+function normalizeWords(name: string): string[] {
+  return name
+    .toLowerCase()
+    .replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/ß/g, 'ss')
+    .replace(/\(.*?\)/g, ' ')
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
+}
+
+function isPantryWord(word: string, storeCategory: ShoppingItem['storeCategory']): boolean {
+  if (NOT_PANTRY.has(word)) return false;
+  if (DRIED_ONLY.has(word)) return storeCategory === 'trocken';
+  return PANTRY_WORDS.has(word) || PANTRY_WORD_ENDINGS.test(word);
+}
+
+/**
+ * Gehört die Zutat zum Grundvorrat (Salz, Zucker, Mehl, Gewürze, Essig) und damit nicht auf die Liste?
+ * Entscheidend ist das Wort, das die Ware benennt: "Zuckerschoten", "Gewürzgurken", "Essig-Gurken"
+ * oder "Salzkartoffeln" bleiben drauf, "Mehl Type 405" oder "Salz und Pfeffer" nicht.
+ */
+export function isPantryStaple(item: string, storeCategory: ShoppingItem['storeCategory']): boolean {
+  const words = normalizeWords(item).filter((w) => w !== 'und');
+  for (let i = words.length - 1; i >= 0; i--) {
+    if (QUALIFIER.test(words[i])) continue;
+    return isPantryWord(words[i], storeCategory);
+  }
+  return false;
+}
+
+// ---------------------------------------------------------------- Zusammenfassen
+
+// Gleiche Ware, unterschiedlich geschrieben (Rezepte aus verschiedenen Quellen / von der KI).
+const ALIASES: Record<string, string> = {
+  vanillepuddingpulver: 'puddingpulver vanille',
+  schokoladenpuddingpulver: 'puddingpulver schokolade',
+  rinderhackfleisch: 'rinderhack',
+  speisequark: 'quark',
+  magerquark: 'quark',
+  salatgurke: 'gurke',
+  salatgurken: 'gurke',
+  'geriebener gouda': 'gouda',
+  'geriebener kase': 'kase',
+  ei: 'eier',
+  mohre: 'karotte',
+  mohren: 'karotte',
+  mohrrube: 'karotte',
+  mohrruben: 'karotte',
+};
+// Klammerzusätze, die nur die Zubereitung beschreiben - gekauft wird dieselbe Ware.
+const PREP_NOTE = /\((?:gekocht|gerieben|scheiben|in scheiben|gewurfelt|gehackt|frisch|geschalt|schmorbraten|apfel, banane, orange, trauben)\)/g;
+
+/** Schlüssel, unter dem gleiche Ware zusammengefasst wird (Schreibweise, Einzahl/Mehrzahl, Zubereitung egal). */
+export function canonicalItemKey(item: string): string {
+  let name = item
+    .toLowerCase()
+    .replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/ß/g, 'ss')
+    .replace(PREP_NOTE, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  name = ALIASES[name] ?? name;
+  // Einzahl/Mehrzahl: "Zwiebel"/"Zwiebeln", "Tomate"/"Tomaten", "Karotte"/"Karotten" ...
+  return name
+    .split(' ')
+    .map((w) => (w.length > 4 ? w.replace(/(en|n|e|s)$/, '') : w))
+    .join(' ');
+}
+
+/** Einheit vereinheitlichen; kg/l werden in g/ml umgerechnet, damit sie zusammenpassen. */
+export function normalizeUnit(unit: string, amount: number): { unit: string; amount: number } {
+  const u = unit.trim().toLowerCase().replace(/\.$/, '');
+  if (['stk', 'stück', 'stuck', 'st', 'stücke'].includes(u)) return { unit: 'Stück', amount };
+  if (u === 'kg') return { unit: 'g', amount: amount * 1000 };
+  if (u === 'l') return { unit: 'ml', amount: amount * 1000 };
+  if (u === 'g' || u === 'ml') return { unit: u, amount };
+  return { unit: unit.trim(), amount };
+}
+
 function aggregateIngredients(days: DayMenu[], portions: number): ShoppingItem[] {
   const scale = portions / 10;
   const byKey = new Map<string, ShoppingItem>();
@@ -17,19 +113,23 @@ function aggregateIngredients(days: DayMenu[], portions: number): ShoppingItem[]
   for (const day of days) {
     for (const recipe of recipesOfDay(day)) {
       for (const ingredient of recipe.ingredients) {
-        const key = `${ingredient.item}__${ingredient.unit}__${ingredient.storeCategory}`;
-        const scaledAmount = ingredient.amountPer10Pax * scale;
+        if (isPantryStaple(ingredient.item, ingredient.storeCategory)) continue;
+        const { unit, amount } = normalizeUnit(ingredient.unit, ingredient.amountPer10Pax * scale);
+        // Gleiche Ware landet in EINER Zeile - auch wenn sie in Rezepten unterschiedlichen
+        // Regalen zugeordnet ist (dann gilt das erste). Nur unvereinbare Einheiten (z.B. Stück
+        // und g) bleiben getrennt, weil man sie nicht addieren kann.
+        const key = `${canonicalItemKey(ingredient.item)}__${unit}`;
         const existing = byKey.get(key);
         if (existing) {
-          existing.amount += scaledAmount;
+          existing.amount += amount;
           if (!existing.recipeNames.includes(recipe.name)) {
             existing.recipeNames.push(recipe.name);
           }
         } else {
           byKey.set(key, {
-            item: ingredient.item,
-            amount: scaledAmount,
-            unit: ingredient.unit,
+            item: ingredient.item.trim(),
+            amount,
+            unit,
             storeCategory: ingredient.storeCategory,
             recipeNames: [recipe.name],
             checked: false,
@@ -83,8 +183,23 @@ export function groupByAisle(
   }));
 }
 
+/**
+ * Einkaufslisten eines gespeicherten Plans neu berechnen (z.B. nach Änderungen an den Regeln für
+ * Vorräte/Zusammenfassen), abgehakte Artikel bleiben abgehakt.
+ */
+export function refreshShoppingLists(plan: WeeklyPlan, portions: number = DEFAULT_PORTIONS): WeeklyPlan {
+  const lists = buildShoppingLists(plan, portions);
+  return {
+    ...plan,
+    shoppingListMon: preserveChecked(plan.shoppingListMon ?? [], lists.shoppingListMon),
+    shoppingListFri: preserveChecked(plan.shoppingListFri ?? [], lists.shoppingListFri),
+  };
+}
+
 /** Übernimmt den Abhak-Status aus einer alten Liste in eine neu berechnete (gleicher Artikel + Einheit). */
 export function preserveChecked(oldItems: ShoppingItem[], newItems: ShoppingItem[]): ShoppingItem[] {
-  const checked = new Set(oldItems.filter((i) => i.checked).map((i) => `${i.item}__${i.unit}`));
-  return newItems.map((i) => (checked.has(`${i.item}__${i.unit}`) ? { ...i, checked: true } : i));
+  // Über den zusammengefassten Schlüssel, damit z.B. abgehakte "Zwiebel" auch "Zwiebeln" abhakt.
+  const keyOf = (i: ShoppingItem) => `${canonicalItemKey(i.item)}__${normalizeUnit(i.unit, 0).unit}`;
+  const checked = new Set(oldItems.filter((i) => i.checked).map(keyOf));
+  return newItems.map((i) => (checked.has(keyOf(i)) ? { ...i, checked: true } : i));
 }
