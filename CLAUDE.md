@@ -34,8 +34,8 @@ Speiseplan- und Einkaufslisten-App für die Hauswirtschaft (Kinderheim Weilburg,
    - 1x Vegetarisch / Gemüsegericht
 4. **Zubereitungszeiten:** Must calculate starting time based on 18:00 serving deadline.
 5. **Einkaufstage:** Split shopping list into Monday (Mo-Mi meals) and Friday (Fr + staples). Group by supermarket aisle.
-   - Pantry staples never appear on the list: salt, sugar (incl. Puder-/Vanillezucker), flour, spices, vinegar (`isPantryStaple` in `shopping.ts`; decided by the word naming the product, so "Zuckerschoten", "Gewürzgurken", "Paniermehl" stay; fresh herbs stay, dried ones count as spice).
-   - No duplicate lines: items merge by `canonicalItemKey` (spelling aliases, singular/plural, preparation notes like "(gerieben)") + normalized unit (Stk=Stück, kg→g, l→ml), regardless of aisle; only incompatible units (Stück vs g) stay separate. Stored plans get their lists rebuilt on load (`refreshShoppingLists`, checks preserved).
+   - Pantry staples never appear on the list: salt, sugar (incl. Puder-/Vanillezucker), flour, spices, vinegar, oils, all broths/Fond, honey, ginger, lemon juice (`isPantryStaple` in `shopping.ts`; decided by the word naming the product, so "Zuckerschoten", "Gewürzgurken", "Paniermehl" stay; fresh herbs stay, dried ones count as spice).
+   - No duplicate lines: items merge by `canonicalItemKey` (spelling aliases, singular/plural, preparation notes like "(gerieben)") + normalized unit (Stk=Stück, kg→g, l→ml), regardless of aisle; produce sold by weight that appears in Stück (AI recipes) is converted to g via `PIECE_WEIGHT_G` (e.g. Zwiebel 100 g), so onions are one line; only items without a known piece weight keep Stück and g apart. Recipe prompts ask for vegetables in g (Stück only for eggs, lemons …). Stored plans get their lists rebuilt on load (`refreshShoppingLists`, checks preserved).
 
 ## Commands
 - Dev Server: `npm run dev`

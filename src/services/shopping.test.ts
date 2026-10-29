@@ -19,8 +19,8 @@ describe('preserveChecked', () => {
   });
 
   it('does not match the same name with a unit that cannot be combined', () => {
-    const old = [item('Zwiebeln', 'g', true)];
-    const next = [item('Zwiebeln', 'Stück', false)];
+    const old = [item('Zitronen', 'g', true)];
+    const next = [item('Zitronen', 'Stück', false)];
     expect(preserveChecked(old, next)[0].checked).toBe(false);
   });
 
@@ -45,8 +45,18 @@ describe('isPantryStaple', () => {
     expect(isPantryStaple('Oregano (getrocknet)', 'trocken')).toBe(true);
   });
 
+  it('also removes oils, broths, honey, ginger and lemon juice', () => {
+    for (const name of ['Rapsöl', 'Olivenöl', 'Sonnenblumenöl', 'Öl', 'Speiseöl', 'Gemüsebrühe', 'Rinderbrühe', 'Hühnerbrühe', 'Geflügelbrühe', 'Kalbsfond', 'Brühwürfel', 'Honig', 'Zitronensaft']) {
+      expect(isPantryStaple(name, 'trocken'), name).toBe(true);
+    }
+    expect(isPantryStaple('Ingwer', 'gemuese')).toBe(true);
+    for (const name of ['Zitrone', 'Ölsardinen', 'Karfiol', 'Kokosmilch', 'Honigmelone']) {
+      expect(isPantryStaple(name, 'gemuese'), name).toBe(false);
+    }
+  });
+
   it('keeps real groceries that only contain such a word', () => {
-    for (const name of ['Zuckerschoten', 'Zuckermais', 'Salzkartoffeln', 'Gewürzgurken', 'Essig-Gurken', 'Paniermehl', 'Puddingpulver Vanille', 'Backpulver', 'Senf', 'Gemüsebrühe', 'Rapsöl', 'Zimtschnecken']) {
+    for (const name of ['Zuckerschoten', 'Zuckermais', 'Salzkartoffeln', 'Gewürzgurken', 'Essig-Gurken', 'Paniermehl', 'Puddingpulver Vanille', 'Backpulver', 'Senf', 'Zimtschnecken']) {
       expect(isPantryStaple(name, 'trocken'), name).toBe(false);
     }
     // Frische Kräuter werden gekauft, getrocknete sind Vorrat.
@@ -101,11 +111,29 @@ describe('buildShoppingLists', () => {
     } as WeeklyPlan;
     const { shoppingListMon } = buildShoppingLists(plan, 10);
     expect(shoppingListMon.map((i) => [i.item, i.amount, i.unit])).toEqual([
-      ['Zwiebeln', 3, 'Stück'],
+      ['Zwiebeln', 300, 'g'],
       ['Hähnchenbrust', 1500, 'g'],
       ['Eier', 10, 'Stück'],
     ]);
     expect(shoppingListMon.find((i) => i.item === 'Eier')?.recipeNames).toEqual(['A', 'B']);
+  });
+
+  it('counts onions given in pieces and in grams on ONE line (in g)', () => {
+    const plan = {
+      id: 'p', calendarWeek: 1, year: 2026, isFinalized: false, createdAt: '', shoppingListMon: [], shoppingListFri: [],
+      days: [
+        day('Montag', recipe('A', [{ item: 'Zwiebeln', amountPer10Pax: 400, unit: 'g', storeCategory: 'gemuese' }])),
+        day('Mittwoch', recipe('B', [
+          { item: 'Zwiebel', amountPer10Pax: 2, unit: 'Stück', storeCategory: 'gemuese' },
+          { item: 'Zitrone', amountPer10Pax: 2, unit: 'Stk', storeCategory: 'gemuese' },
+        ])),
+      ],
+    } as WeeklyPlan;
+    const { shoppingListMon } = buildShoppingLists(plan, 10);
+    expect(shoppingListMon.map((i) => [i.item, i.amount, i.unit])).toEqual([
+      ['Zitrone', 2, 'Stück'],
+      ['Zwiebeln', 600, 'g'],
+    ]);
   });
 
   it('has no pantry items and no duplicate lines for the built-in recipes', () => {

@@ -16,7 +16,7 @@ Domänenregeln, die du IMMER einhalten musst:
   - subCategory: "suppe" | "salat" | "beilage" | "dessert"
   - proteinCategory (nur bei hauptspeise): "gefluegel" | "rind" | "fisch" | "suess" | "vegetarisch"
   - storeCategory je Zutat: "gemuese" | "kuehlung" | "mopro" | "trocken" | "tk"
-- Zutatenmengen werden immer für 10 Portionen angegeben (Feld amountPer10Pax), die App skaliert das selbst auf die tatsächliche Personenzahl hoch/runter.
+- Zutatenmengen werden immer für 10 Portionen angegeben (Feld amountPer10Pax), die App skaliert das selbst auf die tatsächliche Personenzahl hoch/runter. Einheiten nur "g", "ml" oder "Stück": Stück nur für Eier, Zitronen u.ä.; Gemüse wie Zwiebeln, Karotten, Paprika immer in g.
 - Bei Hauptspeisen immer eine passende, typisch deutsche Beilage vorschlagen (z.B. Reis, Kartoffelpüree, Spätzle) oder "—" falls keine sinnvolle Beilage existiert (z.B. bei süßen Hauptspeisen).
 - Zubereitung muss bis 18:00 Uhr fertig sein.
 

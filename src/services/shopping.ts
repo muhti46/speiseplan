@@ -13,14 +13,17 @@ function recipesOfDay(day: DayMenu): Recipe[] {
 // ---------------------------------------------------------------- Vorräte
 
 // Was in der Großküche immer im Vorrat ist und nicht auf den Einkaufszettel gehört:
-// Salz, Zucker, Mehl, Gewürze, Essig. Geprüft wird je Wort des Zutatennamens, damit
+// Salz, Zucker, Mehl, Gewürze, Essig, Öl, Brühe, Honig, Ingwer, Zitronensaft. Geprüft wird je Wort des Zutatennamens, damit
 // z.B. "Zuckerschoten", "Salzkartoffeln", "Gewürzgurken" oder "Paniermehl" drauf bleiben.
-const PANTRY_WORD_ENDINGS = /(salz|zucker|essig|gewurz|gewurze)$/;
+// Auch Öle (Rapsöl, Olivenöl …), Brühen (Gemüse-, Rinder-, Hühnerbrühe …), Honig, Ingwer und
+// Zitronensaft sind in der Küche immer vorrätig.
+const PANTRY_WORD_ENDINGS = /(salz|zucker|essig|gewurz|gewurze|oel|bruhe|fond)$/;
 const PANTRY_WORDS = new Set([
   'mehl', 'weizenmehl', 'dinkelmehl', 'roggenmehl', 'vollkornmehl',
   'pfeffer', 'paprikapulver', 'currypulver', 'curry', 'zimt', 'muskat', 'muskatnuss', 'kummel', 'kreuzkummel',
   'lorbeer', 'lorbeerblatt', 'lorbeerblatter', 'nelken', 'gewurznelken', 'piment', 'kurkuma', 'chilipulver',
   'chiliflocken', 'cayennepfeffer', 'knoblauchpulver', 'zwiebelpulver', 'ingwerpulver', 'masala', 'balsamico',
+  'ingwer', 'honig', 'zitronensaft', 'bruhwurfel', 'gemusebruhwurfel',
 ]);
 // Kräuter zählen nur getrocknet (Trockensortiment) als Gewürz - frische Petersilie usw. wird gekauft.
 const DRIED_ONLY = new Set(['oregano', 'thymian', 'rosmarin', 'majoran', 'basilikum', 'petersilie', 'dill', 'koriander', 'krauter']);
@@ -32,6 +35,8 @@ const NOT_PANTRY = new Set(['paniermehl']);
 function normalizeWords(name: string): string[] {
   return name
     .toLowerCase()
+    // "öl" am Wortende als "oel", damit Öle erkannt werden, ohne Wörter wie "Karfiol" zu treffen.
+    .replace(/öl(?![a-zäöüß])/g, 'oel')
     .replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/ß/g, 'ss')
     .replace(/\(.*?\)/g, ' ')
     .split(/[^a-z0-9]+/)
@@ -45,7 +50,8 @@ function isPantryWord(word: string, storeCategory: ShoppingItem['storeCategory']
 }
 
 /**
- * Gehört die Zutat zum Grundvorrat (Salz, Zucker, Mehl, Gewürze, Essig) und damit nicht auf die Liste?
+ * Gehört die Zutat zum Grundvorrat (Salz, Zucker, Mehl, Gewürze, Essig, Öl, Brühe, Honig, Ingwer,
+ * Zitronensaft) und damit nicht auf die Liste?
  * Entscheidend ist das Wort, das die Ware benennt: "Zuckerschoten", "Gewürzgurken", "Essig-Gurken"
  * oder "Salzkartoffeln" bleiben drauf, "Mehl Type 405" oder "Salz und Pfeffer" nicht.
  */
@@ -106,6 +112,39 @@ export function normalizeUnit(unit: string, amount: number): { unit: string; amo
   return { unit: unit.trim(), amount };
 }
 
+// Ungefähres Gewicht eines Stücks für Gemüse/Obst, das in den Rezepten mal in Stück, mal in g
+// steht (die Standardrezepte nutzen g, KI-Rezepte teils Stück). Auf der Liste wird dann alles in g
+// zusammengezählt - sonst stünden z.B. Zwiebeln zweimal drauf.
+const PIECE_WEIGHT_G: Record<string, number> = {
+  zwiebel: 100,
+  fruhlingszwiebel: 20,
+  knoblauchzeh: 5,
+  paprika: 150,
+  karott: 80,
+  zucchini: 250,
+  tomat: 80,
+  gurk: 400,
+  apfel: 150,
+  banan: 120,
+  birn: 150,
+  kohlrabi: 300,
+  lauch: 200,
+  kartoffel: 100,
+  aubergin: 300,
+};
+
+/**
+ * Einheit, in der eine Ware auf der Liste geführt wird: wie `normalizeUnit`, zusätzlich werden
+ * Stück bei nach Gewicht gekauftem Gemüse/Obst in g umgerechnet.
+ */
+export function toShoppingUnit(item: string, unit: string, amount: number): { unit: string; amount: number } {
+  const normalized = normalizeUnit(unit, amount);
+  if (normalized.unit !== 'Stück') return normalized;
+  const key = canonicalItemKey(item);
+  const weight = PIECE_WEIGHT_G[key] ?? PIECE_WEIGHT_G[key.split(' ').pop() ?? ''];
+  return weight ? { unit: 'g', amount: normalized.amount * weight } : normalized;
+}
+
 function aggregateIngredients(days: DayMenu[], portions: number): ShoppingItem[] {
   const scale = portions / 10;
   const byKey = new Map<string, ShoppingItem>();
@@ -114,10 +153,10 @@ function aggregateIngredients(days: DayMenu[], portions: number): ShoppingItem[]
     for (const recipe of recipesOfDay(day)) {
       for (const ingredient of recipe.ingredients) {
         if (isPantryStaple(ingredient.item, ingredient.storeCategory)) continue;
-        const { unit, amount } = normalizeUnit(ingredient.unit, ingredient.amountPer10Pax * scale);
+        const { unit, amount } = toShoppingUnit(ingredient.item, ingredient.unit, ingredient.amountPer10Pax * scale);
         // Gleiche Ware landet in EINER Zeile - auch wenn sie in Rezepten unterschiedlichen
-        // Regalen zugeordnet ist (dann gilt das erste). Nur unvereinbare Einheiten (z.B. Stück
-        // und g) bleiben getrennt, weil man sie nicht addieren kann.
+        // Regalen zugeordnet ist (dann gilt das erste). Nur unvereinbare Einheiten ohne bekanntes
+        // Stückgewicht (z.B. Zitronen in Stück und g) bleiben getrennt.
         const key = `${canonicalItemKey(ingredient.item)}__${unit}`;
         const existing = byKey.get(key);
         if (existing) {
@@ -199,7 +238,7 @@ export function refreshShoppingLists(plan: WeeklyPlan, portions: number = DEFAUL
 /** Übernimmt den Abhak-Status aus einer alten Liste in eine neu berechnete (gleicher Artikel + Einheit). */
 export function preserveChecked(oldItems: ShoppingItem[], newItems: ShoppingItem[]): ShoppingItem[] {
   // Über den zusammengefassten Schlüssel, damit z.B. abgehakte "Zwiebel" auch "Zwiebeln" abhakt.
-  const keyOf = (i: ShoppingItem) => `${canonicalItemKey(i.item)}__${normalizeUnit(i.unit, 0).unit}`;
+  const keyOf = (i: ShoppingItem) => `${canonicalItemKey(i.item)}__${toShoppingUnit(i.item, i.unit, 0).unit}`;
   const checked = new Set(oldItems.filter((i) => i.checked).map(keyOf));
   return newItems.map((i) => (checked.has(keyOf(i)) ? { ...i, checked: true } : i));
 }
