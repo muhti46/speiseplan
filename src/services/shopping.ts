@@ -13,7 +13,7 @@ function recipesOfDay(day: DayMenu): Recipe[] {
 // ---------------------------------------------------------------- Vorräte
 
 // Was in der Großküche immer im Vorrat ist und nicht auf den Einkaufszettel gehört:
-// Salz, Zucker, Mehl, Gewürze, Essig, Öl, Brühe, Honig, Ingwer, Zitronensaft. Geprüft wird je Wort des Zutatennamens, damit
+// Salz, Zucker, Mehl, Gewürze, Essig, Öl, Brühe, Honig, Ingwer, Zitronensaft, Butter, Milch. Geprüft wird je Wort des Zutatennamens, damit
 // z.B. "Zuckerschoten", "Salzkartoffeln", "Gewürzgurken" oder "Paniermehl" drauf bleiben.
 // Auch Öle (Rapsöl, Olivenöl …), Brühen (Gemüse-, Rinder-, Hühnerbrühe …), Honig, Ingwer und
 // Zitronensaft sind in der Küche immer vorrätig.
@@ -24,11 +24,12 @@ const PANTRY_WORDS = new Set([
   'lorbeer', 'lorbeerblatt', 'lorbeerblatter', 'nelken', 'gewurznelken', 'piment', 'kurkuma', 'chilipulver',
   'chiliflocken', 'cayennepfeffer', 'knoblauchpulver', 'zwiebelpulver', 'ingwerpulver', 'masala', 'balsamico',
   'ingwer', 'honig', 'zitronensaft', 'bruhwurfel', 'gemusebruhwurfel',
+  'butter', 'milch', 'vollmilch', 'frischmilch',
 ]);
 // Kräuter zählen nur getrocknet (Trockensortiment) als Gewürz - frische Petersilie usw. wird gekauft.
 const DRIED_ONLY = new Set(['oregano', 'thymian', 'rosmarin', 'majoran', 'basilikum', 'petersilie', 'dill', 'koriander', 'krauter']);
 // Wörter, die nach dem Vorratswort nur die Sorte beschreiben ("Mehl Type 405", "Paprikapulver edelsüß").
-const QUALIFIER = /^(type|\d+|gemahlen|getrocknet|edelsuss|rosenscharf|scharf|suss|mild|schwarz|weiss|grun|bunt|fein|grob|hell|dunkel|der|provence|braun|brauner|weisser)$/;
+const QUALIFIER = /^(fettarme|fettarm|h|type|\d+|gemahlen|getrocknet|edelsuss|rosenscharf|scharf|suss|mild|schwarz|weiss|grun|bunt|fein|grob|hell|dunkel|der|provence|braun|brauner|weisser)$/;
 // Sieht aus wie Vorrat, ist aber eigene Ware.
 const NOT_PANTRY = new Set(['paniermehl']);
 
@@ -51,7 +52,7 @@ function isPantryWord(word: string, storeCategory: ShoppingItem['storeCategory']
 
 /**
  * Gehört die Zutat zum Grundvorrat (Salz, Zucker, Mehl, Gewürze, Essig, Öl, Brühe, Honig, Ingwer,
- * Zitronensaft) und damit nicht auf die Liste?
+ * Zitronensaft, Butter, Milch) und damit nicht auf die Liste?
  * Entscheidend ist das Wort, das die Ware benennt: "Zuckerschoten", "Gewürzgurken", "Essig-Gurken"
  * oder "Salzkartoffeln" bleiben drauf, "Mehl Type 405" oder "Salz und Pfeffer" nicht.
  */
