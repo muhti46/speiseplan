@@ -54,7 +54,7 @@ function buildPrompt(name: string, course: Course): string {
   return `Erstelle ein Rezept für das Gericht "${name}" (Gang: ${COURSE_LABEL[course]}) für die Großküche eines Kinderheims: 10 Portionen, Kinder und Jugendliche von 5 bis 17 Jahren, alles zusammen in höchstens ca. 60 Minuten machbar.
 
 Regeln:
-- Mengen in "amountPer10Pax" gelten für 10 Portionen. Einheit ausschließlich "g", "ml" oder "Stück" (z.B. Eier, Zwiebeln in Stück; Flüssigkeiten in ml; alles andere in g).
+- Mengen in "amountPer10Pax" gelten für 10 Portionen. Einheit ausschließlich "g", "ml" oder "Stück" (Eier, Zitronen u.ä. in Stück; Flüssigkeiten in ml; alles andere in g - auch Gemüse wie Zwiebeln, Karotten, Paprika).
 - Zutatennamen und Zubereitungsschritte auf Deutsch. 4 bis 8 kurze, konkrete Schritte. Wasser, Salz und Pfeffer nur, wenn wirklich nötig.
 - storeCategory je Zutat: gemuese = Obst und Gemüse, kuehlung = Fleisch/Fisch/Wurst, mopro = Milchprodukte/Eier/Käse, trocken = Trockensortiment/Konserven/Gewürze/Öl/Mehl/Reis/Nudeln, tk = Tiefkühlware.
 - Hauptspeise: proteinCategory angeben (gefluegel, rind, fisch, suess oder vegetarisch; niemals Schweinefleisch) und eine typische Beilage als "beilage" (oder "—", wenn keine nötig ist, z.B. bei süßen Hauptspeisen).
