@@ -4,6 +4,7 @@ import { DayOfWeek, DAYS_OF_WEEK, WeeklyPlan } from '../../types/menu';
 import { ChatContext } from '../../types/ai';
 import { applyBeilageChange, applyMealSwap, generateWeeklyPlan, getIsoWeek, rerollDay } from '../generator';
 import { buildShoppingLists } from '../shopping';
+import { purchaseAmount } from '../packSizes';
 import { coerceRecipe, isCoercionError } from './recipeCoercion';
 import { DraftRequest, generateRecipeDrafts } from './recipeDraft';
 
@@ -344,7 +345,8 @@ export function createToolDispatcher(ctx: ChatContext) {
       case 'get_shopping_list': {
         if (!ctx.plan) return { error: 'Es existiert noch kein Wochenplan.' };
         const list = args.list === 'fri' ? ctx.plan.shoppingListFri : ctx.plan.shoppingListMon;
-        return { items: list.map((i) => ({ item: i.item, amount: i.amount, unit: i.unit })) };
+        // purchase = Menge wie im Supermarkt gekauft (Packungen/Stück) - so dem Nutzer nennen.
+        return { items: list.map((i) => ({ item: i.item, amount: i.amount, unit: i.unit, purchase: purchaseAmount(i) })) };
       }
 
       default:

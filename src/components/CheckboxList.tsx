@@ -2,6 +2,7 @@ import { Check } from 'lucide-react';
 import { ShoppingItem } from '../types/menu';
 import { groupByAisle } from '../services/shopping';
 import { formatAmount } from '../services/format';
+import { purchaseAmount } from '../services/packSizes';
 import { useLanguage } from '../i18n/LanguageContext';
 
 interface CheckboxListProps {
@@ -48,7 +49,7 @@ export default function CheckboxList({ title, items, onToggle }: CheckboxListPro
                   <span className={`flex-1 text-sm ${item.checked ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
                     {item.item}
                   </span>
-                  <span className="text-sm font-medium text-slate-500">{formatAmount(item.amount, item.unit)}</span>
+                  <AmountLabel item={item} />
                 </button>
               </li>
             ))}
@@ -56,5 +57,20 @@ export default function CheckboxList({ title, items, onToggle }: CheckboxListPro
         </div>
       ))}
     </div>
+  );
+}
+
+/** Kaufmenge wie im Supermarkt (z.B. "1 kg", "3 × 500 g"), darunter klein die genau benötigte Menge. */
+function AmountLabel({ item }: { item: ShoppingItem }) {
+  const exact = formatAmount(item.amount, item.unit);
+  const purchase = purchaseAmount(item);
+  if (!purchase || purchase === exact) {
+    return <span className="text-sm font-medium text-slate-500">{exact}</span>;
+  }
+  return (
+    <span className="flex shrink-0 flex-col items-end leading-tight">
+      <span className="text-sm font-semibold text-slate-600">{purchase}</span>
+      <span className="text-[11px] text-slate-400">{exact}</span>
+    </span>
   );
 }

@@ -50,6 +50,12 @@ describe('isPantryStaple', () => {
       expect(isPantryStaple(name, 'trocken'), name).toBe(true);
     }
     expect(isPantryStaple('Ingwer', 'gemuese')).toBe(true);
+    for (const name of ['Butter', 'Milch', 'H-Milch', 'Vollmilch', 'Milch (3,5 %)']) {
+      expect(isPantryStaple(name, 'mopro'), name).toBe(true);
+    }
+    for (const name of ['Buttermilch', 'Kokosmilch', 'Milchreis', 'Erdnussbutter', 'Butterkekse', 'Milchbrötchen']) {
+      expect(isPantryStaple(name, 'mopro'), name).toBe(false);
+    }
     for (const name of ['Zitrone', 'Ölsardinen', 'Karfiol', 'Kokosmilch', 'Honigmelone']) {
       expect(isPantryStaple(name, 'gemuese'), name).toBe(false);
     }
